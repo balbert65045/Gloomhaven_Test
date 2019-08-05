@@ -120,6 +120,7 @@ public class EnemyGroup : MonoBehaviour {
         FindObjectOfType<MyCameraController>().SetTarget(character.transform);
         FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
         FindObjectOfType<CharacterViewer>().ShowActionCard(currentAction.gameObject);
+        currentAction.setUpCard(character.Strength, character.Agility, character.Dexterity);
         yield return new WaitForSeconds(.5f);
         currentCharacterIndex++;
         character.PerformAction(currentAction.MovementIncrease, currentAction.DamageIncrease, currentAction.RangeIncrease, currentAction.MovementAvailable, currentAction.AttackAvailable, currentAction.HealAmount, currentAction.ShieldAmount);

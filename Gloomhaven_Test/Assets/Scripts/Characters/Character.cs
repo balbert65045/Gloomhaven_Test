@@ -6,7 +6,7 @@ public enum BuffType
 {
     Strength = 1,
     Agility = 2,
-    Range = 3,
+    Dexterity = 3,
     Armor = 4,
 }
 
@@ -37,12 +37,12 @@ public class Character : Entity {
 
     public int baseStrength = 0;
     public int baseAgility = 0;
-    public int baseAttackRange = 0;
-    public int baseShield = 0;
+    public int baseDexterity = 0;
+    public int baseArmor = 0;
 
     public int Agility = 0;
     public int Strength = 0;
-    public int Range = 0;
+    public int Dexterity = 0;
     public int Armor = 0;
 
     public int CurrentArmor = 0;
@@ -74,7 +74,7 @@ public class Character : Entity {
                 Strength += value;
                 break;
             case BuffType.Armor:
-                AddBuff(value, duration, buffType, Armor, baseShield);
+                AddBuff(value, duration, buffType, Armor, baseArmor);
                 Armor += value;
                 myHealthBar.AddShield(value);
                 break;
@@ -82,9 +82,9 @@ public class Character : Entity {
                 AddBuff(value, duration, buffType, Agility, baseAgility);
                 Agility += value;
                 break;
-            case BuffType.Range:
-                AddBuff(value, duration, buffType, Range, baseAttackRange);
-                Range += value;
+            case BuffType.Dexterity:
+                AddBuff(value, duration, buffType, Dexterity, baseDexterity);
+                Dexterity += value;
                 break;
         }
     }
@@ -118,13 +118,13 @@ public class Character : Entity {
                     Agility = Agility - buff.Amount;
                     if (Agility == baseAgility) { myHealthBar.RemoveBuff(BuffType.Agility); }
                     break;
-                case BuffType.Range:
-                    Range = Range - buff.Amount;
-                    if (Range == baseAttackRange) { myHealthBar.RemoveBuff(BuffType.Range); }
+                case BuffType.Dexterity:
+                    Dexterity = Dexterity - buff.Amount;
+                    if (Dexterity == baseDexterity) { myHealthBar.RemoveBuff(BuffType.Dexterity); }
                     break;
                 case BuffType.Armor:
                     Armor = Armor - buff.Amount;
-                    if (Armor == baseShield) { myHealthBar.RemoveBuff(BuffType.Armor); }
+                    if (Armor == baseArmor) { myHealthBar.RemoveBuff(BuffType.Armor); }
                     break;
             }
             Buffs.Remove(buff);
@@ -138,8 +138,8 @@ public class Character : Entity {
 
         Strength = baseStrength;
         Agility = baseAgility;
-        Range = baseAttackRange;
-        Armor = baseShield;
+        Dexterity = baseDexterity;
+        Armor = baseArmor;
        
     }
 
@@ -150,7 +150,7 @@ public class Character : Entity {
         {
             myHealthBar.CreateHealthBar(health);
         }
-        Shield(baseShield);
+        Shield(baseArmor);
         maxHealth = health;
     }
 

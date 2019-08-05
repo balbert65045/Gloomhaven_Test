@@ -42,7 +42,7 @@ public class CombatPlayerHand : MonoBehaviour {
     public void ShowPotential(CombatPlayerCard card)
     {
         Character myCharacter = playerController.myCharacter;
-        Action[] actions = card.TopAbility.Actions;
+        Action[] actions = card.CardAbility.Actions;
         FindObjectOfType<MyActionBoard>().showActions(actions, myCharacter);
     }
 
@@ -125,7 +125,6 @@ public class CombatPlayerHand : MonoBehaviour {
     {
         FindObjectOfType<MyActionBoard>().ShowPanel();
         ShowPotential(SelectedPlayerCard);
-        SelectedPlayerCard.BottomAbility.HideAbility();
         Vector3 currentScale = SelectedPlayerCard.transform.localScale;
         PlayArea showArea = GetComponentInChildren<PlayArea>();
         SelectedPlayerCard.transform.SetParent(showArea.transform);
@@ -138,8 +137,7 @@ public class CombatPlayerHand : MonoBehaviour {
     {
         HidePotential();
         FindObjectOfType<MyActionBoard>().HidePanel();
-        SelectedPlayerCard.TopAbility.UnHighlightAbility();
-        SelectedPlayerCard.BottomAbility.UnHighlightAbility();
+        SelectedPlayerCard.CardAbility.UnHighlightAbility();
         SelectedPlayerCard.gameObject.SetActive(false);
     }
 

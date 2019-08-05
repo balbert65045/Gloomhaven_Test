@@ -43,7 +43,7 @@ public class ActionButton : MonoBehaviour {
                 if (action.Range > 1) {
                     RangeImage.gameObject.SetActive(true);
                     RangeValue.gameObject.SetActive(true);
-                    RangeValue.text = (action.Range + character.Range - 1).ToString();
+                    RangeValue.text = (action.Range + character.Dexterity).ToString();
                 } else
                 {
                     RangeImage.gameObject.SetActive(false);

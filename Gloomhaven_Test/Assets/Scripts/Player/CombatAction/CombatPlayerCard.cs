@@ -9,8 +9,7 @@ public class CombatPlayerCard : MonoBehaviour
     public bool LostAbilityUsed = false;
 
     public int Initiative;
-    public CombatCardAbility TopAbility;
-    public CombatCardAbility BottomAbility;
+    public CombatCardAbility CardAbility;
 
     Color OGcolor;
 
@@ -19,6 +18,12 @@ public class CombatPlayerCard : MonoBehaviour
     int OldSiblingIndex;
 
     bool CardIncreased = false;
+
+    public void SetUpCardActions()
+    {
+        Character character = FindObjectOfType<PlayerController>().myCharacter;
+        CardAbility.setUpCard(character.Strength, character.Agility, character.Dexterity);
+    }
 
     void IncreaseSize()
     {

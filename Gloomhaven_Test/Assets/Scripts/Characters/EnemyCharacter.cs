@@ -33,7 +33,7 @@ public class EnemyCharacter : Character {
             myHealthBar.CreateHealthBar(health);
         }
         maxHealth = health;
-        Shield(baseShield);
+        Shield(baseArmor);
         HexMap = FindObjectOfType<HexMapController>();
 
         if (InCombat)
@@ -187,11 +187,14 @@ public class EnemyCharacter : Character {
         }
     }
 
-    public void PerformAction(int MovementIncrease, int AttackIncrease, int RangeIncrease, bool moveAvailable, bool attackAvailable, int healAmount, int shieldAmount)
+    public void PerformAction(int ActionMove, int ActionAttack, int ActionRange, bool moveAvailable, bool attackAvailable, int healAmount, int shieldAmount)
     {
-        modifiedAttack = Strength + AttackIncrease;
-        modifiedAttackRange = baseAttackRange + RangeIncrease;
-        modifiedMovement = Agility + MovementIncrease;
+        bool meleeAtack = ActionRange == 1;
+        modifiedAttackRange = meleeAtack ? ActionRange : ActionRange + Dexterity;
+        Debug.Log(modifiedAttackRange);
+
+        modifiedAttack = Strength + ActionAttack;
+        modifiedMovement = Agility + ActionMove;
 
         MoveAvailable = moveAvailable;
         AttackAvailable = attackAvailable;
@@ -259,9 +262,11 @@ public class EnemyCharacter : Character {
         PlayerCharacter[] charactersOut = FindObjectsOfType<PlayerCharacter>();
         int PathToClosestPlayerLength = 100;
         PlayerCharacter ClosestCharacter = null;
+        Debug.Log(modifiedAttackRange);
         foreach (PlayerCharacter character in charactersOut)
         {
-            int pathToCharacter = getPathToTarget(character.HexOn, baseAttackRange).Count;
+            //TODO change this to current attack range
+            int pathToCharacter = getPathToTarget(character.HexOn, modifiedAttackRange).Count;
             if (pathToCharacter < PathToClosestPlayerLength)
             {
                 PathToClosestPlayerLength = pathToCharacter;

@@ -17,7 +17,6 @@ public class CombatCardAbilityEditor : Editor
     private void OnEnable()
     {
         Lost_Property = serializedObject.FindProperty("LostAbility");
-        AbilityType_Property = serializedObject.FindProperty("ThisAbilityType");
         Actions_Property = serializedObject.FindProperty("Actions");
         ActionsCount_Property = serializedObject.FindProperty("Actions.Array.size");
         cardAbility = (CombatCardAbility)target;
@@ -30,7 +29,6 @@ public class CombatCardAbilityEditor : Editor
         serializedObject.Update();
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(Lost_Property);
-        EditorGUILayout.PropertyField(AbilityType_Property);
         //EditorGUILayout.PropertyField(Actions_Property, new GUIContent("Actions Field"), false);
         EditorGUILayout.BeginHorizontal();
         int OldArrayNumber = ActionsCount_Property.intValue;

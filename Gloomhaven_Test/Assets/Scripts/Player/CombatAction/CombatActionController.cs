@@ -212,7 +212,7 @@ public class CombatActionController : MonoBehaviour {
 
         List<Character> charactersAttacking = new List<Character>();
         bool meleeAtack = action.Range == 1;
-        int range = meleeAtack ? action.Range : action.Range + myCharacter.Range - 1;
+        int range = meleeAtack ? action.Range : action.Range + myCharacter.Dexterity;
         if (!myCharacter.HexAttackable(hexSelected, range)) { return false; }
         foreach (Node node in nodes)
         {
@@ -328,7 +328,7 @@ public class CombatActionController : MonoBehaviour {
         else if (myCurrentAction.thisActionType == ActionType.Attack)
         {
             bool meleeAtack = action.Range == 1;
-            int range = meleeAtack ? action.Range : action.Range + myCharacter.Range - 1;
+            int range = meleeAtack ? action.Range : action.Range + myCharacter.Dexterity;
             ShowAttack(range);
         }
         else if (myCurrentAction.thisActionType == ActionType.Heal)

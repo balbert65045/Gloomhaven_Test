@@ -2777,14 +2777,15 @@ MonoBehaviour:
   HexOn: {fileID: 0}
   myCT: 1
   ViewDistance: 4
-  baseStrength: 0
-  baseAgility: 0
-  baseAttackRange: 1
-  baseShield: 0
+  baseStrength: 1
+  baseAgility: 1
+  baseDexterity: 0
+  baseArmor: 0
   Agility: 0
   Strength: 0
-  Range: 0
+  Dexterity: 0
   Armor: 0
+  CurrentArmor: 0
   CurrentAttackRange: 3
   CurrentMoveRange: 4
   health: 5

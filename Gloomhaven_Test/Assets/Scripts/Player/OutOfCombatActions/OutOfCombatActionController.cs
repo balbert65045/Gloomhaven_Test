@@ -87,7 +87,7 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     void BuffRange(int value, int duration)
     {
-        myCharacter.ApplyBuff(value, duration, BuffType.Range);
+        myCharacter.ApplyBuff(value, duration, BuffType.Dexterity);
     }
 
     void BuffMove(int value, int duration)

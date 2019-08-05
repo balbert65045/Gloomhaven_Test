@@ -3,26 +3,59 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-public enum AbilityType
-{
-    Top = 1,
-    Bottom = 2,
-}
-
 public class CombatCardAbility : MonoBehaviour {
 
     public bool LostAbility = false;
-    public AbilityType ThisAbilityType;
-    //GetAbilityType
     public Action[] Actions;
-    //GetActions
 
     Color OGColor;
 
 	// Use this for initialization
 	void Start () {
         OGColor = GetComponent<Image>().color;
+    }
+
+    public void setUpCard(int Strength, int Agility, int Dexterity)
+    {
+        List<ActionLine> actionLines = new List<ActionLine>();
+        actionLines.AddRange(GetComponentsInChildren<ActionLine>());
+        for(int i = 0; i < Actions.Length; i++)
+        {
+            switch (Actions[i].thisActionType)
+            {
+                case ActionType.Attack:
+                    for (int j = 0; j < actionLines.Count; j++)
+                    {
+                        if (actionLines[j].MyActionType == BuffType.Strength)
+                        {
+                            actionLines[j].SetUpAmount(Strength);
+                            actionLines.Remove(actionLines[j]);
+                            break;
+                        }
+                    }
+                    for (int j = 0; j < actionLines.Count; j++)
+                    {
+                        if (actionLines[j].MyActionType == BuffType.Dexterity)
+                        {
+                            actionLines[j].SetUpAmount(Dexterity);
+                            actionLines.Remove(actionLines[j]);
+                            break;
+                        }
+                    }
+                    break;
+                case ActionType.Movement:
+                    for (int j = 0; j < actionLines.Count; j++)
+                    {
+                        if (actionLines[j].MyActionType == BuffType.Agility)
+                        {
+                            actionLines[j].SetUpAmount(Agility);
+                            actionLines.Remove(actionLines[j]);
+                            break;
+                        }
+                    }
+                    break;
+            }
+        }
     }
 
     public void HideAbility()

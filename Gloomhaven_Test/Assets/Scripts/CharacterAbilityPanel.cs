@@ -22,7 +22,6 @@ public class CharacterAbilityPanel : MonoBehaviour, IPointerEnterHandler, IPoint
 
     public void AddBuff(Buff buff)
     {
-        Debug.Log("adding Buff");
         buffsForAbility.Add(buff);
     }
 

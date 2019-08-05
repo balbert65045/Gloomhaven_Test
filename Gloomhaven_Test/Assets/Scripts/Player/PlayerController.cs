@@ -161,7 +161,7 @@ public class PlayerController : MonoBehaviour {
         FindObjectOfType<myCharacterCard>().ShowCharacterStats(myCharacter.name, characterIcon, myCharacter);
         hand.showSelectedCard();
         CombatPlayerCard card = hand.getSelectedCard();
-        combatController.SetAbilities(card.TopAbility);
+        combatController.SetAbilities(card.CardAbility);
     }
 
     public void GoIntoCombat()

@@ -93,7 +93,7 @@ public class HealthBar : MonoBehaviour {
             case BuffType.Agility:
                 SpriteRend.sprite = AgilitySprite;
                 break;
-            case BuffType.Range:
+            case BuffType.Dexterity:
                 SpriteRend.sprite = RangeSprite;
                 break;
             case BuffType.Armor:
@@ -112,7 +112,7 @@ public class HealthBar : MonoBehaviour {
             case BuffType.Agility:
                 removeBuff(AgilitySprite);
                 break;
-            case BuffType.Range:
+            case BuffType.Dexterity:
                 removeBuff(RangeSprite);
                 break;
             case BuffType.Armor:

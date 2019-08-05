@@ -87,6 +87,7 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
         myCard.transform.localPosition = Vector3.zero;
         myCard.transform.localScale = OldScale;
         myCard.gameObject.SetActive(true);
+        myCard.SetUpCardActions();
     }
 
     void unShowCard()
