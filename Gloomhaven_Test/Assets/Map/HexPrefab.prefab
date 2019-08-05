@@ -1,0 +1,156 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1539112753753054}
+  m_IsPrefabParent: 1
+--- !u!1 &1539112753753054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4268054201935486}
+  - component: {fileID: 33803669403051338}
+  - component: {fileID: 23307246061590648}
+  - component: {fileID: 114831510539766018}
+  - component: {fileID: 64156572816623936}
+  - component: {fileID: 114466069040254478}
+  m_Layer: 8
+  m_Name: HexPrefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4268054201935486
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539112753753054}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!23 &23307246061590648
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539112753753054}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: c9440004964558b448555bcda7fbe1d1, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &33803669403051338
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539112753753054}
+  m_Mesh: {fileID: 4300000, guid: a0b1ecb5f740bbf4c93ffc78e6c87a18, type: 3}
+--- !u!64 &64156572816623936
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539112753753054}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 491209ff846037946b6033eff052d942, type: 3}
+--- !u!114 &114466069040254478
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539112753753054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db66977dfaea70342b90b712db86ae3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RoomName:
+  - A
+  isAvailable: 1
+  Shown: 0
+  X: 0
+  Y: 0
+  NodeHex: {fileID: 0}
+--- !u!114 &114831510539766018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539112753753054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24293e40bb88eaf4faca50269158f2ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EntityToSpawn: {fileID: 0}
+  EntityOffset: 0.1
+  EntityHolding: {fileID: 0}
+  Hidden: 1
+  SelectionHighlightMaterial: {fileID: 2100000, guid: 3a53c79cf1c4cec4a8d2a56198903aea,
+    type: 2}
+  MovePointHighlightMaterial: {fileID: 2100000, guid: 74fead4eaef962140ad42ba9bc770dd0,
+    type: 2}
+  MoveRangeHighlightMaterial: {fileID: 2100000, guid: 568dd4358118b2c43b44789a8bce2440,
+    type: 2}
+  AttackAreaHighlightMaterial: {fileID: 2100000, guid: d846a1755089e954aadacb68cf1a81cd,
+    type: 2}
+  AttackRangeHighlightMaterial: {fileID: 2100000, guid: 76510b4853cdf7e43b0b6cc8971cf894,
+    type: 2}
+  HealPointHighlightMaterial: {fileID: 2100000, guid: 2363b1ecb00073e4fb26abebc677abab,
+    type: 2}
+  HealRangeHighlightMaterial: {fileID: 2100000, guid: 5af26d5dfa657884f84a6d6eb6d04344,
+    type: 2}
+  ShieldRangeHighlightMaterial: {fileID: 2100000, guid: bc67ecf77fd9b72458ef7340f3ad4e5e,
+    type: 2}
+  InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
+  SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
+    type: 2}
+  OGMaterial: {fileID: 2100000, guid: c9440004964558b448555bcda7fbe1d1, type: 2}
+  BlockingLineOfSight: 0
+  HexNode: {fileID: 0}
