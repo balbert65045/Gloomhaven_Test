@@ -191,7 +191,6 @@ public class EnemyCharacter : Character {
     {
         bool meleeAtack = ActionRange == 1;
         modifiedAttackRange = meleeAtack ? ActionRange : ActionRange + Dexterity;
-        Debug.Log(modifiedAttackRange);
 
         modifiedAttack = Strength + ActionAttack;
         modifiedMovement = Agility + ActionMove;
@@ -262,7 +261,6 @@ public class EnemyCharacter : Character {
         PlayerCharacter[] charactersOut = FindObjectsOfType<PlayerCharacter>();
         int PathToClosestPlayerLength = 100;
         PlayerCharacter ClosestCharacter = null;
-        Debug.Log(modifiedAttackRange);
         foreach (PlayerCharacter character in charactersOut)
         {
             //TODO change this to current attack range

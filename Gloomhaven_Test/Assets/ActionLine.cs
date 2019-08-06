@@ -22,18 +22,18 @@ public class ActionLine : MonoBehaviour {
 
     public void SetUpAmount(int attribute)
     {
-        if (attribute > 0)
-        {
-            AbilityAmount.color = EnhanceColor;
-        }
-        else if (attribute < 0)
-        {
-            AbilityAmount.color = DehanceColor;
-        }
-        else
-        {
-            AbilityAmount.color = Color.black;
-        }
+        //if (attribute > 0)
+        //{
+        //    AbilityAmount.color = EnhanceColor;
+        //}
+        //else if (attribute < 0)
+        //{
+        //    AbilityAmount.color = DehanceColor;
+        //}
+        //else
+        //{
+        //    AbilityAmount.color = Color.black;
+        //}
         AbilityAmount.text = (ActionLineBaseAmount + attribute).ToString();
     }
 

@@ -10758,7 +10758,7 @@ Prefab:
     - target: {fileID: 114828592485980528, guid: 39ec1063eb8afd04b87bcf76a264232d,
         type: 2}
       propertyPath: Actions.Array.data[1].Range
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114660941890190436, guid: 39ec1063eb8afd04b87bcf76a264232d, type: 2}

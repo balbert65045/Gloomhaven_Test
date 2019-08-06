@@ -60,6 +60,9 @@ public class Character : Entity {
     private Character characterThatAttackedMe;
     private List<Character> charactersAttackingAt;
 
+    private List<Node> NodesInWalkingDistance = new List<Node>();
+    private List<Node> NodesInAttackRange = new List<Node>();
+
     int TotalHealthLosing;
     private bool GoingToDie = false;
 
@@ -323,24 +326,25 @@ public class Character : Entity {
     {
         CurrentAttackRange = Range;
         List<Node> nodes = HexMap.LineOfSight(Range, HexOn);
+        NodesInAttackRange.Clear();
         foreach (Node node in nodes)
         {
+            if (!node.Shown) { continue; }
+            NodesInAttackRange.Add(node);
             node.NodeHex.HighlightAttackRange();
         }
     }
 
     public bool CheckIfinAttackRange(Hex hex, int Range)
     {
-        List<Node> nodes = HexMap.LineOfSight(Range, HexOn);
-        if (nodes.Contains(hex.HexNode)) { return true; }
+        if (NodesInAttackRange.Contains(hex.HexNode)) { return true; }
         return false;
     }
   
     // MOVEMENT//
     public bool HexInMoveRange(Hex hex, int Amount)
     {
-        List<Node> WalkableNodes = GetWalkableNodes(Amount);
-        if (WalkableNodes.Contains(hex.HexNode)) { return true; }
+        if (NodesInWalkingDistance.Contains(hex.HexNode)) { return true; }
         return false;
 
     }
@@ -356,13 +360,14 @@ public class Character : Entity {
         return openNodes;
     }
 
+    //Is this needed still?
     public List<Node> GetWalkableNodes(int Amount)
     {
         List<Node> WalkableNodes = new List<Node>();
-        List<Node> nodesInDistance = HexMap.GetDistanceRange(HexOn.HexNode, CurrentMoveRange, myCT);
+        List<Node> nodesInDistance = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, CurrentMoveRange);
         foreach (Node node in nodesInDistance)
         {
-            if (node.NodeHex.EntityHolding != null) { continue; }
+            if (node.NodeHex.EntityHolding != null || !node.Shown) { continue; }
             if (aStar.FindPath(HexOn.HexNode, node, HexMap.Map, myCT).Count <= CurrentMoveRange)
             {
                 WalkableNodes.Add(node);
@@ -375,10 +380,12 @@ public class Character : Entity {
     public void ShowMoveDistance(int moveRange)
     {
         CurrentMoveRange = moveRange;
-        List<Node> nodesInDistance = HexMap.GetDistanceRange(HexOn.HexNode, CurrentMoveRange, myCT);
+        List<Node> nodesInDistance = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, CurrentMoveRange);
+        NodesInWalkingDistance.Clear();
         foreach (Node node in nodesInDistance)
         {
-            if (node.NodeHex.EntityHolding != null) { continue; }
+            if (node.NodeHex.EntityHolding != null || !node.Shown) { continue; }
+            NodesInWalkingDistance.Add(node);
             if (aStar.FindPath(HexOn.HexNode, node, HexMap.Map, myCT).Count <= CurrentMoveRange)
             {
                 node.NodeHex.HighlightMoveRange();

@@ -29,8 +29,11 @@ public class MyActionBoard : MonoBehaviour {
 
     public void hideActions()
     {
+        int i = 0;
         foreach (ActionButton action in Actions)
         {
+            UnHighlightAction(i);
+            i++;
             action.gameObject.SetActive(false);
         }
     }

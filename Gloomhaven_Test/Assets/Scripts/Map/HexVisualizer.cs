@@ -9,9 +9,13 @@ public class HexVisualizer : MonoBehaviour {
     private CombatActionController combatcontroller;
     private Character myCharacter;
     private List<Hex> LastHexesChanged = new List<Hex>();
+    private Hex LastHexOver;
 
     void OnHexChanged(Hex hex)
     {
+        if (LastHexOver == hex) { return; }
+        LastHexOver = hex;
+
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
         {
             if (myCharacter.GetComponent<CharacterAnimationController>().Moving) { return; }
