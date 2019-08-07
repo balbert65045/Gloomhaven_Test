@@ -16,7 +16,7 @@ public class ActionLine : MonoBehaviour {
     public int ActionLineBaseAmount;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         ActionLineBaseAmount = int.Parse(AbilityAmount.text);
     }
 
