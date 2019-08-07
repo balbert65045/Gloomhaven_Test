@@ -9,6 +9,11 @@ public class OutOfCombatHand : MonoBehaviour {
 
     public void HideHand()
     {
+        OutOfCombatCardButton[] outOfCombatCards = GetComponentsInChildren<OutOfCombatCardButton>();
+        foreach(OutOfCombatCardButton cardButton in outOfCombatCards)
+        {
+            cardButton.unShowCard();
+        }
         Hand.SetActive(false);
     }
 

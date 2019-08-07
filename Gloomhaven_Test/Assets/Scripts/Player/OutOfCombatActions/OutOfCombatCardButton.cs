@@ -36,7 +36,7 @@ public class OutOfCombatCardButton : MonoBehaviour, IPointerEnterHandler, IPoint
         myCard.gameObject.SetActive(true);
     }
 
-    void unShowCard()
+    public void unShowCard()
     {
         myCard.transform.SetParent(this.transform);
         myCard.transform.localPosition = Vector3.zero;
