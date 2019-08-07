@@ -322,6 +322,18 @@ public class Character : Entity {
         return false;
     }
 
+    public void GetAttackHexes(int Range)
+    {
+        CurrentAttackRange = Range;
+        List<Node> nodes = HexMap.LineOfSight(Range, HexOn);
+        NodesInAttackRange.Clear();
+        foreach (Node node in nodes)
+        {
+            if (!node.Shown) { continue; }
+            NodesInAttackRange.Add(node);
+        }
+    }
+
     public void ShowAttack(int Range)
     {
         CurrentAttackRange = Range;

@@ -271,13 +271,13 @@ public class EnemyCharacter : Character {
                 ClosestCharacter = character;
             }
         }
-
         return ClosestCharacter;
     }
 
     public void CheckToAttackFirst()
     {
         TargetHex = FindClosestEnemy().HexOn;
+        GetAttackHexes(modifiedAttackRange);
         if (HexAttackable(TargetHex, modifiedAttackRange))
         {
             CheckToAttack();
@@ -352,6 +352,7 @@ public class EnemyCharacter : Character {
             return;
         }
         TargetHex = FindClosestEnemy().HexOn;
+        GetAttackHexes(modifiedAttackRange);
         if (HexAttackable(TargetHex, modifiedAttackRange)) { StartCoroutine("ShowAttack"); }
         else { FinishedAttacking(); }
     }
