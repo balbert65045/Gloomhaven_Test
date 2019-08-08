@@ -12,11 +12,19 @@ public class CharacterAnimationController : MonoBehaviour {
     bool Attacking = false;
     Hex hexMovingTo;
     List<Node> nodesMovingOn;
+
+    Character myCharacter;
 	// Use this for initialization
 	void Start () {
         myAnimator = GetComponent<Animator>();
         myRigidbody = GetComponent<Rigidbody>();
         myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
+        myCharacter = GetComponent<Character>();
+    }
+
+    public void SetStealthState(bool stealthed)
+    {
+        myAnimator.SetBool("Stealthed", stealthed);
     }
 
     public void SwitchCombatState(bool inCombat)
@@ -42,7 +50,7 @@ public class CharacterAnimationController : MonoBehaviour {
     public void Hit()
     {
         Attacking = false;
-        GetComponent<Character>().HitOpponent();
+        myCharacter.HitOpponent();
     }
 
     public void Attack()
@@ -79,18 +87,26 @@ public class CharacterAnimationController : MonoBehaviour {
 
     void MoveToNextPosition()
     {
-        GetComponent<Character>().LinktoHex(hexMovingTo);
-        bool fight = GetComponent<Character>().ShowViewAreaAndCheckToFight(hexMovingTo, GetComponent<Character>().ViewDistance);
+        myCharacter.LinktoHex(hexMovingTo);
+        if (myCharacter.Stealthed) { myCharacter.ReduceStealthDuration(); }
+        myCharacter.ShowViewArea(hexMovingTo, GetComponent<Character>().ViewDistance);
+
+        bool fight = false;
+        if (!myCharacter.Stealthed)
+        {
+            fight = myCharacter.CheckToFight(); 
+        }
+
         if (nodesMovingOn.Count == 0 || fight)
         {
             Moving = false;
             myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
             myAnimator.SetBool("moving", false);
-            GetComponent<Character>().FinishedMoving(hexMovingTo);
+            myCharacter.FinishedMoving(hexMovingTo);
         }
         else
         {
-            GetComponent<Character>().RemoveLinkFromHex();
+            myCharacter.RemoveLinkFromHex();
             Node NextHex = nodesMovingOn[0];
             nodesMovingOn.Remove(NextHex);
             MoveTowards(NextHex.NodeHex, nodesMovingOn);

@@ -21,6 +21,25 @@ public class PlayerCharacter : Character
     }
 
     //VIEW//
+    public void ShowRangeDistance(int Range)
+    {
+        List<Node> nodesInDistance = HexMap.GetDistanceRange(HexOn.HexNode, Range, myCT);
+        foreach (Node node in nodesInDistance)
+        {
+            node.GetComponent<Hex>().HighlightMoveRange();
+        }
+    }
+
+    public void ShowPath(Node NodeToMoveTo)
+    {
+        Node StartNode = HexOn.HexNode;
+        Node EndNode = NodeToMoveTo;
+        List<Node> NodePath = FindObjectOfType<AStar>().FindPath(StartNode, EndNode, HexMap.Map, myCT);
+        foreach (Node node in NodePath)
+        {
+            node.GetComponent<Hex>().HighlightMoveRange();
+        }
+    }
 
     //placeholder
     public void ShowHexes()
@@ -32,10 +51,10 @@ public class PlayerCharacter : Character
     IEnumerator ShowNodes()
     {
         yield return new WaitForSeconds(.5f);
-        ShowViewAreaAndCheckToFight(HexOn, ViewDistance);
+        ShowViewArea(HexOn, ViewDistance);
     }
 
-    public override bool ShowViewAreaAndCheckToFight(Hex hex, int distance)
+    public override void ShowViewArea(Hex hex, int distance)
     {
         List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1);
         List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance);
@@ -56,6 +75,11 @@ public class PlayerCharacter : Character
             }
         }
 
+        playerController.ShowCharacterView();
+    }
+
+    public override bool CheckToFight()
+    {
         return playerController.ShowEnemyAreaAndCheckToFight();
     }
 
@@ -64,7 +88,7 @@ public class PlayerCharacter : Character
         FindObjectOfType<PlayerController>().FinishedMoving();
         if (HexOn.GetComponent<Door>() != null && !HexOn.GetComponent<Door>().isOpen)
         {
-            FindObjectOfType<PlayerController>().allowOpenDoor();
+            FindObjectOfType<PlayerController>().AllowOpenDoor();
         }
     }
 
@@ -89,7 +113,8 @@ public class PlayerCharacter : Character
         if (HexOn.GetComponent<Door>() != null)
         {
             HexOn.GetComponent<Door>().OpenHexes();
-            ShowViewAreaAndCheckToFight(HexOn, ViewDistance);
+            ShowViewArea(HexOn, ViewDistance);
+            CheckToFight();
         }
     }
 
@@ -105,7 +130,7 @@ public class PlayerCharacter : Character
         myHealthBar.CreateHandSize(size);
     }
 
-    public void setNewHandSize(int size)
+    public void SetNewHandSize(int size)
     {
         myHealthBar.ResetHandSize(size);
     }

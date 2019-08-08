@@ -71,14 +71,22 @@ public class PlayerController : MonoBehaviour {
         myCharacter.SetHandSize(size);
     }
 
-    public void setHandSize(int size)
+    public void SetHandSize(int size)
     {
-        myCharacter.setNewHandSize(size);
+        myCharacter.SetNewHandSize(size);
     }
 
     public void LoseCardForCharacter()
     {
         myCharacter.LoseCard();
+    }
+
+    public void ShowCharacterView()
+    {
+        if (myState == PlayerState.OutofCombat)
+        {
+            FindObjectOfType<EnemyController>().ShowCharactersView();
+        }
     }
 
     public bool ShowEnemyAreaAndCheckToFight()
@@ -92,23 +100,23 @@ public class PlayerController : MonoBehaviour {
 
     public void FinishedMoving()
     {
-        if (myState == PlayerState.InCombat && myCombatState == CombatState.UsingCombatCards) { GetComponent<CombatActionController>().finishedMoving(); }
-        else if (myState == PlayerState.OutofCombat){}
+        if (myState == PlayerState.InCombat && myCombatState == CombatState.UsingCombatCards) { GetComponent<CombatActionController>().FinishedMoving(); }
+        else if (myState == PlayerState.OutofCombat){ GetComponent<OutOfCombatActionController>().FinishedMoving(); }
     }
 
     public void FinishedAttacking()
     {
-        if (myState == PlayerState.InCombat){ GetComponent<CombatActionController>().finishedAttacking(); }
+        if (myState == PlayerState.InCombat){ GetComponent<CombatActionController>().FinishedAttacking(); }
     }
 
     public void FinishedHealing()
     {
-        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().finishedHealing(); }
+        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedHealing(); }
     }
 
     public void FinishedShielding()
     {
-        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().finishedShielding(); }
+        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedShielding(); }
     }
 
     public void SelectCard()
@@ -116,7 +124,7 @@ public class PlayerController : MonoBehaviour {
         switch (myState)
         {
             case PlayerState.InCombat:
-                allowEndTurn();
+                AllowEndTurn();
                 break;
             case PlayerState.OutofCombat:
                 OutOfCombatCard card = outOfCombatHand.GetSelectecdCard();
@@ -134,7 +142,7 @@ public class PlayerController : MonoBehaviour {
         hand.ShowHand();
     }
 
-    public void allowOpenDoor()
+    public void AllowOpenDoor()
     {
         actionButton.gameObject.SetActive(true);
         actionButton.allowOpenDoorAction();
@@ -146,14 +154,14 @@ public class PlayerController : MonoBehaviour {
         myCharacter.OpenDoor();
     }
 
-    public void allowEndTurn()
+    public void AllowEndTurn()
     {
-        endTurnButton.allowEndTurn();
+        endTurnButton.AllowEndTurn();
     }
 
-    public void disableEndTurn()
+    public void DisableEndTurn()
     {
-        endTurnButton.disableEndTurn();
+        endTurnButton.DisableEndTurn();
     }
 
     public void BeginActions()
@@ -199,7 +207,7 @@ public class PlayerController : MonoBehaviour {
     {
         combatController.UnHighlightHexes();
         FindObjectOfType<CharacterViewer>().HideCharacterStats();
-        FindObjectOfType<EndTurnButton>().disableEndTurn();
+        FindObjectOfType<EndTurnButton>().DisableEndTurn();
         switch (myState)
         {
             case PlayerState.InCombat:

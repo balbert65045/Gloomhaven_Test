@@ -8,7 +8,8 @@ public enum OutOfCombatActionType
     BuffAttack = 2,
     BuffMove = 3,
     BuffRange = 4,
-    BuffArmor = 5
+    BuffArmor = 5,
+    Stealth = 6,
 }
 
 [System.Serializable]

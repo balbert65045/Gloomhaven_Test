@@ -86,6 +86,15 @@ public class EnemyController : MonoBehaviour {
         }
     }
 
+    public void ShowCharactersView()
+    {
+        EnemyCharacter[] enemiesOut = FindObjectsOfType<EnemyCharacter>();
+        foreach (EnemyCharacter character in enemiesOut)
+        {
+            character.ShowViewAreaInShownHexes();
+        }
+    }
+
     public bool ShowEnemyViewAreaAndCheckToFight()
     {
         EnemyCharacter[] enemiesOut = FindObjectsOfType<EnemyCharacter>();

@@ -101,7 +101,7 @@ public class CombatPlayerHand : MonoBehaviour {
             cardButton.putBackInHand();
             myCardsInHand.Add(cardButton);
         }
-        playerController.setHandSize(myCardsInHand.Count - 1);
+        playerController.SetHandSize(myCardsInHand.Count - 1);
     }
 
     //Change this to better code for this functunallity

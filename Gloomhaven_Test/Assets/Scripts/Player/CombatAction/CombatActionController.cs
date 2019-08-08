@@ -19,7 +19,7 @@ public class CombatActionController : MonoBehaviour {
     public bool Attacking = false;
 
     private PlayerController playerController;
-    private Character myCharacter;
+    private PlayerCharacter myCharacter;
 
     private Character characterSelected;
 
@@ -30,11 +30,6 @@ public class CombatActionController : MonoBehaviour {
         playerController = GetComponent<PlayerController>();
         myCharacter = playerController.myCharacter;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     public Action NoAction()
     {
@@ -230,7 +225,7 @@ public class CombatActionController : MonoBehaviour {
             }
         }
         if ( charactersAttacking.Count == 0) { return false; }
-        playerController.disableEndTurn();
+        playerController.DisableEndTurn();
         myCharacter.Attack(action.thisAOE.Damage + myCharacter.Strength, charactersAttacking);
         return success;
     }
@@ -248,35 +243,35 @@ public class CombatActionController : MonoBehaviour {
                 hexSelected.GetComponent<Door>().OpenHexes();
             }
             FindObjectOfType<MyCameraController>().SetTarget(myCharacter.transform);
-            playerController.disableEndTurn();
+            playerController.DisableEndTurn();
             return true;
         }
         return false;
     }
 
-    public void finishedMoving()
+    public void FinishedMoving()
     {
-        playerController.allowEndTurn();
+        playerController.AllowEndTurn();
         FindObjectOfType<MyCameraController>().UnLockCamera();
         MoveToNextAbility();
     }
 
-    public void finishedAttacking()
+    public void FinishedAttacking()
     {
         if (Attacking != false)
         {
-            playerController.allowEndTurn();
+            playerController.AllowEndTurn();
             Attacking = false;
             MoveToNextAbility();
         }
     }
 
-    public void finishedHealing()
+    public void FinishedHealing()
     {
         MoveToNextAbility();
     }
 
-    public void finishedShielding()
+    public void FinishedShielding()
     {
         MoveToNextAbility();
     }

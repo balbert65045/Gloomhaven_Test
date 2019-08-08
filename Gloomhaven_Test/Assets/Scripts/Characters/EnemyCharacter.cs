@@ -366,6 +366,18 @@ public class EnemyCharacter : Character {
         Attack(modifiedAttack, charactersAttacking);
     }
 
+    public void GetAttackHexes(int Range)
+    {
+        CurrentAttackRange = Range;
+        List<Node> nodes = HexMap.LineOfSight(Range, HexOn);
+        NodesInAttackRange.Clear();
+        foreach (Node node in nodes)
+        {
+            if (!node.Shown) { continue; }
+            NodesInAttackRange.Add(node);
+        }
+    }
+
     //PATHING
     public List<Node> getPathToTarget(Hex target, int range)
     {

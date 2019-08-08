@@ -49,7 +49,7 @@ public class CombatManager : MonoBehaviour {
                 FindObjectOfType<MyCameraController>().LookAt(playerController.myCharacter.transform);
                 FindObjectOfType<MyCameraController>().UnLockCamera();
                 playerController.ChangeCombatState(PlayerController.CombatState.UsingCombatCards);
-                playerController.allowEndTurn();
+                playerController.AllowEndTurn();
                 playerController.BeginActions();
             }
             else if (card.GetComponent<EnemyActionCard>() != null)

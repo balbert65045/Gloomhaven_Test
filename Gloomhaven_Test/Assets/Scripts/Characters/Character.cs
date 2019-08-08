@@ -60,13 +60,16 @@ public class Character : Entity {
     private Character characterThatAttackedMe;
     private List<Character> charactersAttackingAt;
 
-    private List<Node> NodesInWalkingDistance = new List<Node>();
-    private List<Node> NodesInAttackRange = new List<Node>();
+    public List<Node> NodesInWalkingDistance = new List<Node>();
+    public List<Node> NodesInAttackRange = new List<Node>();
 
     int TotalHealthLosing;
     private bool GoingToDie = false;
 
     public List<Buff> Buffs = new List<Buff>();
+
+    public bool Stealthed = false;
+    public int StealthDuration = 0;
 
     public void ApplyBuff(int value, int duration, BuffType buffType)
     {
@@ -158,7 +161,9 @@ public class Character : Entity {
     }
 
     // CALLBACKS
-    public virtual bool ShowViewAreaAndCheckToFight(Hex hex, int distance) { return false; }
+    public virtual void ShowViewArea(Hex hex, int distance) { }
+
+    public virtual bool CheckToFight() { return false; }
 
     public virtual bool SavingThrow() { return false; }
 
@@ -322,17 +327,6 @@ public class Character : Entity {
         return false;
     }
 
-    public void GetAttackHexes(int Range)
-    {
-        CurrentAttackRange = Range;
-        List<Node> nodes = HexMap.LineOfSight(Range, HexOn);
-        NodesInAttackRange.Clear();
-        foreach (Node node in nodes)
-        {
-            if (!node.Shown) { continue; }
-            NodesInAttackRange.Add(node);
-        }
-    }
 
     public void ShowAttack(int Range)
     {
@@ -352,7 +346,24 @@ public class Character : Entity {
         if (NodesInAttackRange.Contains(hex.HexNode)) { return true; }
         return false;
     }
-  
+
+    //Stealth
+    public void ReduceStealthDuration()
+    {
+        StealthDuration--;
+        if (StealthDuration <= 0) {
+            GetComponent<CharacterAnimationController>().SetStealthState(false);
+            Stealthed = false;
+        }
+    }
+
+    public void Stealth(int value)
+    {
+        Stealthed = true;
+        StealthDuration = value;
+        GetComponent<CharacterAnimationController>().SetStealthState(true);
+    }
+
     // MOVEMENT//
     public bool HexInMoveRange(Hex hex, int Amount)
     {
@@ -372,23 +383,6 @@ public class Character : Entity {
         return openNodes;
     }
 
-    //Is this needed still?
-    public List<Node> GetWalkableNodes(int Amount)
-    {
-        List<Node> WalkableNodes = new List<Node>();
-        List<Node> nodesInDistance = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, CurrentMoveRange);
-        foreach (Node node in nodesInDistance)
-        {
-            if (node.NodeHex.EntityHolding != null || !node.Shown) { continue; }
-            if (aStar.FindPath(HexOn.HexNode, node, HexMap.Map, myCT).Count <= CurrentMoveRange)
-            {
-                WalkableNodes.Add(node);
-            }
-        }
-        WalkableNodes.Add(HexOn.HexNode);
-        return WalkableNodes;
-    }
-
     public void ShowMoveDistance(int moveRange)
     {
         CurrentMoveRange = moveRange;
@@ -403,16 +397,6 @@ public class Character : Entity {
                 node.NodeHex.HighlightMoveRange();
             }
         }
-    }
-
-    public void ShowRangeDistance(int Range)
-    {
-        List<Node> nodesInDistance = HexMap.GetDistanceRange(HexOn.HexNode, Range, myCT);
-        foreach (Node node in nodesInDistance)
-        {
-            node.GetComponent<Hex>().HighlightMoveRange();
-        }
-        //HexOn.HighlightMoveRange();
     }
 
     public Node FindClosestNode(List<Node> nodes)
@@ -436,17 +420,6 @@ public class Character : Entity {
         Node StartNode = HexOn.HexNode;
         Node EndNode = NodeToMoveTo;
         return FindObjectOfType<AStar>().FindPath(StartNode, EndNode, HexMap.Map, myCT);
-    }
-
-    public void ShowPath(Node NodeToMoveTo)
-    {
-        Node StartNode = HexOn.HexNode;
-        Node EndNode = NodeToMoveTo;
-        List<Node> NodePath = FindObjectOfType<AStar>().FindPath(StartNode, EndNode, HexMap.Map, myCT);
-        foreach (Node node in NodePath)
-        {
-            node.GetComponent<Hex>().HighlightMoveRange();
-        }
     }
 
     public void MoveOnPath(Hex hex)

@@ -15,6 +15,23 @@ public class OutOfCombatActionController : MonoBehaviour {
         myCharacter = playerController.myCharacter;
     }
 
+    public void UnHighlightHexes()
+    {
+        Hex[] hexes = FindObjectsOfType<Hex>();
+        foreach (Hex hex in hexes)
+        {
+            if (hex.HexNode.Shown)
+            {
+                hex.returnToPreviousColor();
+            }
+        }
+    }
+
+    public void FinishedMoving()
+    {
+        UnHighlightHexes();
+    }
+
     public void CheckToShowCharacterStats()
     {
         RaycastHit Hit;
@@ -70,6 +87,9 @@ public class OutOfCombatActionController : MonoBehaviour {
             case OutOfCombatActionType.Scout:
                 Scout(card.actions[0].Value);
                 break;
+            case OutOfCombatActionType.Stealth:
+                Stealth(card.actions[0].Value);
+                break;
             case OutOfCombatActionType.BuffAttack:
                 BuffAttack(card.actions[0].Value, card.actions[0].Duration);
                 break;
@@ -107,11 +127,11 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     void Scout(int value)
     {
-        myCharacter.ShowViewAreaAndCheckToFight(myCharacter.HexOn, myCharacter.ViewDistance + value);
+        myCharacter.ShowViewArea(myCharacter.HexOn, myCharacter.ViewDistance + value);
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
+    void Stealth(int value)
+    {
+        myCharacter.Stealth(value);
+    }
 }
