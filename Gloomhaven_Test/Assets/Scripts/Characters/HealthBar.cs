@@ -356,6 +356,6 @@ public class HealthBar : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.rotation = Quaternion.Euler(90 - cam.transform.localRotation.eulerAngles.x, cam.transform.localRotation.eulerAngles.y, 0);
+        transform.rotation = Quaternion.Euler(90 - cam.transform.rotation.eulerAngles.x, cam.transform.rotation.eulerAngles.y, 0);
 	}
 }

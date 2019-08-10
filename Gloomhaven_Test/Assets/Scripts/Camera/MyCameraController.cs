@@ -5,6 +5,8 @@ using UnityEngine;
 public class MyCameraController : MonoBehaviour {
 
     // Use this for initialization
+    public GameObject Pivot;
+    public GameObject Arm;
     public float zOffset;
     public float xOffset;
 
@@ -12,12 +14,11 @@ public class MyCameraController : MonoBehaviour {
 
     public float moveDistance = 50f;
 
+    private Quaternion RotationAngle;
+
 	void Start () {
-        target = FindObjectOfType<PlayerController>().myCharacter.transform;
-        Vector3 pos = target.position;
-        zOffset = pos.z - transform.position.z;
-        xOffset = pos.x - transform.position.x;
         target = null;
+        RotationAngle = Pivot.transform.rotation;
     }
 	
     public void SetTarget(Transform newTarget)
@@ -27,7 +28,7 @@ public class MyCameraController : MonoBehaviour {
 
     public void LookAt(Transform ObjectToLookAt)
     {
-        transform.position = new Vector3(ObjectToLookAt.position.x - xOffset, transform.position.y, ObjectToLookAt.position.z - zOffset);
+        Pivot.transform.position = ObjectToLookAt.transform.position;
     }
 
     public void UnLockCamera()
@@ -39,25 +40,36 @@ public class MyCameraController : MonoBehaviour {
 	void Update () {
         if (target != null)
         {
-            transform.position = new Vector3(target.position.x - xOffset, transform.position.y, target.position.z - zOffset);
+            Pivot.transform.position = target.transform.position;
         }
         else
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.S))
             {
-                transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y, transform.position.z + moveDistance), transform.position, .5f);
-            } else if (Input.GetKey(KeyCode.S))
+                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.forward * moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
+            } else if (Input.GetKey(KeyCode.A))
             {
-                transform.position = Vector3.Lerp(new Vector3(transform.position.x - moveDistance, transform.position.y, transform.position.z), transform.position, .5f);
-            }
-            else if (Input.GetKey(KeyCode.D))
-            {
-                transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y, transform.position.z - moveDistance), transform.position, .5f);
+                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.right * moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
             }
             else if (Input.GetKey(KeyCode.W))
             {
-                transform.position = Vector3.Lerp(new Vector3(transform.position.x + moveDistance, transform.position.y, transform.position.z), transform.position, .5f);
+                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.forward * -moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
             }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.right * -moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                RotationAngle *= Quaternion.AngleAxis(90, Vector3.up);
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                RotationAngle *= Quaternion.AngleAxis(-90, Vector3.up);
+            }
+
+            Pivot.transform.rotation = Quaternion.Lerp(Pivot.transform.rotation, RotationAngle, 10 * Time.deltaTime);
 
         }
 	}
