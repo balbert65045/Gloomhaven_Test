@@ -349,12 +349,54 @@ public class CombatActionController : MonoBehaviour {
     void ShowAttack(int Range)
     {
         myCharacter.ShowAttack(Range);
+        HighlightHexForAttack(Range);
+    }
+
+    void HighlightHexForAttack(int Distance)
+    {
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
+        if (raycastHits.Length == 0) { return; }
+        foreach (RaycastHit hit in raycastHits)
+        {
+            if (hit.transform.GetComponent<Hex>())
+            {
+                Hex hex = hit.transform.GetComponent<Hex>();
+                if (myCharacter.CheckIfinAttackRange(hex, myCharacter.CurrentAttackRange) && !Attacking)
+                {
+                    FindObjectOfType<HexVisualizer>().HighlightAttackArea(hex);
+                }
+                return;
+            }
+        }
     }
 
     void ShowMoveDistance(int Distance)
     {
         myCharacter.ShowMoveDistance(Distance);
+        HighlightHexOverForMove(Distance);
     }
+
+    void HighlightHexOverForMove(int Distance)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
+        if (raycastHits.Length == 0) { return; }
+        foreach (RaycastHit hit in raycastHits)
+        {
+            if (hit.transform.GetComponent<Hex>())
+            {
+                Hex hex = hit.transform.GetComponent<Hex>();
+                if (myCharacter.HexInMoveRange(hex, Distance))
+                {
+                    FindObjectOfType<HexVisualizer>().HighlightMovePath(hex);
+                }
+                return;
+            }
+        }
+    }
+
 
     void ShowDistance(int Distance)
     {

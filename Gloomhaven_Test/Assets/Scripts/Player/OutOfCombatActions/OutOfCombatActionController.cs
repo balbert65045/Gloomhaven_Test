@@ -27,9 +27,25 @@ public class OutOfCombatActionController : MonoBehaviour {
         }
     }
 
+    void HighlightHexOver()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
+        if (raycastHits.Length == 0) { return; }
+        foreach (RaycastHit hit in raycastHits)
+        {
+            if (hit.transform.GetComponent<Hex>())
+            {
+                FindObjectOfType<HexVisualizer>().HighlightMovePath(hit.transform.GetComponent<Hex>());
+                return;
+            }
+        }
+    }
+
     public void FinishedMoving()
     {
         UnHighlightHexes();
+        HighlightHexOver();
     }
 
     public void CheckToShowCharacterStats()

@@ -391,9 +391,9 @@ public class Character : Entity {
         foreach (Node node in nodesInDistance)
         {
             if (node.NodeHex.EntityHolding != null || !node.Shown) { continue; }
-            NodesInWalkingDistance.Add(node);
             if (aStar.FindPath(HexOn.HexNode, node, HexMap.Map, myCT).Count <= CurrentMoveRange)
             {
+                NodesInWalkingDistance.Add(node);
                 node.NodeHex.HighlightMoveRange();
             }
         }

@@ -11,38 +11,52 @@ public class HexVisualizer : MonoBehaviour {
     private List<Hex> LastHexesChanged = new List<Hex>();
     private Hex LastHexOver;
 
-    void OnHexChanged(Hex hex)
+
+    public void HighlightMovePath(Hex hex)
     {
-        if (LastHexOver == hex) { return; }
+        List<Node> NodePath = myCharacter.GetPath(hex.HexNode);
+        foreach (Node node in NodePath)
+        {
+            LastHexesChanged.Add(node.NodeHex);
+            node.NodeHex.HighlightMovePoint();
+        }
+    }
+
+    public void HighlightAttackArea(Hex hex)
+    {
+        List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(combatcontroller.GetMyCurrectAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
+        foreach (Node node in nodesInAOE)
+        {
+            if (node == null) { break; }
+            node.NodeHex.HighlightAttackArea();
+            LastHexesChanged.Add(node.NodeHex);
+        }
+    } 
+
+    void ClearLastChangedHexes()
+    {
+        if (LastHexesChanged.Count != 0)
+        {
+            foreach (Hex lastHex in LastHexesChanged)
+            {
+                lastHex.returnToPreviousColor();
+            }
+            LastHexesChanged.Clear();
+        }
+    }
+
+    public void OnHexChanged(Hex hex)
+    {
+        
+        if (LastHexOver == hex) {return;}
         LastHexOver = hex;
 
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
         {
             if (myCharacter.GetComponent<CharacterAnimationController>().Moving) { return; }
-            if (hex == null || !hex.HexNode.Shown) {
-                foreach (Hex lastHex in LastHexesChanged)
-                {
-                    lastHex.returnToPreviousColor();
-                }
-                LastHexesChanged.Clear();
-                return;
-            }
-            if (LastHexesChanged.Count != 0)
-            {
-                foreach (Hex lastHex in LastHexesChanged)
-                {
-                        lastHex.returnToPreviousColor();
-                }
-                LastHexesChanged.Clear();
-            }
-            List<Node> NodePath = myCharacter.GetPath(hex.HexNode);
-            foreach (Node node in NodePath)
-            {
-                node.GetComponent<Hex>().HighlightMovePoint();
-                LastHexesChanged.Add(node.NodeHex);
-                node.NodeHex.HighlightMovePoint();
-            }
-            
+            ClearLastChangedHexes();
+            if (hex == null || !hex.HexNode.Shown) {return;}
+            HighlightMovePath(hex);
         }
         else if (playerController.GetPlayerState() == PlayerController.PlayerState.InCombat && playerController.GetCombatState() == PlayerController.CombatState.UsingCombatCards)
         {
@@ -72,14 +86,7 @@ public class HexVisualizer : MonoBehaviour {
                         }
                         if (myCharacter.HexInMoveRange(hex, myCharacter.CurrentMoveRange))
                         {
-                            List<Node> NodePath = myCharacter.GetPath(hex.HexNode);
-                            foreach (Node node in NodePath)
-                            {
-                                node.GetComponent<Hex>().HighlightMovePoint();
-                                LastHexesChanged.Add(node.NodeHex);
-                            }
-                            hex.HighlightMovePoint();
-                            //LastHexesChanged.Add(hex);
+                            HighlightMovePath(hex);
                         }
                         break;
                 }
@@ -101,13 +108,7 @@ public class HexVisualizer : MonoBehaviour {
                                 }
                                 LastHexesChanged.Clear();
                             }
-                            List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(combatcontroller.GetMyCurrectAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
-                            foreach (Node node in nodesInAOE)
-                            {
-                                if (node == null) { break; }
-                                node.NodeHex.HighlightAttackArea();
-                                LastHexesChanged.Add(node.NodeHex);
-                            }
+                            HighlightAttackArea(hex);
                         }
                         else
                         {
