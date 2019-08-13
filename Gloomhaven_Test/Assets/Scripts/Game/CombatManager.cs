@@ -10,11 +10,15 @@ public class CombatManager : MonoBehaviour {
 
     public void PlayerDonePickingCombatCards()
     {
-        //announcmentBoard.ShowText("Inniative");
         EnemyActionCard[] enemyActions = enemyController.selectEnemyActions();
-        CombatPlayerCard playerCard = FindObjectOfType<CombatPlayerHand>().getSelectedCard();
+        PlayerCharacter[] playerCharacters = FindObjectsOfType<PlayerCharacter>();
 
-        initBoard.AddInitiative(playerController.CharacterName, playerCard.Initiative, playerCard.gameObject);
+        foreach(PlayerCharacter playerCharacter in playerCharacters)
+        {
+            CombatPlayerCard playerCard = playerCharacter.GetMyCurrentCombatCard();
+            initBoard.AddInitiative(playerCharacter.CharacterName, playerCard.Initiative, playerCard.gameObject);
+        }
+
         foreach (EnemyActionCard enemyAction in enemyActions)
         {
             initBoard.AddInitiative(enemyAction.characterName, enemyAction.Initiative, enemyAction.gameObject);
@@ -41,16 +45,30 @@ public class CombatManager : MonoBehaviour {
 
     public void PerformNextInInitiative()
     {
+    
         GameObject card = initBoard.GetNextInitiativeCard();
         if (card != null)
         {
             if (card.GetComponent<CombatPlayerCard>() != null)
             {
-                FindObjectOfType<MyCameraController>().LookAt(playerController.myCharacter.transform);
+                // Not the way to do this
+                PlayerCharacter currentPlayerCharacter = null;
+                PlayerCharacter[] playerCharacters = FindObjectsOfType<PlayerCharacter>();
+                foreach(PlayerCharacter character in playerCharacters)
+                {
+                    if (character.GetMyCurrentCombatCard() == card.GetComponent<CombatPlayerCard>())
+                    {
+                        currentPlayerCharacter = character;
+                        break;
+                    }
+                }
+
+                if (currentPlayerCharacter == null) { Debug.LogWarning("No character with that card"); }
+                FindObjectOfType<MyCameraController>().LookAt(currentPlayerCharacter.transform);
                 FindObjectOfType<MyCameraController>().UnLockCamera();
                 playerController.ChangeCombatState(PlayerController.CombatState.UsingCombatCards);
                 playerController.AllowEndTurn();
-                playerController.BeginActions();
+                playerController.BeginActions(currentPlayerCharacter);
             }
             else if (card.GetComponent<EnemyActionCard>() != null)
             {
@@ -67,7 +85,7 @@ public class CombatManager : MonoBehaviour {
 
     void BeginNewTurn()
     {
-        FindObjectOfType<MyCameraController>().LookAt(playerController.myCharacter.transform);
+        FindObjectOfType<MyCameraController>().LookAt(playerController.SelectPlayerCharacter.transform);
         FindObjectOfType<MyCameraController>().UnLockCamera();
         //TakeAwaySummoningSickness();
         //FindObjectOfType<EnemyCardButton>().SetInteractable(false);

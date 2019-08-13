@@ -107,6 +107,7 @@ public class Hex : MonoBehaviour {
     {
        // if (SelectionHighlightMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = SelectionHighlightMaterial;
+        //previousMaterial = GetComponent<MeshRenderer>().material;
     }
 
     public void HighlightShieldlRange()

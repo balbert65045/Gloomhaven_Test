@@ -19,7 +19,6 @@ public class CombatActionController : MonoBehaviour {
     public bool Attacking = false;
 
     private PlayerController playerController;
-    private PlayerCharacter myCharacter;
 
     private Character characterSelected;
 
@@ -28,7 +27,6 @@ public class CombatActionController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         playerController = GetComponent<PlayerController>();
-        myCharacter = playerController.myCharacter;
     }
 
     public Action NoAction()
@@ -75,12 +73,12 @@ public class CombatActionController : MonoBehaviour {
                 EnemyCharacter character = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>();
                 FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
             }
-            else if  (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>())
+            else if  (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<PlayerCharacter>())
             {
                 if (characterSelected != null) { characterSelected.HexOn.UnHighlight(); }
                 Hit.transform.GetComponent<Hex>().HighlightSelection();
                 characterSelected = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>();
-                FindObjectOfType<CharacterViewer>().ShowCharacterStats(playerController.CharacterName, playerController.characterIcon, characterSelected);
+                FindObjectOfType<CharacterViewer>().ShowCharacterStats(characterSelected.GetComponent<PlayerCharacter>().CharacterName, characterSelected.GetComponent<PlayerCharacter>().characterIcon, characterSelected);
             }
             else
             {
@@ -183,7 +181,7 @@ public class CombatActionController : MonoBehaviour {
     {
         if (action.Range == 0 && action.thisAOE.thisAOEType == AOEType.SingleTarget)
         {
-            myCharacter.Shield(action.thisAOE.Damage);
+            playerController.SelectPlayerCharacter.Shield(action.thisAOE.Damage);
             return true;
         }
         return false;
@@ -194,7 +192,7 @@ public class CombatActionController : MonoBehaviour {
         //Heal self
         if (action.Range == 0 && action.thisAOE.thisAOEType == AOEType.SingleTarget)
         {
-            myCharacter.Heal(action.thisAOE.Damage);
+            playerController.SelectPlayerCharacter.Heal(action.thisAOE.Damage);
             return true;
         }
         return false;
@@ -202,6 +200,8 @@ public class CombatActionController : MonoBehaviour {
 
     bool CheckForAttack(Action action, Hex hexSelected)
     {
+
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         List<Node> nodes = FindObjectOfType<HexMapController>().GetAOE(action.thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hexSelected.HexNode);
         bool success = false;
 
@@ -232,6 +232,7 @@ public class CombatActionController : MonoBehaviour {
 
     bool CheckForMove(Action action, Hex hexSelected)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCharacter.HexInMoveRange(hexSelected, action.Range + myCharacter.Agility))
         {
             UnHighlightHexes();
@@ -279,6 +280,8 @@ public class CombatActionController : MonoBehaviour {
     void MoveToNextAbility()
     {
         UnHighlightHexes();
+        Debug.Log("moving to next ability");
+        playerController.SelectPlayerCharacter.HexOn.HighlightSelection();
         characterSelected = null;
         FindObjectOfType<CharacterViewer>().HideCharacterStats();
         FindObjectOfType<CharacterViewer>().HideActionCard();
@@ -286,6 +289,16 @@ public class CombatActionController : MonoBehaviour {
         FindObjectOfType<MyActionBoard>().DisableAction(ActionIndex);
         if (ActionsAllUsed()) { myCurrentAction = NoAction(); }
         else { SwitchAction(); }
+    }
+
+    public void ShowActions(PlayerCharacter character)
+    {
+        FindObjectOfType<MyActionBoard>().hideActions();
+        CombatPlayerCard card = character.GetMyCombatHand().getSelectedCard();
+        if (card != null)
+        {
+            FindObjectOfType<MyActionBoard>().showActions(card.CardAbility.Actions, character);
+        }
     }
 
     bool ActionsAllUsed()
@@ -299,6 +312,7 @@ public class CombatActionController : MonoBehaviour {
 
     public void SetAbilities(CombatCardAbility cardAbility)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         CardAbilityUsing = cardAbility;
         SelectedCardActions.Clear();
         ActionsUsed.Clear();
@@ -316,6 +330,7 @@ public class CombatActionController : MonoBehaviour {
 
     void ShowAbility(Action action)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCurrentAction.thisActionType == ActionType.Movement)
         {
             ShowMoveDistance(action.Range + myCharacter.Agility);
@@ -338,23 +353,26 @@ public class CombatActionController : MonoBehaviour {
 
     void ShowShield(int Range)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         myCharacter.ShowShield(Range);
     }
 
     void ShowHeal(int Range)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         myCharacter.ShowHeal(Range);
     }
 
     void ShowAttack(int Range)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         myCharacter.ShowAttack(Range);
         HighlightHexForAttack(Range);
     }
 
     void HighlightHexForAttack(int Distance)
     {
-
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
         if (raycastHits.Length == 0) { return; }
@@ -374,12 +392,14 @@ public class CombatActionController : MonoBehaviour {
 
     void ShowMoveDistance(int Distance)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         myCharacter.ShowMoveDistance(Distance);
         HighlightHexOverForMove(Distance);
     }
 
     void HighlightHexOverForMove(int Distance)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
         if (raycastHits.Length == 0) { return; }
@@ -400,6 +420,7 @@ public class CombatActionController : MonoBehaviour {
 
     void ShowDistance(int Distance)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         myCharacter.ShowRangeDistance(Distance);
     }
 

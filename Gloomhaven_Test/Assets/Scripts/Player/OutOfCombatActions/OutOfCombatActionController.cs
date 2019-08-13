@@ -6,13 +6,13 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     private LayerMask MapLayer;
     private PlayerController playerController;
-    private Character myCharacter;
+    //private Character myCharacter;
     private Character characterSelected;
     // Use this for initialization
     void Start () {
         playerController = GetComponent<PlayerController>();
         MapLayer = playerController.MapLayer;
-        myCharacter = playerController.myCharacter;
+        //myCharacter = playerController.myCharacter;
     }
 
     public void UnHighlightHexes()
@@ -45,6 +45,7 @@ public class OutOfCombatActionController : MonoBehaviour {
     public void FinishedMoving()
     {
         UnHighlightHexes();
+        playerController.SelectPlayerCharacter.HexOn.HighlightSelection();
         HighlightHexOver();
     }
 
@@ -62,12 +63,12 @@ public class OutOfCombatActionController : MonoBehaviour {
                 EnemyCharacter character = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>();
                 FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
             }
-            else if (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>())
+            else if (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<PlayerCharacter>())
             {
                 if (characterSelected != null) { characterSelected.HexOn.UnHighlight(); }
                 Hit.transform.GetComponent<Hex>().HighlightSelection();
                 characterSelected = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>();
-                FindObjectOfType<CharacterViewer>().ShowCharacterStats(playerController.CharacterName, playerController.characterIcon, characterSelected);
+                FindObjectOfType<CharacterViewer>().ShowCharacterStats(characterSelected.GetComponent<PlayerCharacter>().CharacterName, characterSelected.GetComponent<PlayerCharacter>().characterIcon, characterSelected);
             }
             else
             {
@@ -123,31 +124,31 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     void BuffRange(int value, int duration)
     {
-        myCharacter.ApplyBuff(value, duration, BuffType.Dexterity);
+        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Dexterity);
     }
 
     void BuffMove(int value, int duration)
     {
-        myCharacter.ApplyBuff(value, duration, BuffType.Agility);
+        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Agility);
     }
 
     void BuffAttack(int value, int duration)
     {
-        myCharacter.ApplyBuff(value, duration, BuffType.Strength);
+        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Strength);
     }
 
     void BuffArmor(int value, int duration)
     {
-        myCharacter.ApplyBuff(value, duration, BuffType.Armor);
+        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Armor);
     }
 
     void Scout(int value)
     {
-        myCharacter.ShowViewArea(myCharacter.HexOn, myCharacter.ViewDistance + value);
+        playerController.SelectPlayerCharacter.ShowViewArea(playerController.SelectPlayerCharacter.HexOn, playerController.SelectPlayerCharacter.ViewDistance + value);
     }
 
     void Stealth(int value)
     {
-        myCharacter.Stealth(value);
+        playerController.SelectPlayerCharacter.Stealth(value);
     }
 }

@@ -7,13 +7,14 @@ public class HexVisualizer : MonoBehaviour {
     private CameraRaycaster cameraRaycaster;
     private PlayerController playerController;
     private CombatActionController combatcontroller;
-    private Character myCharacter;
+    //private Character myCharacter;
     private List<Hex> LastHexesChanged = new List<Hex>();
     private Hex LastHexOver;
 
 
     public void HighlightMovePath(Hex hex)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         List<Node> NodePath = myCharacter.GetPath(hex.HexNode);
         foreach (Node node in NodePath)
         {
@@ -24,6 +25,7 @@ public class HexVisualizer : MonoBehaviour {
 
     public void HighlightAttackArea(Hex hex)
     {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(combatcontroller.GetMyCurrectAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
         foreach (Node node in nodesInAOE)
         {
@@ -39,6 +41,7 @@ public class HexVisualizer : MonoBehaviour {
         {
             foreach (Hex lastHex in LastHexesChanged)
             {
+                if (lastHex == playerController.SelectPlayerCharacter.HexOn) { continue; }
                 lastHex.returnToPreviousColor();
             }
             LastHexesChanged.Clear();
@@ -50,6 +53,8 @@ public class HexVisualizer : MonoBehaviour {
         
         if (LastHexOver == hex) {return;}
         LastHexOver = hex;
+
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
 
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
         {
@@ -148,7 +153,7 @@ public class HexVisualizer : MonoBehaviour {
     void Start () {
         combatcontroller = GetComponent<CombatActionController>();
         playerController = GetComponent<PlayerController>();
-        myCharacter = playerController.myCharacter;
+        //myCharacter = playerController.myCharacter;
         cameraRaycaster = FindObjectOfType<CameraRaycaster>();
         cameraRaycaster.notifyCursorOverHexObservers += OnHexChanged;
     }

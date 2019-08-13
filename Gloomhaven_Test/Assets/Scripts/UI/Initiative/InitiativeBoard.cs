@@ -32,13 +32,13 @@ public class InitiativeBoard : MonoBehaviour {
 
     public void placeCharacterIcons(PlayerController playerController, EnemyGroup[] enemyGroups)
     {
-        int totalCharacterTypes = 1 + enemyGroups.Length;
+        int totalCharacterTypes = playerController.myCharacters.Count + enemyGroups.Length;
         startingPosition = (InitiativePositions.Length - totalCharacterTypes) / 2;
         int nextPosition = startingPosition;
         for (int i = 0; i < totalCharacterTypes; i++)
         {
-            if (i == 0) { PlaceCharacterOnBoard(nextPosition, playerController.characterIcon, playerController.CharacterName); }
-            else { PlaceCharacterOnBoard(nextPosition, enemyGroups[i - 1].CharacterIcon, enemyGroups[i - 1].CharacterNameLinkedTo); }
+            if (i < playerController.myCharacters.Count) { PlaceCharacterOnBoard(nextPosition, playerController.myCharacters[i].characterIcon, playerController.myCharacters[i].CharacterName); }
+            else { PlaceCharacterOnBoard(nextPosition, enemyGroups[i - playerController.myCharacters.Count].CharacterIcon, enemyGroups[i - playerController.myCharacters.Count].CharacterNameLinkedTo); }
             nextPosition++;
         }
     }
@@ -73,6 +73,7 @@ public class InitiativeBoard : MonoBehaviour {
                 return;
             }
         }
+        Debug.Log("No name found");
     }
 
     public void OrganizeInits()

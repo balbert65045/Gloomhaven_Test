@@ -4,9 +4,19 @@ using UnityEngine;
 
 public class PlayerCharacter : Character
 {
-
     private PlayerController playerController;
     private bool SavingThrowUsed = false;
+
+    public Sprite characterIcon;
+    public string CharacterName;
+
+    public GameObject myDecks;
+    public CombatPlayerHand GetMyCombatHand(){ return myDecks.GetComponentInChildren<CombatPlayerHand>(); }
+    public OutOfCombatHand GetMyOutOfCombatHand() { return myDecks.GetComponentInChildren<OutOfCombatHand>(); }
+
+    public CombatPlayerCard myCurrentCombatCard;
+    public CombatPlayerCard GetMyCurrentCombatCard() { return myCurrentCombatCard; }
+    public void SetMyCurrentCombatCard(CombatPlayerCard card) { myCurrentCombatCard = card; }
 
     // Use this for initialization
     void Start()
@@ -18,6 +28,9 @@ public class PlayerCharacter : Character
             myHealthBar.CreateHealthBar(health);
         }
         maxHealth = health;
+
+        int cardsInHand = myDecks.GetComponentInChildren<CombatPlayerHand>().CheckCardsInHand();
+        SetHandSize(cardsInHand);
     }
 
     //VIEW//

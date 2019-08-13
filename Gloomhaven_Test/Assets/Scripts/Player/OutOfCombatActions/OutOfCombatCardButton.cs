@@ -38,6 +38,7 @@ public class OutOfCombatCardButton : MonoBehaviour, IPointerEnterHandler, IPoint
 
     public void unShowCard()
     {
+        if (myCard == null) { return; }
         myCard.transform.SetParent(this.transform);
         myCard.transform.localPosition = Vector3.zero;
         myCard.transform.localScale = OldScale;

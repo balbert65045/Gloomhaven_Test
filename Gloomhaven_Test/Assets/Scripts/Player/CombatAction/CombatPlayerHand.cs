@@ -41,7 +41,7 @@ public class CombatPlayerHand : MonoBehaviour {
 
     public void ShowPotential(CombatPlayerCard card)
     {
-        Character myCharacter = playerController.myCharacter;
+        Character myCharacter = playerController.SelectPlayerCharacter;
         Action[] actions = card.CardAbility.Actions;
         FindObjectOfType<MyActionBoard>().showActions(actions, myCharacter);
     }
@@ -126,7 +126,7 @@ public class CombatPlayerHand : MonoBehaviour {
         FindObjectOfType<MyActionBoard>().ShowPanel();
         ShowPotential(SelectedPlayerCard);
         Vector3 currentScale = SelectedPlayerCard.transform.localScale;
-        PlayArea showArea = GetComponentInChildren<PlayArea>();
+        PlayArea showArea = FindObjectOfType<PlayArea>();
         SelectedPlayerCard.transform.SetParent(showArea.transform);
         SelectedPlayerCard.transform.localPosition = Vector3.zero;
         SelectedPlayerCard.transform.localScale = currentScale;
@@ -144,8 +144,14 @@ public class CombatPlayerHand : MonoBehaviour {
     // Use this for initialization
     void Start () {
         playerController = FindObjectOfType<PlayerController>();
+      //  myCardsInHand.AddRange(GetComponentsInChildren<CombatPlayerCardButton>());
+   //     playerController.SetUpCharacterHand(myCardsInHand.Count - 1);
+    }
+
+    public int CheckCardsInHand()
+    {
         myCardsInHand.AddRange(GetComponentsInChildren<CombatPlayerCardButton>());
-        playerController.SetUpCharacterHand(myCardsInHand.Count - 1);
+        return (myCardsInHand.Count - 1);
     }
 	
 	// Update is called once per frame

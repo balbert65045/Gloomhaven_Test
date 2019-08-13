@@ -13,13 +13,16 @@ public class Entity : MonoBehaviour {
 
     public void LinktoHex(Hex hex)
     {
-        hex.AddEntityToHex(this);
+        if (hex.EntityHolding == null) { hex.AddEntityToHex(this); }
         HexOn = hex;
     }
 
     public void RemoveLinkFromHex()
     {
-        HexOn.RemoveEntityFromHex();
+        if (HexOn.EntityHolding == this)
+        {
+            HexOn.RemoveEntityFromHex();
+        }
     }
 
     // Use this for initialization

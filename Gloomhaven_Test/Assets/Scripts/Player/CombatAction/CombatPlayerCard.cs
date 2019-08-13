@@ -21,7 +21,8 @@ public class CombatPlayerCard : MonoBehaviour
 
     public void SetUpCardActions()
     {
-        Character character = FindObjectOfType<PlayerController>().myCharacter;
+        
+        Character character = FindObjectOfType<PlayerController>().SelectPlayerCharacter;
         CardAbility.setUpCard(character.Strength, character.Agility, character.Dexterity);
     }
 
