@@ -111,7 +111,12 @@ public class PlayerController : MonoBehaviour {
         switch (myState)
         {
             case PlayerState.InCombat:
-                AllowEndTurn();
+                SelectPlayerCharacter.SetMyCurrentCombatCard(SelectPlayerCharacter.GetMyCombatHand().getSelectedCard());
+                ShowCardSelected(SelectPlayerCharacter);
+                if (AllPlayersHaveCardSelected())
+                {
+                    AllowEndTurn();
+                }
                 break;
             case PlayerState.OutofCombat:
                 OutOfCombatCard card = SelectPlayerCharacter.GetMyOutOfCombatHand().GetSelectecdCard();
@@ -123,6 +128,7 @@ public class PlayerController : MonoBehaviour {
     public void BeginNewTurn()
     {
         ShowCharacterSelection();
+        ShowCardIndicators();
         foreach (PlayerCharacter character in myCharacters)
         {
             character.DecreaseBuffsDuration();
@@ -180,6 +186,7 @@ public class PlayerController : MonoBehaviour {
             myState = PlayerState.InCombat;
             FindObjectOfType<CombatManager>().ShowPeopleInCombat();
             combatController.UnHighlightHexes();
+            ShowCardIndicators();
         }
     }
 
@@ -217,24 +224,30 @@ public class PlayerController : MonoBehaviour {
                         break;
                     case CombatState.SelectingCombatCards:
                         SelectPlayerCharacter.GetMyCombatHand().HideHand();
-                        if (!SelectPlayerCharacter.GetMyCombatHand().selectedCardLinkedButton.basicAttack) { LoseCardForCharacter(); }
-                        SelectPlayerCharacter.SetMyCurrentCombatCard(SelectPlayerCharacter.GetMyCombatHand().getSelectedCard());
-                        if (!AllPlayersHaveCardSelected())
+                        foreach(PlayerCharacter character in myCharacters)
                         {
-                            foreach (PlayerCharacter character in myCharacters)
-                            {
-                                if (character.GetMyCurrentCombatCard() == null)
-                                {
-                                    SelectCharacter(character);
-                                }
-                            }
+                            if (!character.GetMyCombatHand().selectedCardLinkedButton.basicAttack) { LoseCardForCharacter(); }
                         }
-                        else
-                        {
-                            HideCharacterSelection();
-                            FindObjectOfType<EndTurnButton>().DisableEndTurn();
-                            FindObjectOfType<CombatManager>().PlayerDonePickingCombatCards();
-                        }
+                        //SelectPlayerCharacter.SetMyCurrentCombatCard(SelectPlayerCharacter.GetMyCombatHand().getSelectedCard());
+                        HideCharacterSelection();
+                        FindObjectOfType<EndTurnButton>().DisableEndTurn();
+                        FindObjectOfType<CombatManager>().PlayerDonePickingCombatCards();
+                        //if (!AllPlayersHaveCardSelected())
+                        //{
+                        //    foreach (PlayerCharacter character in myCharacters)
+                        //    {
+                        //        if (character.GetMyCurrentCombatCard() == null)
+                        //        {
+                        //            SelectCharacter(character);
+                        //        }
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    HideCharacterSelection();
+                        //    FindObjectOfType<EndTurnButton>().DisableEndTurn();
+                        //    FindObjectOfType<CombatManager>().PlayerDonePickingCombatCards();
+                        //}
                         break;
                     case CombatState.UsingCombatCards:
                         FindObjectOfType<EndTurnButton>().DisableEndTurn();
@@ -253,7 +266,24 @@ public class PlayerController : MonoBehaviour {
     {
         foreach (CharacterSelectionButton button in characterButtons)
         {
+            button.hideCardIndicators();
             button.gameObject.SetActive(false);
+        }
+    }
+
+    void ShowCardSelected(PlayerCharacter character)
+    {
+        foreach (CharacterSelectionButton button in characterButtons)
+        {
+            if (button.characterLinkedTo == character) { button.CardForCharacterSelected(); }
+        }
+    }
+
+    void ShowCardIndicators()
+    {
+        foreach (CharacterSelectionButton button in characterButtons)
+        {
+            button.showCardIndicators();
         }
     }
 
