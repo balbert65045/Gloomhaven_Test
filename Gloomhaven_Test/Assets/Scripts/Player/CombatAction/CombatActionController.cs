@@ -280,7 +280,6 @@ public class CombatActionController : MonoBehaviour {
     void MoveToNextAbility()
     {
         UnHighlightHexes();
-        Debug.Log("moving to next ability");
         playerController.SelectPlayerCharacter.HexOn.HighlightSelection();
         characterSelected = null;
         FindObjectOfType<CharacterViewer>().HideCharacterStats();

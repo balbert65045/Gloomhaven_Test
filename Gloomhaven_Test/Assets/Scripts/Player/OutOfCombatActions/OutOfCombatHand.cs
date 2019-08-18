@@ -17,6 +17,15 @@ public class OutOfCombatHand : MonoBehaviour {
         Hand.SetActive(false);
     }
 
+    public void unShowAnyCards()
+    {
+        OutOfCombatCardButton[] outOfCombatCards = GetComponentsInChildren<OutOfCombatCardButton>();
+        foreach (OutOfCombatCardButton cardButton in outOfCombatCards)
+        {
+            cardButton.unShowCard();
+        }
+    }
+
     public void ShowHand()
     {
         Hand.SetActive(true);

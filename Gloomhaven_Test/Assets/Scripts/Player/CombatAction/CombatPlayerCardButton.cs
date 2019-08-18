@@ -90,7 +90,7 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
         myCard.SetUpCardActions();
     }
 
-    void unShowCard()
+    public void unShowCard()
     {
         myCard.transform.SetParent(this.transform);
         myCard.transform.localPosition = Vector3.zero;

@@ -133,12 +133,24 @@ public class CombatPlayerHand : MonoBehaviour {
         SelectedPlayerCard.gameObject.SetActive(true);
     }
 
+    public void unShowAnyCards()
+    {
+        CombatPlayerCardButton[] cardButtons = GetComponentsInChildren<CombatPlayerCardButton>();
+        foreach (CombatPlayerCardButton button in cardButtons)
+        {
+            button.unShowCard();
+        }
+    }
+
     public void HideSelectedCard()
     {
-        HidePotential();
-        FindObjectOfType<MyActionBoard>().HidePanel();
-        SelectedPlayerCard.CardAbility.UnHighlightAbility();
-        SelectedPlayerCard.gameObject.SetActive(false);
+        if (SelectedPlayerCard != null)
+        {
+            HidePotential();
+            FindObjectOfType<MyActionBoard>().HidePanel();
+            SelectedPlayerCard.CardAbility.UnHighlightAbility();
+            SelectedPlayerCard.gameObject.SetActive(false);
+        }
     }
 
     // Use this for initialization

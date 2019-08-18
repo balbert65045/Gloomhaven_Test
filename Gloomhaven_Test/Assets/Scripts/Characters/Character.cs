@@ -315,7 +315,7 @@ public class Character : Entity {
 
     public bool HexDamageable(Hex hex)
     {
-        return hex.EntityHolding != null && hex.EntityHolding.GetComponent<Character>() != null;
+        return hex.EntityHolding != null && hex.EntityHolding.GetComponent<EnemyCharacter>() != null;
     }
 
     public bool HexAttackable(Hex hex, int Range)
