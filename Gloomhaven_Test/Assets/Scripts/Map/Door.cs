@@ -23,6 +23,7 @@ public class Door : MonoBehaviour {
         foreach (Hex hex in hexesToOpenTo)
         {
             hex.ShowHexEditor();
+            hex.ShowHexEnd();
             hex.GetComponent<Node>().isAvailable = true;
             if (hex.EntityToSpawn != null)
             {
@@ -37,6 +38,7 @@ public class Door : MonoBehaviour {
         {
             hex.HideHexEditor();
             hex.GetComponent<Node>().isAvailable = false;
+            hex.HideHexEnd();
             if (hex.EntityHolding != null)
             {
                 DestroyImmediate(hex.EntityHolding.gameObject);

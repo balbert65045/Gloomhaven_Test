@@ -75,6 +75,7 @@ public class PlayerCharacter : Character
         {
             if (!node.Shown && nodesSeen.Contains(node))
             {
+                node.GetComponent<Hex>().ShowHexEnd();
                 node.GetComponent<Hex>().UnHighlight();
                 node.Shown = true;
                 if (node.NodeHex.EntityToSpawn != null)

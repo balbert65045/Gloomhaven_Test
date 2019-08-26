@@ -93,6 +93,22 @@ public class Hex : MonoBehaviour {
         return EntityHolding.gameObject;
     }
 
+    public void ShowHexEnd()
+    {
+        if (GetComponent<EndHex>() != null)
+        {
+            GetComponent<EndHex>().ShowObjectsHiding();
+        }
+    }
+
+    public void HideHexEnd()
+    {
+        if (GetComponent<EndHex>() != null)
+        {
+            GetComponent<EndHex>().HideObjectsHiding();
+        }
+    }
+
     public void AddEntityToHex(Entity entity)
     {
         EntityHolding = entity;

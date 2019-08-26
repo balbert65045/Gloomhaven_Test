@@ -120,6 +120,7 @@ public class EnemyCharacter : Character {
             if (!node.Shown && nodesInView.Contains(node))
             {
                 node.GetComponent<Hex>().UnHighlight();
+                node.GetComponent<Hex>().ShowHexEnd();
                 node.Shown = true;
                 if (node.NodeHex.EntityToSpawn != null)
                 {
