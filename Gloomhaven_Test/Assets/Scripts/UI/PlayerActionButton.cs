@@ -10,6 +10,11 @@ public class PlayerActionButton : MonoBehaviour {
         GetComponentInChildren<Text>().text = "Open Door";
     }
 
+    public void allowHideDoorAction()
+    {
+        GetComponentInChildren<Text>().text = "";
+    }
+
     public void OpenDoor()
     {
         FindObjectOfType<PlayerController>().OpenDoor();

@@ -104,6 +104,10 @@ public class PlayerCharacter : Character
         {
             FindObjectOfType<PlayerController>().AllowOpenDoor();
         }
+        else
+        {
+            FindObjectOfType<PlayerController>().CheckToHideOpenDoor();
+        }
     }
 
     public override void FinishedAttacking()

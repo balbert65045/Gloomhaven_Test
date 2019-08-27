@@ -7,40 +7,39 @@ public class Wall : MonoBehaviour {
     public Material NormalMaterial;
     public Material InvisibleMaterial;
 
-    Transform myCameraPivot;
+    Transform myCamera;
 
-    public float CamRot;
+    public float InvisibleDistance = 5;
+
+    float wallRotation;
 
     bool invisible = false;
     MeshRenderer myWallMesh;
 	// Use this for initialization
 	void Start () {
-        myCameraPivot = FindObjectOfType<MyCameraController>().Pivot.transform;
+        myCamera = FindObjectOfType<MyCameraController>().transform;
         myWallMesh = GetComponentInChildren<MeshRenderer>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-         CamRot = myCameraPivot.rotation.eulerAngles.y;
-        //f (CamRot > 360) { CamRot -= 360; }
-        //float AngleDifference = Mathf.Abs(CamRot - transform.rotation.eulerAngles.y);
 
+    // Update is called once per frame
+    void Update() {
+        //float distance = (transform.position - myCamera.position).magnitude;
 
-        if (CamRot < transform.rotation.eulerAngles.y + 100 && CamRot > transform.rotation.eulerAngles.y - 100)
-        {
-            if (!invisible)
-            {
-                invisible = true;
-                myWallMesh.material = InvisibleMaterial;
-            }
-        }
-        else
-        {
-            if (invisible)
-            {
-                invisible = false;
-                myWallMesh.material = NormalMaterial;
-            }
-        }
+        //if (distance < InvisibleDistance)
+        //{
+        //    if (!invisible)
+        //    {
+        //        invisible = true;
+        //        myWallMesh.material = InvisibleMaterial;
+        //    }
+        //}
+        //else
+        //{
+        //    if (invisible)
+        //    {
+        //        invisible = false;
+        //        myWallMesh.material = NormalMaterial;
+        //    }
+        //}
 	}
 }

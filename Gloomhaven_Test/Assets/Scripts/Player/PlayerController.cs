@@ -344,6 +344,7 @@ public class PlayerController : MonoBehaviour {
                 ShowCharacterButtonSelected(SelectPlayerCharacter);
             }
         }
+        CheckToHideOpenDoor();
     }
 
     void CheckToSelectCharacter()
@@ -447,11 +448,28 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void CheckToHideOpenDoor()
+    {
+        if (SelectPlayerCharacter.HexOn.GetComponent<Door>() != null && !SelectPlayerCharacter.HexOn.GetComponent<Door>().isOpen)
+        {
+            AllowOpenDoor();
+        }
+        else
+        {
+            HideOpenDoor();
+        }
+    }
+
     //Door Button
     public void AllowOpenDoor()
     {
         actionButton.gameObject.SetActive(true);
         actionButton.allowOpenDoorAction();
+    }
+
+    public void HideOpenDoor()
+    {
+        actionButton.gameObject.SetActive(false);
     }
 
     public void OpenDoor()
