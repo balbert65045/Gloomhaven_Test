@@ -9,7 +9,10 @@ public class OutOfCombatCardButton : MonoBehaviour, IPointerEnterHandler, IPoint
     public OutOfCombatCard myCard;
     public HandCardShowArea showArea;
 
-    private Color OGColor;
+    public bool Discarded = false;
+    public bool Lost = false;
+
+    public Color OGColor;
     private Vector3 OldScale;
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -19,16 +22,50 @@ public class OutOfCombatCardButton : MonoBehaviour, IPointerEnterHandler, IPoint
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        unShowCard();
+        if (GetComponentInParent<OutOfCombatHand>().GetSelectecdCard() != myCard)
+        {
+            unShowCard();
+        }
     }
 
     public void SelectCard()
     {
+        GetComponent<Image>().color = Color.blue;
         GetComponentInParent<OutOfCombatHand>().SelectCard(myCard);
+        //DiscardCard();
+    }
+
+    public void DiscardCard()
+    {
+        Discarded = true;
+        GetComponent<Image>().color = Color.red;
         GetComponent<Button>().interactable = false;
     }
 
-    void showCard()
+    public void LoseCard()
+    {
+        Discarded = false;
+        GetComponent<Image>().color = Color.black;
+        Lost = true;
+    }
+
+    public void putBackInHand()
+    {
+        Lost = false;
+        Discarded = false;
+        GetComponent<Button>().interactable = true;
+        GetComponent<Image>().color = OGColor;
+    }
+
+    public void UnHighlight()
+    {
+        if (!Discarded && !Lost)
+        {
+            GetComponent<Image>().color = OGColor;
+        }
+    }
+
+    public void showCard()
     {
         myCard.transform.SetParent(showArea.transform);
         myCard.transform.localPosition = Vector3.zero;
@@ -50,7 +87,7 @@ public class OutOfCombatCardButton : MonoBehaviour, IPointerEnterHandler, IPoint
         myCard = GetComponentInChildren<OutOfCombatCard>();
         OldScale = myCard.transform.localScale;
         myCard.gameObject.SetActive(false);
-        OGColor = GetComponent<Image>().color;
+        //OGColor = GetComponent<Image>().color;
     }
 	
 	// Update is called once per frame

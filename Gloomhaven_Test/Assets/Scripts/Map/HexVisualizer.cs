@@ -7,6 +7,7 @@ public class HexVisualizer : MonoBehaviour {
     private CameraRaycaster cameraRaycaster;
     private PlayerController playerController;
     private CombatActionController combatcontroller;
+    private OutOfCombatActionController outOfCombatcontroller;
     //private Character myCharacter;
     private List<Hex> LastHexesChanged = new List<Hex>();
     private Hex LastHexOver;
@@ -48,6 +49,21 @@ public class HexVisualizer : MonoBehaviour {
         }
     }
 
+    void ClearLastChangedHexSelf()
+    {
+        if (LastHexesChanged.Count != 0)
+        {
+            foreach (Hex lastHex in LastHexesChanged)
+            {
+                if (lastHex == playerController.SelectPlayerCharacter.HexOn) {
+                    lastHex.HighlightSelection() ;
+                }
+                else { lastHex.returnToPreviousColor(); }
+            }
+            LastHexesChanged.Clear();
+        }
+    }
+
     public void OnHexChanged(Hex hex)
     {
         
@@ -59,9 +75,66 @@ public class HexVisualizer : MonoBehaviour {
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
         {
             if (myCharacter.GetComponent<CharacterAnimationController>().Moving) { return; }
-            ClearLastChangedHexes();
-            if (hex == null || !hex.HexNode.Shown) {return;}
-            HighlightMovePath(hex);
+            if (outOfCombatcontroller.cardUsing == null)
+            {
+                ClearLastChangedHexes();
+                if (hex == null || !hex.HexNode.Shown) { return; }
+                HighlightMovePath(hex);
+            }
+            else
+            {
+                switch (outOfCombatcontroller.cardUsing.actions[0].thisActionType)
+                {
+                    case OutOfCombatActionType.Scout:
+                        ClearLastChangedHexSelf();
+                        if (hex == myCharacter.HexOn)
+                        {
+                            hex.HighlightHealRPoint();
+                            LastHexesChanged.Add(hex);
+                        }
+                        break;
+                    case OutOfCombatActionType.Stealth:
+                        ClearLastChangedHexSelf();
+                        if (hex == myCharacter.HexOn)
+                        {
+                            hex.HighlightHealRPoint();
+                            LastHexesChanged.Add(hex);
+                        }
+                        break;
+                    case OutOfCombatActionType.BuffAttack:
+                        ClearLastChangedHexSelf();
+                        if (hex == myCharacter.HexOn)
+                        {
+                            hex.HighlightHealRPoint();
+                            LastHexesChanged.Add(hex);
+                        }
+                        break;
+                    case OutOfCombatActionType.BuffMove:
+                        ClearLastChangedHexSelf();
+                        if (hex == myCharacter.HexOn)
+                        {
+                            hex.HighlightHealRPoint();
+                            LastHexesChanged.Add(hex);
+                        }
+                        break;
+                    case OutOfCombatActionType.BuffRange:
+                        ClearLastChangedHexSelf();
+                        if (hex == myCharacter.HexOn)
+                        {
+                            hex.HighlightHealRPoint();
+                            LastHexesChanged.Add(hex);
+                        }
+                        break;
+                    case OutOfCombatActionType.BuffArmor:
+                        ClearLastChangedHexSelf();
+                        if (hex == myCharacter.HexOn)
+                        {
+                            hex.HighlightHealRPoint();
+                            LastHexesChanged.Add(hex);
+                        }
+                        break;
+                }
+            }
         }
         else if (playerController.GetPlayerState() == PlayerController.PlayerState.InCombat && playerController.GetCombatState() == PlayerController.CombatState.UsingCombatCards)
         {
@@ -151,6 +224,7 @@ public class HexVisualizer : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        outOfCombatcontroller = GetComponent<OutOfCombatActionController>();
         combatcontroller = GetComponent<CombatActionController>();
         playerController = GetComponent<PlayerController>();
         //myCharacter = playerController.myCharacter;

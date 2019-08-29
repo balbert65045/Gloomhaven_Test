@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4831133020730196}
   - component: {fileID: 33791991853847236}
   - component: {fileID: 23315829814057496}
-  m_Layer: 0
+  - component: {fileID: 65355267689427950}
+  m_Layer: 9
   m_Name: ThickLongWall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4709419401120612}
   - component: {fileID: 114855488127771574}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ThickLongWall180
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50,8 +51,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1720979430738936}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 85.561, y: 0.97587, z: -5.9974}
+  m_LocalRotation: {x: 0.10938163, y: 0.8754261, z: -0.40821788, w: -0.23456968}
+  m_LocalPosition: {x: 72.66767, y: -38.745255, z: -29.868818}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4831133020730196}
@@ -112,6 +113,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1055159609260804}
   m_Mesh: {fileID: 4300040, guid: 78f5761481a9c8f4b901dfed8748a045, type: 3}
+--- !u!65 &65355267689427950
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1055159609260804}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0558783, y: 0.29429922, z: 1.0665992}
+  m_Center: {x: -0.00000002980232, y: 0.0000026151538, z: -0.0000016093254}
 --- !u!114 &114855488127771574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,6 +138,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NormalMaterial: {fileID: 2100000, guid: c20fe963048074042a2180ac6418a417, type: 2}
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
-  CamRot: 0
-  CamRotHigh: 0
-  CameraRotLow: 0
+  invisible: 0

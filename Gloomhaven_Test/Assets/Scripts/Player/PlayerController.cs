@@ -81,6 +81,8 @@ public class PlayerController : MonoBehaviour {
                 case PlayerState.OutofCombat:
                     if (!AnyCharacterMoving())
                     {
+                        outOfCombatController.ShowOutOfCombatAbility(null);
+                        SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
                         CheckToSelectCharacter();
                         outOfCombatController.CheckToShowCharacterStats();
                     }
@@ -92,7 +94,8 @@ public class PlayerController : MonoBehaviour {
         {
             if (myState == PlayerState.OutofCombat)
             {
-                outOfCombatController.CheckToMoveOutOfCombat(SelectPlayerCharacter);
+                outOfCombatController.UseAction(SelectPlayerCharacter);
+                //outOfCombatController.CheckToMoveOutOfCombat(SelectPlayerCharacter);
             }
             else if (myState == PlayerState.InCombat && myCombatState == CombatState.UsingCombatCards)
             {
@@ -126,7 +129,7 @@ public class PlayerController : MonoBehaviour {
                 break;
             case PlayerState.OutofCombat:
                 OutOfCombatCard card = SelectPlayerCharacter.GetMyOutOfCombatHand().GetSelectecdCard();
-                GetComponent<OutOfCombatActionController>().UseOutOfCombatAbility(card);
+                GetComponent<OutOfCombatActionController>().ShowOutOfCombatAbility(card);
                 break;
         }
     }
@@ -217,7 +220,7 @@ public class PlayerController : MonoBehaviour {
                         SelectPlayerCharacter.GetMyCombatHand().HideHand();
                         foreach (PlayerCharacter character in myCharacters)
                         {
-                            if (!character.GetMyCombatHand().selectedCardLinkedButton.basicAttack) { LoseCardForCharacter(); }
+                            if (!character.GetMyCombatHand().selectedCardLinkedButton.basicAttack) { LoseCardForCharacter(character); }
                         }
                         HideCharacterSelection();
                         FindObjectOfType<EndTurnButton>().DisableEndTurn();
@@ -265,9 +268,9 @@ public class PlayerController : MonoBehaviour {
         SelectPlayerCharacter.SetNewHandSize(size);
     }
 
-    public void LoseCardForCharacter()
+    public void LoseCardForCharacter(PlayerCharacter character)
     {
-        SelectPlayerCharacter.LoseCard();
+        character.LoseCard();
     }
 
     public bool LoseCardInHand()

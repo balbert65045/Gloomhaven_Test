@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4217577592740050}
   - component: {fileID: 33150908991461632}
   - component: {fileID: 23522756713258166}
-  m_Layer: 0
+  - component: {fileID: 65864572066029196}
+  m_Layer: 9
   m_Name: SkinnySlant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4825476062492682}
   - component: {fileID: 114023059859619050}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SkinnySlant270-180
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,8 +64,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1431399603959422}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
-  m_LocalPosition: {x: 83.515, y: 0.97586, z: -4.4004}
+  m_LocalRotation: {x: 0.36599815, y: 0.45315394, z: -0.21130912, w: -0.7848856}
+  m_LocalPosition: {x: 70.12591, y: -36.208477, z: -27.740192}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4217577592740050}
@@ -112,6 +113,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1192205906029544}
   m_Mesh: {fileID: 4300122, guid: 78f5761481a9c8f4b901dfed8748a045, type: 3}
+--- !u!65 &65864572066029196
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1192205906029544}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.76556456, y: 0.25905904, z: 1.0665996}
+  m_Center: {x: -0.24155109, y: 0.000007621002, z: 0.00000017066137}
 --- !u!114 &114023059859619050
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,6 +138,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NormalMaterial: {fileID: 2100000, guid: c20fe963048074042a2180ac6418a417, type: 2}
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
-  CamRot: 0
-  CamRotHigh: 0
-  CameraRotLow: 0
+  invisible: 0

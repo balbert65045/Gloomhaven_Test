@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class CombatPlayerHand : MonoBehaviour {
 
+    public OutOfCombatHand outOfCombatHand;
     public CombatPlayerCard SelectedPlayerCard;
     public GameObject Hand;
     public Button ShortRestButton;
@@ -58,10 +59,50 @@ public class CombatPlayerHand : MonoBehaviour {
         FindObjectOfType<MyActionBoard>().HidePanel();
     }
 
+    public bool HasLostOrDiscardCard()
+    {
+        CombatPlayerCardButton[] outOfCombatCards = GetComponentsInChildren<CombatPlayerCardButton>();
+        foreach (CombatPlayerCardButton cardButton in outOfCombatCards)
+        {
+            if (cardButton.Discarded || cardButton.Lost) { return true; }
+        }
+        return false;
+    }
+
+    bool ShortRestReady()
+    {
+        CombatPlayerCardButton[] outOfCombatCards = GetComponentsInChildren<CombatPlayerCardButton>();
+        foreach (CombatPlayerCardButton cardButton in outOfCombatCards)
+        {
+            if (cardButton.Discarded) { return true; }
+        }
+        return false;
+    }
+
     public void ShowHand()
     {
         Hand.SetActive(true);
         FindObjectOfType<MyActionBoard>().ShowPanel();
+        CombatPlayerCardButton[] outOfCombatCards = GetComponentsInChildren<CombatPlayerCardButton>();
+        foreach (CombatPlayerCardButton cardButton in outOfCombatCards)
+        {
+            if (!cardButton.Discarded && !cardButton.Lost) {
+                cardButton.GetComponent<Button>().interactable = true;
+                cardButton.Unhighlight();
+            }
+        }
+        ShortRestButton.interactable = ShortRestReady();
+    }
+
+    public void ShowHandTemp()
+    {
+        Hand.SetActive(true);
+        CombatPlayerCardButton[] outOfCombatCards = GetComponentsInChildren<CombatPlayerCardButton>();
+        foreach (CombatPlayerCardButton cardButton in outOfCombatCards)
+        {
+            cardButton.GetComponent<Button>().interactable = false;
+        }
+        ShortRestButton.interactable = false;
     }
 
     public void discardSelectedCard()
@@ -77,6 +118,7 @@ public class CombatPlayerHand : MonoBehaviour {
                 selectedCardLinkedButton.DiscardCard();
             }
             myCardsInHand.Remove(selectedCardLinkedButton);
+            outOfCombatHand.allowLongRest();
         }
         SelectedPlayerCard.transform.SetParent(selectedCardLinkedButton.transform);
         SelectedPlayerCard = null;
@@ -100,6 +142,20 @@ public class CombatPlayerHand : MonoBehaviour {
         {
             cardButton.putBackInHand();
             myCardsInHand.Add(cardButton);
+        }
+        playerController.SetHandSize(myCardsInHand.Count - 1);
+    }
+
+    public void LongRest()
+    {
+        CombatPlayerCardButton[] cardButtons = GetComponentsInChildren<CombatPlayerCardButton>();
+        foreach(CombatPlayerCardButton cardButton in cardButtons)
+        {
+            if (cardButton.Lost || cardButton.Discarded)
+            {
+                cardButton.putBackInHand();
+                myCardsInHand.Add(cardButton);
+            }
         }
         playerController.SetHandSize(myCardsInHand.Count - 1);
     }

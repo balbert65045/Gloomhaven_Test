@@ -265,13 +265,15 @@ public class EnemyCharacter : Character {
         foreach (PlayerCharacter character in charactersOut)
         {
             //TODO change this to current attack range
-            int pathToCharacter = getPathToTarget(character.HexOn, modifiedAttackRange).Count;
-            if (pathToCharacter < PathToClosestPlayerLength)
+            List<Node> pathToCharacter = getPathToTarget(character.HexOn, modifiedAttackRange);
+            if (pathToCharacter.Count == 1 && pathToCharacter[0] == HexOn.HexNode) {continue;}
+            if (pathToCharacter.Count < PathToClosestPlayerLength)
             {
-                PathToClosestPlayerLength = pathToCharacter;
+                PathToClosestPlayerLength = pathToCharacter.Count;
                 ClosestCharacter = character;
             }
         }
+        //TODO may need to handle when No closest character
         return ClosestCharacter;
     }
 
@@ -387,6 +389,7 @@ public class EnemyCharacter : Character {
         if (OpenNodes.Count > 0)
         {
             Node closestNode = FindClosestNode(OpenNodes);
+            if (closestNode == null) { return new List<Node> { HexOn.HexNode }; }
             List<Node> nodePath = GetPath(closestNode);
             return nodePath;
         }

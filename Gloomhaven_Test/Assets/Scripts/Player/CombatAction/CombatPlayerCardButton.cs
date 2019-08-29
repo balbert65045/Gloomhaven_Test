@@ -9,7 +9,7 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
     public CombatPlayerCard myCard;
     public HandCardShowArea showArea;
 
-    private Color OGColor;
+    public Color OGColor;
     private Vector3 OldScale;
 
     public Text InitText;
@@ -47,6 +47,7 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
     public void DiscardCard()
     {
         Discarded = true;
+        GetComponent<Image>().color = Color.red;
         GetComponent<Button>().interactable = false;
         Unhighlight();
     }
@@ -57,7 +58,7 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
         Lost = true;
         GetComponent<Image>().color = Color.black;
         GetComponent<Button>().interactable = false;
-        //InitText.GetComponent<Image>().color = Color.black;
+        //GetComponent<Image>().color = Color.black;
     }
 
     public void putBackInHand()
@@ -67,6 +68,12 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
         GetComponent<Button>().interactable = true;
         //InitText.GetComponent<Image>().color = Color.white;
         Unhighlight();
+    }
+
+    public void ReturnToNormalColor()
+    {
+        if (Lost) { GetComponent<Image>().color = Color.black; }
+        else { GetComponent<Image>().color = Color.white; }
     }
 
     public void Unhighlight()
@@ -101,9 +108,9 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
     // Use this for initialization
     void Start () {
         myCard = GetComponentInChildren<CombatPlayerCard>();
+        //OGColor = GetComponent<Image>().color;
         OldScale = myCard.transform.localScale;
         myCard.gameObject.SetActive(false);
-        OGColor = GetComponent<Image>().color;
 
         InitText.text = myCard.Initiative.ToString();
 

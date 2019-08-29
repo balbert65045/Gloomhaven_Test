@@ -21,7 +21,8 @@ GameObject:
   - component: {fileID: 4560495298659866}
   - component: {fileID: 33902259724389554}
   - component: {fileID: 23264403903474344}
-  m_Layer: 0
+  - component: {fileID: 65841429339057036}
+  m_Layer: 9
   m_Name: Corner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4269683353531890}
   - component: {fileID: 114243967344807216}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Corner180-90
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50,8 +51,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1812974879381236}
-  m_LocalRotation: {x: 0.2588191, y: 0.9659258, z: 0, w: 0}
-  m_LocalPosition: {x: 94.658, y: 1.1978, z: -5.5298}
+  m_LocalRotation: {x: 0.33223152, y: 0.8172866, z: -0.4550193, w: -0.12092233}
+  m_LocalPosition: {x: 79.211334, y: -41.08309, z: -32.120205}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4560495298659866}
@@ -112,6 +113,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1570666997228060}
   m_Mesh: {fileID: 4300128, guid: 78f5761481a9c8f4b901dfed8748a045, type: 3}
+--- !u!65 &65841429339057036
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1570666997228060}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.980704, y: 0.25905886, z: 1.0665992}
+  m_Center: {x: -0.24744564, y: 0.03799976, z: 0.12933958}
 --- !u!114 &114243967344807216
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,6 +138,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NormalMaterial: {fileID: 2100000, guid: c20fe963048074042a2180ac6418a417, type: 2}
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
-  CamRot: 0
-  CamRotHigh: 0
-  CameraRotLow: 0
+  invisible: 0

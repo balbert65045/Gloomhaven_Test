@@ -38,11 +38,11 @@ public class Door : MonoBehaviour {
         {
             hex.HideHexEditor();
             hex.GetComponent<Node>().isAvailable = false;
-            hex.HideHexEnd();
             if (hex.EntityHolding != null)
             {
                 DestroyImmediate(hex.EntityHolding.gameObject);
             }
+            hex.HideHexEnd();
         }
     }
 

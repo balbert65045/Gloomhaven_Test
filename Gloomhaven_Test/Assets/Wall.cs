@@ -9,16 +9,26 @@ public class Wall : MonoBehaviour {
 
     Transform myCamera;
 
-    public float InvisibleDistance = 5;
-
-    float wallRotation;
-
-    bool invisible = false;
+    public bool invisible = false;
     MeshRenderer myWallMesh;
 	// Use this for initialization
 	void Start () {
         myCamera = FindObjectOfType<MyCameraController>().transform;
         myWallMesh = GetComponentInChildren<MeshRenderer>();
+    }
+
+    public void setInvisible()
+    {
+        myWallMesh = GetComponentInChildren<MeshRenderer>();
+        invisible = true;
+        myWallMesh.material = InvisibleMaterial;
+    }
+
+    public void ShowWall()
+    {
+        myWallMesh = GetComponentInChildren<MeshRenderer>();
+        invisible = false;
+        myWallMesh.material = NormalMaterial;
     }
 
     // Update is called once per frame

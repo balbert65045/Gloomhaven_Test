@@ -316,6 +316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myCard: {fileID: 0}
   showArea: {fileID: 0}
+  OGColor: {r: 1, g: 1, b: 1, a: 1}
   InitText: {fileID: 114521153129892326}
   basicAttack: 0
   Discarded: 0
@@ -1196,7 +1197,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1976333541098334}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.8765793, y: -50.475037, z: 0}
+  m_LocalPosition: {x: 2.8765793, y: 45, z: 0}
   m_LocalScale: {x: 0.57131976, y: 0.57131976, z: 0.57131976}
   m_Children:
   - {fileID: 224397395739907786}
@@ -1207,7 +1208,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.8765793, y: -50.475033}
+  m_AnchoredPosition: {x: 2.8765793, y: 45}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224856895754379532
