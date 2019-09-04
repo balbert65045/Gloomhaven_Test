@@ -4,32 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler{
-
-    public CombatPlayerCard myCard;
-    public HandCardShowArea showArea;
-
-    public Color OGColor;
-    private Vector3 OldScale;
+public class CombatPlayerCardButton : CardButton{
 
     public Text InitText;
 
     public bool basicAttack = false;
-    public bool Discarded = false;
-    public bool Lost = false;
 
     public CombatPlayerCard getMyCard()
     {
-        return myCard;
+        return (CombatPlayerCard)myCard;
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public override void OnPointerEnter(PointerEventData eventData)
     {
-        showCard();
-        FindObjectOfType<CombatPlayerHand>().ShowPotential(myCard);
+        base.OnPointerEnter(eventData);
+        FindObjectOfType<CombatPlayerHand>().ShowPotential((CombatPlayerCard)myCard);
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public override void OnPointerExit(PointerEventData eventData)
     {
         CombatPlayerHand hand = FindObjectOfType<CombatPlayerHand>();
         if (hand.getSelectedCard() == null)
@@ -44,32 +36,6 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
         unShowCard();
     }
 
-    public void DiscardCard()
-    {
-        Discarded = true;
-        GetComponent<Image>().color = Color.red;
-        GetComponent<Button>().interactable = false;
-        Unhighlight();
-    }
-
-    public void LoseCard()
-    {
-        Discarded = false;
-        Lost = true;
-        GetComponent<Image>().color = Color.black;
-        GetComponent<Button>().interactable = false;
-        //GetComponent<Image>().color = Color.black;
-    }
-
-    public void putBackInHand()
-    {
-        Lost = false;
-        Discarded = false;
-        GetComponent<Button>().interactable = true;
-        //InitText.GetComponent<Image>().color = Color.white;
-        Unhighlight();
-    }
-
     public void ReturnToNormalColor()
     {
         if (Lost) { GetComponent<Image>().color = Color.black; }
@@ -82,38 +48,16 @@ public class CombatPlayerCardButton : MonoBehaviour, IPointerEnterHandler, IPoin
         else { GetComponent<Image>().color = OGColor; }
     }
 
-    public void SelectCard()
+    public override void showCard()
     {
-        GetComponent<Image>().color = Color.blue;
-        GetComponentInParent<CombatPlayerHand>().SelectCard(myCard);
-    }
-
-    void showCard()
-    {
-        myCard.transform.SetParent(showArea.transform);
-        myCard.transform.localPosition = Vector3.zero;
-        myCard.transform.localScale = OldScale;
-        myCard.gameObject.SetActive(true);
-        myCard.SetUpCardActions();
-    }
-
-    public void unShowCard()
-    {
-        myCard.transform.SetParent(this.transform);
-        myCard.transform.localPosition = Vector3.zero;
-        myCard.transform.localScale = OldScale;
-        myCard.gameObject.SetActive(false);
+        base.showCard();
+        ((CombatPlayerCard)myCard).SetUpCardActions();
     }
 
     // Use this for initialization
-    void Start () {
-        myCard = GetComponentInChildren<CombatPlayerCard>();
-        //OGColor = GetComponent<Image>().color;
-        OldScale = myCard.transform.localScale;
-        myCard.gameObject.SetActive(false);
-
-        InitText.text = myCard.Initiative.ToString();
-
+    public override void Start () {
+        base.Start();
+        InitText.text = ((CombatPlayerCard)myCard).Initiative.ToString();
     }
 	
 	// Update is called once per frame

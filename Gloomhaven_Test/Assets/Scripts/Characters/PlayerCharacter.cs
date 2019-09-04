@@ -69,8 +69,8 @@ public class PlayerCharacter : Character
 
     public override void ShowViewArea(Hex hex, int distance)
     {
-        List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1);
-        List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance);
+        List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1, true);
+        List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance, true);
         foreach (Node node in nodesAlmostSeen)
         {
             if (!node.Shown && nodesSeen.Contains(node))
@@ -99,15 +99,8 @@ public class PlayerCharacter : Character
 
     public override void FinishedMoving(Hex hex)
     {
+        HexMovingTo.CharacterArrivedAtHex();
         FindObjectOfType<PlayerController>().FinishedMoving();
-        if (HexOn.GetComponent<Door>() != null && !HexOn.GetComponent<Door>().isOpen)
-        {
-            FindObjectOfType<PlayerController>().AllowOpenDoor();
-        }
-        else
-        {
-            FindObjectOfType<PlayerController>().CheckToHideOpenDoor();
-        }
     }
 
     public override void FinishedAttacking()
@@ -139,7 +132,7 @@ public class PlayerCharacter : Character
     //CARDS
     public override bool SavingThrow()
     {
-        SavingThrowUsed = playerController.LoseCardInHand();
+        SavingThrowUsed = GetMyCombatHand().LoseRandomCard();
         return SavingThrowUsed;
     }
 
@@ -168,4 +161,16 @@ public class PlayerCharacter : Character
             LoseCard();
         }
     }
+
+    public override void ShowNewMoveArea()
+    {
+        FindObjectOfType<CombatActionController>().ShowMoveArea();
+    }
+
+    public override void Die()
+    {
+        FindObjectOfType<PlayerController>().CharacterDied(this);
+        base.Die();
+    }
+
 }

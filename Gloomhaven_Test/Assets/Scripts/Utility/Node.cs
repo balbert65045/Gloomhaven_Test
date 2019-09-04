@@ -5,6 +5,7 @@ using UnityEngine;
 public class Node : MonoBehaviour
 {
     public List<string> RoomName;
+    public bool edge = false;
     public bool isAvailable = true;
     public bool Shown = false;
 
@@ -21,9 +22,9 @@ public class Node : MonoBehaviour
 
     public Hex NodeHex;
 
-    public bool isConnectedToRoom(Node node)
+    public bool isConnectedToRoom(Node node, bool edgeAvailable)
     {
-        if (node.isAvailable)
+        if (node.isAvailable || (node.edge  && edgeAvailable))
         {
             if (node.RoomName.Count == this.RoomName.Count && node.RoomName[0] == this.RoomName[0])
             {

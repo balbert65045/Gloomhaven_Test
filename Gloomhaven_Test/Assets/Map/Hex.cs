@@ -8,6 +8,8 @@ public class Hex : MonoBehaviour {
     public float EntityOffset = 0.1f;
     public Entity EntityHolding;
     public bool Hidden = true;
+    public bool MovedTo = false;
+    public bool InEnemySeight = false;
 
 
     public Material SelectionHighlightMaterial;
@@ -39,6 +41,27 @@ public class Hex : MonoBehaviour {
             HideHex();
         }
     }
+
+    public void setUpHexes()
+    {
+        if (EntityToSpawn != null && EntityToSpawn.GetComponent<EnemyCharacter>() != null)
+        {
+            int viewDistance = EntityToSpawn.GetComponent<EnemyCharacter>().ViewDistance;
+            List<Node> nodesInEnemyView = FindObjectOfType<HexMapController>().GetNodesAtDistanceFromNode(this.HexNode, viewDistance);
+            foreach (Node node in nodesInEnemyView)
+            {
+                node.NodeHex.InEnemySeight = true;
+            }
+        }
+    }
+
+    public void TakeAwayThreatArea()
+    {
+        InEnemySeight = false;
+    }
+
+    public void CharacterMovingToHex() { MovedTo = true; }
+    public void CharacterArrivedAtHex() { MovedTo = false; }
 
     public void ShowHexEditor()
     {

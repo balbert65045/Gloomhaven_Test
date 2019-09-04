@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OutOfCombatCard : MonoBehaviour {
+public class OutOfCombatCard : Card {
 
     public OutOfCombatAction[] actions;
 

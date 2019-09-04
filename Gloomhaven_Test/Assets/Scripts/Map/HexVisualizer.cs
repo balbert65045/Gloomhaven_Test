@@ -133,6 +133,14 @@ public class HexVisualizer : MonoBehaviour {
                             LastHexesChanged.Add(hex);
                         }
                         break;
+                    case OutOfCombatActionType.Heal:
+                        ClearLastChangedHexSelf();
+                        if (hex == myCharacter.HexOn)
+                        {
+                            hex.HighlightHealRPoint();
+                            LastHexesChanged.Add(hex);
+                        }
+                        break;
                 }
             }
         }

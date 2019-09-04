@@ -13,9 +13,16 @@ public class EnemyGroup : MonoBehaviour {
 
     public int currentCharacterIndex = 0;
 
+    MyCameraController myCamera;
+    CharacterViewer characterViewer;
+
+    //public List<EnemyCharacter> charactersOut = new List<EnemyCharacter>();
+
     // Use this for initialization
     void Start()
     {
+        myCamera = FindObjectOfType<MyCameraController>();
+        characterViewer = FindObjectOfType<CharacterViewer>();
         EnemyActionDeck[] decks = FindObjectsOfType<EnemyActionDeck>();
         foreach (EnemyActionDeck deck in decks)
         {
@@ -35,12 +42,7 @@ public class EnemyGroup : MonoBehaviour {
 
     public bool hasCharactersOut()
     {
-        EnemyCharacter[] characters = FindObjectsOfType<EnemyCharacter>();
-        foreach (EnemyCharacter character in characters)
-        {
-            if (character.CharacterName == CharacterNameLinkedTo) { return true; }
-        }
-        return false;
+        return linkedCharacters.Count != 0;
     }
 
     public void LinkCharacterToGroup(EnemyCharacter character)
@@ -117,12 +119,12 @@ public class EnemyGroup : MonoBehaviour {
     IEnumerator WaitAndPerformCharacterAction()
     {
         EnemyCharacter character = linkedCharacters[currentCharacterIndex];
-        FindObjectOfType<MyCameraController>().SetTarget(character.transform);
-        FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
-        FindObjectOfType<CharacterViewer>().ShowActionCard(currentAction.gameObject);
+        myCamera.SetTarget(character.transform);
+        characterViewer.ShowCharacterStats(character.CharacterName, character.enemySprite, character);
+        characterViewer.ShowActionCard(currentAction.gameObject);
         currentAction.setUpCard(character.Strength, character.Agility, character.Dexterity);
         yield return new WaitForSeconds(.5f);
         currentCharacterIndex++;
-        character.PerformAction(currentAction.MovementIncrease, currentAction.DamageIncrease, currentAction.RangeIncrease, currentAction.MovementAvailable, currentAction.AttackAvailable, currentAction.HealAmount, currentAction.ShieldAmount);
+        character.PerformAction(currentAction.Movement, currentAction.Damage, currentAction.Range, currentAction.MovementAvailable, currentAction.AttackAvailable, currentAction.HealAmount, currentAction.ShieldAmount);
     }
 }

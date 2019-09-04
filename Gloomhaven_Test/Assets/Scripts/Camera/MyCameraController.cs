@@ -38,39 +38,39 @@ public class MyCameraController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (target != null)
+        if (Input.GetKey(KeyCode.S))
+        {
+            target = null;
+            Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.forward * moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
+        } else if (Input.GetKey(KeyCode.A))
+        {
+            target = null;
+            Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.right * moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
+        }
+        else if (Input.GetKey(KeyCode.W))
+        {
+            target = null;
+            Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.forward * -moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            target = null;
+            Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.right * -moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
+        }
+        else if (target != null)
         {
             Pivot.transform.position = target.transform.position;
         }
-        else
+
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (Input.GetKey(KeyCode.S))
-            {
-                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.forward * moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
-            } else if (Input.GetKey(KeyCode.A))
-            {
-                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.right * moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
-            }
-            else if (Input.GetKey(KeyCode.W))
-            {
-                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.forward * -moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
-            }
-            else if (Input.GetKey(KeyCode.D))
-            {
-                Pivot.transform.localPosition = Vector3.Lerp(Pivot.transform.right * -moveDistance + Pivot.transform.localPosition, Pivot.transform.localPosition, .5f);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                RotationAngle *= Quaternion.AngleAxis(90, Vector3.up);
-            }
-            else if (Input.GetKeyDown(KeyCode.E))
-            {
-                RotationAngle *= Quaternion.AngleAxis(-90, Vector3.up);
-            }
-
-            Pivot.transform.rotation = Quaternion.Lerp(Pivot.transform.rotation, RotationAngle, 10 * Time.deltaTime);
-
+            RotationAngle *= Quaternion.AngleAxis(90, Vector3.up);
         }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            RotationAngle *= Quaternion.AngleAxis(-90, Vector3.up);
+        }
+
+        Pivot.transform.rotation = Quaternion.Lerp(Pivot.transform.rotation, RotationAngle, 10 * Time.deltaTime);
 	}
 }

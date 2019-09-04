@@ -13,7 +13,16 @@ public class Door : MonoBehaviour {
         door.GetComponent<Animator>().SetTrigger("Open");
         foreach (Hex hex in hexesToOpenTo)
         {
-            hex.HexNode.isAvailable = true;
+            if (!hex.GetComponent<Node>().edge) {
+                hex.GetComponent<Node>().isAvailable = true;
+            }
+        }
+        foreach (Hex hex in hexesToOpenTo)
+        {
+            if (!hex.GetComponent<Node>().edge)
+            {
+                hex.setUpHexes();
+            }
         }
         isOpen = true;
     }
@@ -24,7 +33,7 @@ public class Door : MonoBehaviour {
         {
             hex.ShowHexEditor();
             hex.ShowHexEnd();
-            hex.GetComponent<Node>().isAvailable = true;
+            if (!hex.GetComponent<Node>().edge) { hex.GetComponent<Node>().isAvailable = true; }
             if (hex.EntityToSpawn != null)
             {
                 hex.GenerateCharacter();

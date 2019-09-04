@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CombatPlayerCard : MonoBehaviour
+public class CombatPlayerCard : Card
 {
     public bool LostAbilityUsed = false;
 
@@ -20,8 +20,7 @@ public class CombatPlayerCard : MonoBehaviour
     bool CardIncreased = false;
 
     public void SetUpCardActions()
-    {
-        
+    {      
         Character character = FindObjectOfType<PlayerController>().SelectPlayerCharacter;
         CardAbility.setUpCard(character.Strength, character.Agility, character.Dexterity);
     }

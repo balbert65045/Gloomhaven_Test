@@ -9,7 +9,10 @@ public class OutOfCombatActionController : MonoBehaviour {
     //private Character myCharacter;
     private Character characterSelected;
 
-    public OutOfCombatCard cardUsing = null; 
+    public OutOfCombatCard cardUsing = null;
+
+    public bool MovingIntoCombat;
+    public void FinishedMovingIntoCombat() { MovingIntoCombat = false; }
 
     // Use this for initialization
     void Start () {
@@ -20,7 +23,7 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void UnHighlightHexes()
     {
-        Hex[] hexes = FindObjectsOfType<Hex>();
+        Hex[] hexes = FindObjectOfType<HexMapController>().AllHexes;
         foreach (Hex hex in hexes)
         {
             if (hex.HexNode.Shown)
@@ -92,8 +95,10 @@ public class OutOfCombatActionController : MonoBehaviour {
         if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
         {
             Hex hexSelected = Hit.transform.GetComponent<Hex>();
-            if (!hexSelected.EntityHolding && !myCharacter.GetComponent<CharacterAnimationController>().Moving)
+            if (hexSelected == null || !hexSelected.HexNode.Shown) { return; }
+            if (!hexSelected.EntityHolding && !hexSelected.MovedTo)
             {
+                if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
                 myCharacter.MoveOnPath(hexSelected);
                 return;
             }
@@ -129,6 +134,8 @@ public class OutOfCombatActionController : MonoBehaviour {
                 hexSelected = Hit.transform.GetComponent<Hex>();
             }
         }
+
+        if (hexSelected == null) { return; }
 
         switch (cardUsing.actions[0].thisActionType)
         {
@@ -180,7 +187,20 @@ public class OutOfCombatActionController : MonoBehaviour {
                     cardUsing = null;
                 }
                 break;
+            case OutOfCombatActionType.Heal:
+                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
+                {
+                    Heal(cardUsing.actions[0].Value);
+                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
+                    cardUsing = null;
+                }
+                break;
         }
+    }
+
+    void Heal(int value)
+    {
+        playerController.SelectPlayerCharacter.Heal(value);
     }
 
     void BuffRange(int value, int duration)

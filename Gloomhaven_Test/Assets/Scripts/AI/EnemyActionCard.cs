@@ -7,11 +7,11 @@ public class EnemyActionCard : MonoBehaviour {
     public bool Shuffle = false;
     public int Initiative;
     public bool AttackAvailable = true;
-    public int DamageIncrease = 0;
+    public int Damage = 0;
     public bool MovementAvailable = true;
-    public int MovementIncrease = 0;
+    public int Movement = 0;
 
-    public int RangeIncrease = 0;
+    public int Range = 0;
     public int HealAmount = 0;
 
     public int ShieldAmount = 0;

@@ -9,7 +9,7 @@ public class CharacterAnimationController : MonoBehaviour {
     Animator myAnimator;
     Vector3 movePosition;
     public bool Moving;
-    bool Attacking = false;
+    public bool Attacking = false;
     Hex hexMovingTo;
     List<Node> nodesMovingOn;
 

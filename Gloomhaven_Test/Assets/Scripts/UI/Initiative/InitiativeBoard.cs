@@ -73,7 +73,6 @@ public class InitiativeBoard : MonoBehaviour {
                 return;
             }
         }
-        Debug.Log("No name found");
     }
 
     public void OrganizeInits()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CombatPlayerHand : MonoBehaviour {
+public class CombatPlayerHand : Hand {
 
     public OutOfCombatHand outOfCombatHand;
     public CombatPlayerCard SelectedPlayerCard;
@@ -26,10 +26,10 @@ public class CombatPlayerHand : MonoBehaviour {
     }
 
 
-    public void SelectCard(CombatPlayerCard card)
+    public override void SelectCard(Card card)
     {
         if (card == null) { Debug.LogWarning("Null card was chosen make sure button is wired properly"); }
-        SelectedPlayerCard = card;
+        SelectedPlayerCard = (CombatPlayerCard)card;
         CombatPlayerCardButton[] cardButtons = GetComponentsInChildren<CombatPlayerCardButton>();
         foreach (CombatPlayerCardButton button in cardButtons)
         {
@@ -88,7 +88,6 @@ public class CombatPlayerHand : MonoBehaviour {
         {
             if (!cardButton.Discarded && !cardButton.Lost) {
                 cardButton.GetComponent<Button>().interactable = true;
-                cardButton.Unhighlight();
             }
         }
         ShortRestButton.interactable = ShortRestReady();
@@ -212,8 +211,6 @@ public class CombatPlayerHand : MonoBehaviour {
     // Use this for initialization
     void Start () {
         playerController = FindObjectOfType<PlayerController>();
-      //  myCardsInHand.AddRange(GetComponentsInChildren<CombatPlayerCardButton>());
-   //     playerController.SetUpCharacterHand(myCardsInHand.Count - 1);
     }
 
     public int CheckCardsInHand()
@@ -222,8 +219,4 @@ public class CombatPlayerHand : MonoBehaviour {
         return (myCardsInHand.Count - 1);
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

@@ -23,6 +23,7 @@ public class CombatActionController : MonoBehaviour {
     private Character characterSelected;
 
     public int ActionIndex = 0;
+    bool PerformingAction = false;
 
     // Use this for initialization
     void Start () {
@@ -94,6 +95,7 @@ public class CombatActionController : MonoBehaviour {
 
     public void SwitchAction()
     {
+        if (PerformingAction) { return; }
         if (ActionsAllUsed()) { return; }
         int NewActionIndex = findNextActionIndex(ActionIndex);
         SetCurrentActionAs(NewActionIndex);
@@ -130,7 +132,7 @@ public class CombatActionController : MonoBehaviour {
 
     public void UnHighlightHexes()
     {
-        Hex[] hexes = FindObjectsOfType<Hex>();
+        Hex[] hexes = FindObjectOfType<HexMapController>().AllHexes;
         foreach (Hex hex in hexes)
         {
             if (hex.HexNode.Shown)
@@ -152,6 +154,7 @@ public class CombatActionController : MonoBehaviour {
 
     public bool UseAction(Action action)
     {
+        if (PerformingAction) { return false; }
         RaycastHit Hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
@@ -181,6 +184,7 @@ public class CombatActionController : MonoBehaviour {
     {
         if (action.Range == 0 && action.thisAOE.thisAOEType == AOEType.SingleTarget)
         {
+            PerformingAction = true;
             playerController.SelectPlayerCharacter.Shield(action.thisAOE.Damage);
             return true;
         }
@@ -192,6 +196,7 @@ public class CombatActionController : MonoBehaviour {
         //Heal self
         if (action.Range == 0 && action.thisAOE.thisAOEType == AOEType.SingleTarget)
         {
+            PerformingAction = true;
             playerController.SelectPlayerCharacter.Heal(action.thisAOE.Damage);
             return true;
         }
@@ -227,6 +232,7 @@ public class CombatActionController : MonoBehaviour {
         if ( charactersAttacking.Count == 0) { return false; }
         playerController.DisableEndTurn();
         myCharacter.Attack(action.thisAOE.Damage + myCharacter.Strength, charactersAttacking);
+        PerformingAction = true;
         return success;
     }
 
@@ -245,6 +251,7 @@ public class CombatActionController : MonoBehaviour {
             }
             FindObjectOfType<MyCameraController>().SetTarget(myCharacter.transform);
             playerController.DisableEndTurn();
+            PerformingAction = true;
             return true;
         }
         return false;
@@ -252,6 +259,7 @@ public class CombatActionController : MonoBehaviour {
 
     public void FinishedMoving()
     {
+        PerformingAction = false;
         playerController.AllowEndTurn();
         FindObjectOfType<MyCameraController>().UnLockCamera();
         MoveToNextAbility();
@@ -261,6 +269,7 @@ public class CombatActionController : MonoBehaviour {
     {
         if (Attacking != false)
         {
+            PerformingAction = false;
             playerController.AllowEndTurn();
             Attacking = false;
             MoveToNextAbility();
@@ -269,11 +278,13 @@ public class CombatActionController : MonoBehaviour {
 
     public void FinishedHealing()
     {
+        PerformingAction = false;
         MoveToNextAbility();
     }
 
     public void FinishedShielding()
     {
+        PerformingAction = false;
         MoveToNextAbility();
     }
 
@@ -386,6 +397,16 @@ public class CombatActionController : MonoBehaviour {
                 }
                 return;
             }
+        }
+    }
+
+    public void ShowMoveArea()
+    {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
+
+        if (myCurrentAction.thisActionType == ActionType.Movement)
+        {
+            ShowMoveDistance(myCurrentAction.Range + myCharacter.Agility);
         }
     }
 

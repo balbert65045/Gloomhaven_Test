@@ -64,12 +64,14 @@ public class Character : Entity {
     public List<Node> NodesInAttackRange = new List<Node>();
 
     int TotalHealthLosing;
-    private bool GoingToDie = false;
+    public bool GoingToDie = false;
 
     public List<Buff> Buffs = new List<Buff>();
 
     public bool Stealthed = false;
     public int StealthDuration = 0;
+
+    protected Hex HexMovingTo;
 
     public void ApplyBuff(int value, int duration, BuffType buffType)
     {
@@ -238,14 +240,25 @@ public class Character : Entity {
 
     public void finishedTakingDamage()
     {
-        characterThatAttackedMe.FinishedAttacking();
         if (GoingToDie) {
             GetComponent<CharacterAnimationController>().Die();
         }
+        else
+        {
+            characterThatAttackedMe.FinishedAttacking();
+        }
+    }
+
+    public virtual void ShowNewMoveArea()
+    {
+
     }
 
     public virtual void Die()
     {
+        characterThatAttackedMe.FinishedAttacking();
+        HexOn.RemoveEntityFromHex();
+        characterThatAttackedMe.ShowNewMoveArea();
         Destroy(this.gameObject);
     }
 
@@ -424,6 +437,8 @@ public class Character : Entity {
 
     public void MoveOnPath(Hex hex)
     {
+        HexMovingTo = hex;
+        HexMovingTo.CharacterMovingToHex();
         RemoveLinkFromHex();
         if (hex == HexOn) { FinishedMoving(hex); }
         List<Node> nodes = GetPath(hex.HexNode);

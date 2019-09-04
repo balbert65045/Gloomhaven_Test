@@ -11,6 +11,7 @@ public enum OutOfCombatActionType
     BuffRange = 4,
     BuffArmor = 5,
     Stealth = 6,
+    Heal = 7,
 }
 
 [System.Serializable]

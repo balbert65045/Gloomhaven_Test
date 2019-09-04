@@ -22,6 +22,7 @@ public class HexMapController : MonoBehaviour {
     public LayerMask HexLayer;
 
     public Node[,] Map;
+    public Hex[] AllHexes;
         //= new Node[11, 11];
 
 
@@ -30,6 +31,7 @@ public class HexMapController : MonoBehaviour {
         gridHeight = hexBuilder.gridHeight;
         gridWidth = hexBuilder.gridWidth;
         Map = new Node[gridWidth, gridHeight];
+        AllHexes = GetComponentsInChildren<Hex>();
     }
 
 
@@ -74,7 +76,7 @@ public class HexMapController : MonoBehaviour {
     }
 
 
-    public List<Node> GetNodesAtDistanceFromNode(Node StartNode, int distance)
+    public List<Node> GetNodesAtDistanceFromNode(Node StartNode, int distance, bool edge = false)
     {
         List<Node> NodesChecked = new List<Node>();
         List<Node> NodesToCheckInDistance = new List<Node>();
@@ -85,7 +87,7 @@ public class HexMapController : MonoBehaviour {
             int CurrentAmountToCheck = NodesToCheckInDistance.Count;
             for (int j = 0; j < CurrentAmountToCheck; j++)
             {
-                List<Node> AdjacentNodes = GetNodesAdjacent(NodesToCheckInDistance[0]);
+                List<Node> AdjacentNodes = GetNodesAdjacent(NodesToCheckInDistance[0], edge);
                 foreach (Node node in AdjacentNodes)
                 {
                     if (NodesChecked.Contains(node) || NodesToCheckInDistance.Contains(node)) { continue; }
@@ -100,7 +102,7 @@ public class HexMapController : MonoBehaviour {
     }
 
 
-    public List<Node> GetNodesAdjacent(Node node)
+    public List<Node> GetNodesAdjacent(Node node, bool edge = false)
     {
         List<Node> AdjacentNodes = new List<Node>();
 
@@ -123,7 +125,7 @@ public class HexMapController : MonoBehaviour {
         List<Node> AdjacentNodesAvailable = new List<Node>();
         foreach(Node aNode in AdjacentNodes)
         {
-            if (node.isConnectedToRoom(aNode)) { AdjacentNodesAvailable.Add(aNode); }
+            if (node.isConnectedToRoom(aNode, edge)) { AdjacentNodesAvailable.Add(aNode); }
         }
 
         return AdjacentNodesAvailable;
@@ -192,6 +194,7 @@ public class HexMapController : MonoBehaviour {
 
     bool CheckifBlocked(Node StartNode, Node EndNode)
     {
+        //Way to intensive!!
         Vector3 DirectionVector = (EndNode.transform.position - StartNode.transform.position).normalized;
         float Distance = (EndNode.transform.position - StartNode.transform.position).magnitude;
         Ray NodeRay = new Ray(StartNode.transform.position + Vector3.up * .1f, DirectionVector);

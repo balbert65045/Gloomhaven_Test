@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OutOfCombatHand : MonoBehaviour {
+public class OutOfCombatHand : Hand {
 
     public GameObject Hand;
     public Button LongRestButton;
@@ -85,16 +85,17 @@ public class OutOfCombatHand : MonoBehaviour {
             linkedButton.unShowCard();
             myCard = null;
             linkedButton = null;
+            allowLongRest();
         }
     }
 
-    public void SelectCard(OutOfCombatCard card)
+    public override void SelectCard(Card card)
     {
         if (myCard != null)
         {
             linkedButton.unShowCard();
         }
-        myCard = card;
+        myCard = (OutOfCombatCard)card;
 
         OutOfCombatCardButton[] cardButtons = GetComponentsInChildren<OutOfCombatCardButton>();
         foreach (OutOfCombatCardButton cardButton in cardButtons)
@@ -103,7 +104,6 @@ public class OutOfCombatHand : MonoBehaviour {
             else { linkedButton = cardButton; }
         }
         FindObjectOfType<PlayerController>().SelectCard();
-        //allowLongRest();
     }
 
     public void allowLongRest()
@@ -130,14 +130,4 @@ public class OutOfCombatHand : MonoBehaviour {
         }
         combatHand.LongRest();
     }
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

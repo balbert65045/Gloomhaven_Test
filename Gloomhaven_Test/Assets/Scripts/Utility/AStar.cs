@@ -94,9 +94,6 @@ public class AStar : MonoBehaviour
         nodes = Map;
         foreach (Node node in nodes)
         {
-            Debug.Log(startNode);
-            Debug.Log(startNode.Location.X);
-            Debug.Log(node);
             node.CalculateG(startNode.Location);
             node.CalculateH(endNode.Location);
             node.State = NodeState.Untested;
@@ -284,7 +281,7 @@ public class AStar : MonoBehaviour
             if (node.State == NodeState.Closed)
                 continue;
 
-            if (!fromNode.isConnectedToRoom(node))
+            if (!fromNode.isConnectedToRoom(node, false))
                 continue;
 
             // Already-open nodes are only added to the list if their G-value is lower going via this route.
