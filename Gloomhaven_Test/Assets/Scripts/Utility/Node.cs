@@ -13,9 +13,9 @@ public class Node : MonoBehaviour
     public int Y;
 
     public Point Location { get; set; }
-    public bool IsWalkable { get; set; }
-    public float G { get; private set; }
-    public float H { get; private set; }
+    public bool IsWalkable;
+    public float G;
+    public float H;
     public float F { get { return this.G + this.H; } }
     public NodeState State { get; set; }
     public Node ParentNode { get; set; }
@@ -58,34 +58,41 @@ public class Node : MonoBehaviour
         return 1;
     }
 
-    public void CalculateG(Point StartPoint)
+    public void CalculateG(Node StartPoint)
     {
-        int dx = (StartPoint.X - this.Location.X);
-        int dy = (StartPoint.Y - this.Location.Y);
-        if (Mathf.Sign(dx) == Mathf.Sign(dy))
-        {
-            G = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
-        }
-        else
-        {
-            G = Mathf.Abs(dx) + Mathf.Abs(dy);
-        }
+        G = (StartPoint.transform.position - transform.position).magnitude;
+
+
+
+        //int dx = (StartPoint.X - this.Location.X);
+        //int dy = (StartPoint.Y - this.Location.Y);
+        //if (Mathf.Sign(dx) == Mathf.Sign(dy))
+        //{
+        //    G = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+        //}
+        //else
+        //{
+        //    G = Mathf.Abs(dx) + Mathf.Abs(dy);
+        //}
         //G = Mathf.Abs(StartPoint.X - this.Location.X) + Mathf.Abs(StartPoint.Y - this.Location.Y);
     }
     
 
-    public void CalculateH(Point EndPoint)
-    {
-        int dx = (EndPoint.X - this.Location.X);
-        int dy = (EndPoint.Y - this.Location.Y);
-        if (Mathf.Sign(dx) == Mathf.Sign(dy))
-        {
-            H = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
-        }
-        else
-        {
-            H = Mathf.Abs(dx) + Mathf.Abs(dy);
-        }
+    public void CalculateH(Node EndPoint)
+    { 
+
+        H  = (EndPoint.transform.position - transform.position).magnitude;
+        //{
+        //    int dx = (EndPoint.X - this.Location.X);
+        //    int dy = (EndPoint.Y - this.Location.Y);
+        //    if (Mathf.Sign(dx) == Mathf.Sign(dy))
+        //    {
+        //        H = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
+        //    }
+        //    else
+        //    {
+        //        H = Mathf.Abs(dx) + Mathf.Abs(dy);
+        //    }
 
         //H = Mathf.Abs(EndPoint.X - this.Location.X) + Mathf.Abs(EndPoint.Y - this.Location.Y);
     }

@@ -50,9 +50,9 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void FinishedMoving()
     {
-        UnHighlightHexes();
-        playerController.SelectPlayerCharacter.HexOn.HighlightSelection();
-        HighlightHexOver();
+        //UnHighlightHexes();
+        playerController.SelectPlayerCharacter.Selected();
+        //HighlightHexOver();
     }
 
     public void CheckToShowCharacterStats()
@@ -90,6 +90,7 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void CheckToMoveOutOfCombat(Character myCharacter)
     {
+        if (myCharacter.Moving) { return; }
         RaycastHit Hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
@@ -100,6 +101,7 @@ public class OutOfCombatActionController : MonoBehaviour {
             {
                 if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
                 myCharacter.MoveOnPath(hexSelected);
+                UnHighlightHexes();
                 return;
             }
         }

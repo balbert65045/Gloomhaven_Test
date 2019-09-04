@@ -25,8 +25,8 @@ public class AStar : MonoBehaviour
         nodes = Map;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode.Location);
-            node.CalculateH(endNode.Location);
+            node.CalculateG(startNode);
+            node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
 
@@ -56,8 +56,8 @@ public class AStar : MonoBehaviour
         nodes = Map;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode.Location);
-            node.CalculateH(endNode.Location);
+            node.CalculateG(startNode);
+            node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
             node.IsWalkable = true;
@@ -94,8 +94,8 @@ public class AStar : MonoBehaviour
         nodes = Map;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode.Location);
-            node.CalculateH(endNode.Location);
+            node.CalculateG(startNode);
+            node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
 
@@ -142,8 +142,8 @@ public class AStar : MonoBehaviour
         nodes = Map;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode.Location);
-            node.CalculateH(endNode.Location);
+            node.CalculateG(startNode);
+            node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
 
@@ -277,6 +277,8 @@ public class AStar : MonoBehaviour
             if (!node.IsWalkable)
                 continue;
 
+            if (!node.isAvailable)
+                continue;
             // Ignore already-closed nodes
             if (node.State == NodeState.Closed)
                 continue;

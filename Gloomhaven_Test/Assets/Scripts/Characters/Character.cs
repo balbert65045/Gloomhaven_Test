@@ -71,6 +71,12 @@ public class Character : Entity {
     public bool Stealthed = false;
     public int StealthDuration = 0;
 
+    public bool Moving = false;
+    public void SetMoving(bool value) { Moving = value; }
+
+    public bool Attacking = false;
+    public void SetAttacking(bool value) { Attacking = value; }
+
     protected Hex HexMovingTo;
 
     public void ApplyBuff(int value, int duration, BuffType buffType)

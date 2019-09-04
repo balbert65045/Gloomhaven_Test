@@ -328,6 +328,7 @@ public class PlayerController : MonoBehaviour {
         if (myState == PlayerState.OutofCombat)
         {
             if (outOfCombatController.MovingIntoCombat) { return; }
+            if (playerCharacter.Moving) { return; }
 
             UnHighlightHexes();
             if (SelectPlayerCharacter != null) { SelectPlayerCharacter.myDecks.SetActive(false); }
@@ -390,7 +391,7 @@ public class PlayerController : MonoBehaviour {
     {
         foreach (PlayerCharacter character in myCharacters)
         {
-            if (character.GetComponent<CharacterAnimationController>().Moving) { return true; }
+            if (character.Moving) { return true; }
         }
         return false;
     }

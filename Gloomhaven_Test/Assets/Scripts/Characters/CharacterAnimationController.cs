@@ -8,8 +8,6 @@ public class CharacterAnimationController : MonoBehaviour {
     Rigidbody myRigidbody;
     Animator myAnimator;
     Vector3 movePosition;
-    public bool Moving;
-    public bool Attacking = false;
     Hex hexMovingTo;
     List<Node> nodesMovingOn;
 
@@ -49,23 +47,23 @@ public class CharacterAnimationController : MonoBehaviour {
 
     public void Hit()
     {
-        Attacking = false;
+        myCharacter.SetAttacking(false);
         myCharacter.HitOpponent();
     }
 
     public void Attack()
     {
-        if (!Attacking)
+        if (!myCharacter.Attacking)
         {
             myAnimator.SetTrigger("Attack");
-            Attacking = true;
+            myCharacter.SetAttacking(true);
         }
     }
 
     public void MoveTowards(Hex hex, List<Node> nextNodes)
     {
         transform.LookAt(new Vector3(hex.transform.position.x, transform.position.y, hex.transform.position.z));
-        Moving = true;
+        myCharacter.SetMoving(true);
         myAnimator.SetBool("moving", true);
         hexMovingTo = hex;
         nodesMovingOn = nextNodes;
@@ -74,7 +72,7 @@ public class CharacterAnimationController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Moving)
+		if (myCharacter.Moving)
         {
             movePosition = new Vector3(hexMovingTo.transform.position.x, transform.position.y, hexMovingTo.transform.position.z);
             float difference = (transform.position - movePosition).magnitude;
@@ -99,7 +97,7 @@ public class CharacterAnimationController : MonoBehaviour {
 
         if (nodesMovingOn.Count == 0 || fight)
         {
-            Moving = false;
+            myCharacter.SetMoving(false);
             myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
             myAnimator.SetBool("moving", false);
             myCharacter.FinishedMoving(hexMovingTo);

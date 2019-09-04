@@ -54,6 +54,8 @@ public class PlayerCharacter : Character
         }
     }
 
+    public void Selected(){ if (!Moving) { HexOn.HighlightSelection(); }}
+
     //placeholder
     public void ShowHexes()
     {

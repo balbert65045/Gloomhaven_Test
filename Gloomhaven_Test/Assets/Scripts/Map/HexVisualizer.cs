@@ -74,7 +74,7 @@ public class HexVisualizer : MonoBehaviour {
 
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
         {
-            if (myCharacter.GetComponent<CharacterAnimationController>().Moving) { return; }
+            if (myCharacter.Moving) { return; }
             if (outOfCombatcontroller.cardUsing == null)
             {
                 ClearLastChangedHexes();
@@ -151,7 +151,7 @@ public class HexVisualizer : MonoBehaviour {
             {
                 case ActionType.Movement:
                 {
-                        if (myCharacter.GetComponent<CharacterAnimationController>().Moving) { return; }
+                        if (myCharacter.Moving) { return; }
                         if (LastHexesChanged.Count != 0)
                         {
                             foreach (Hex lastHex in LastHexesChanged)
