@@ -45,6 +45,7 @@ public class CombatPlayerCardButton : CardButton{
     public void Unhighlight()
     {
         if (Lost) { GetComponent<Image>().color = Color.black; }
+        else if (Discarded) { GetComponent<Image>().color = Color.red; }
         else { GetComponent<Image>().color = OGColor; }
     }
 

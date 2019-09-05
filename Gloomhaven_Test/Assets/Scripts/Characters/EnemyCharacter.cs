@@ -24,6 +24,7 @@ public class EnemyCharacter : Character {
     bool attackEnabled;
 
     public bool InCombat = false;
+    public bool Alerted = false;
 
     PlayerCharacter ClosestCharacter;
 
@@ -97,6 +98,7 @@ public class EnemyCharacter : Character {
     // Character has seen player and will show area around him and alert other enemies
     public void ShowHexesViewingAndAlertOthersToCombat()
     {
+        Alerted = true;
         StartCoroutine("ShowHexesViewingAndAlertOthersToCombatCo");
     }
 
@@ -111,7 +113,7 @@ public class EnemyCharacter : Character {
         EnemyCharacter[] EnemiesOut = FindObjectsOfType<EnemyCharacter>();
         foreach (EnemyCharacter character in EnemiesOut)
         {
-            if (character != this && nodesInView.Contains(character.HexOn.HexNode))
+            if (character != this && nodesInView.Contains(character.HexOn.HexNode) && !character.Alerted)
             {
                 character.ShowHexesViewingAndAlertOthersToCombat();
             }

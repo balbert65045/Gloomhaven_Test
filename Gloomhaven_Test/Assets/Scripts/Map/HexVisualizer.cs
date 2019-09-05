@@ -178,7 +178,8 @@ public class HexVisualizer : MonoBehaviour {
                 }
                 case ActionType.Attack:
                 {
-                        if (myCharacter.CheckIfinAttackRange(hex, myCharacter.CurrentAttackRange) && !combatcontroller.Attacking)
+                        if (combatcontroller.Attacking) { return; }
+                        if (myCharacter.CheckIfinAttackRange(hex, myCharacter.CurrentAttackRange))
                         {
                             if (LastHexesChanged.Count != 0) {
                                 foreach (Hex lastHex in LastHexesChanged)

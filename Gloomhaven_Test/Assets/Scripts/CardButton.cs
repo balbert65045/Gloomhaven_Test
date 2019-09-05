@@ -32,7 +32,7 @@ public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         Lost = false;
         Discarded = false;
         GetComponent<Button>().interactable = true;
-        GetComponent<Image>().color = OGColor;
+        GetComponent<Image>().color = Color.white;
     }
 
     public void DiscardCard()

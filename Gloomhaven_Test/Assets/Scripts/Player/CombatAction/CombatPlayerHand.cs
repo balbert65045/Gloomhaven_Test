@@ -12,7 +12,8 @@ public class CombatPlayerHand : Hand {
 
     private PlayerController playerController;
 
-    public List<CombatPlayerCardButton> myCardsInHand = new List<CombatPlayerCardButton>();
+    public List<CombatPlayerCardButton> AllCards = new List<CombatPlayerCardButton>();
+    public List<CombatPlayerCardButton> myCardsInHand;
 
     public CombatPlayerCardButton selectedCardLinkedButton;
     public CombatPlayerCard getSelectedCard()
@@ -24,7 +25,6 @@ public class CombatPlayerHand : Hand {
     {
         return myCardsInHand.Count;
     }
-
 
     public override void SelectCard(Card card)
     {
@@ -147,8 +147,7 @@ public class CombatPlayerHand : Hand {
 
     public void LongRest()
     {
-        CombatPlayerCardButton[] cardButtons = GetComponentsInChildren<CombatPlayerCardButton>();
-        foreach(CombatPlayerCardButton cardButton in cardButtons)
+        foreach(CombatPlayerCardButton cardButton in AllCards)
         {
             if (cardButton.Lost || cardButton.Discarded)
             {
@@ -173,6 +172,7 @@ public class CombatPlayerHand : Hand {
         CombatPlayerCardButton cardToLose = cardsInHand[randomCardIndex];
         cardToLose.LoseCard();
         myCardsInHand.Remove(cardToLose);
+        outOfCombatHand.allowLongRest();
         return true;
     }
 

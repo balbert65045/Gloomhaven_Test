@@ -94,7 +94,6 @@ public class PlayerController : MonoBehaviour {
             if (myState == PlayerState.OutofCombat)
             {
                 outOfCombatController.UseAction(SelectPlayerCharacter);
-                //outOfCombatController.CheckToMoveOutOfCombat(SelectPlayerCharacter);
             }
             else if (myState == PlayerState.InCombat && myCombatState == CombatState.UsingCombatCards)
             {

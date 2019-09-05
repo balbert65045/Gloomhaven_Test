@@ -120,13 +120,27 @@ public class OutOfCombatHand : Hand {
         {
             if (cardButton.Discarded) { discardedCards.Add(cardButton); }
         }
-        int randomCardIndex = Random.Range(0, discardedCards.Count);
-        OutOfCombatCardButton cardToLose = discardedCards[randomCardIndex];
-        cardToLose.LoseCard();
-        discardedCards.Remove(cardToLose);
-        foreach (OutOfCombatCardButton cardButton in discardedCards)
+        if (discardedCards.Count != 0)
         {
-            cardButton.putBackInHand();
+            int randomCardIndex = Random.Range(0, discardedCards.Count);
+            OutOfCombatCardButton cardToLose = discardedCards[randomCardIndex];
+            cardToLose.LoseCard();
+            discardedCards.Remove(cardToLose);
+            foreach (OutOfCombatCardButton cardButton in discardedCards)
+            {
+                cardButton.putBackInHand();
+            }
+        }
+        else
+        {
+            List<OutOfCombatCardButton> cardsAvailable = new List<OutOfCombatCardButton>();
+            foreach (OutOfCombatCardButton cardButton in cardButtons)
+            {
+                if (!cardButton.Lost) { cardsAvailable.Add(cardButton); }
+            }
+            int randomCardIndex = Random.Range(0, cardsAvailable.Count);
+            OutOfCombatCardButton cardToLose = cardsAvailable[randomCardIndex];
+            cardToLose.LoseCard();
         }
         combatHand.LongRest();
     }
