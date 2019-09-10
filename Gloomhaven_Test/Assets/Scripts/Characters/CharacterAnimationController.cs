@@ -53,7 +53,7 @@ public class CharacterAnimationController : MonoBehaviour {
 
     public void Attack()
     {
-        if (!myCharacter.Attacking)
+        if (!myCharacter.GetAttacking())
         {
             myAnimator.SetTrigger("Attack");
             myCharacter.SetAttacking(true);
@@ -72,7 +72,7 @@ public class CharacterAnimationController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (myCharacter.Moving)
+		if (myCharacter.GetMoving())
         {
             movePosition = new Vector3(hexMovingTo.transform.position.x, transform.position.y, hexMovingTo.transform.position.z);
             float difference = (transform.position - movePosition).magnitude;
@@ -86,11 +86,11 @@ public class CharacterAnimationController : MonoBehaviour {
     void MoveToNextPosition()
     {
         myCharacter.LinktoHex(hexMovingTo);
-        if (myCharacter.Stealthed) { myCharacter.ReduceStealthDuration(); }
+        if (myCharacter.GetStealthed()) { myCharacter.ReduceStealthDuration(); }
         myCharacter.ShowViewArea(hexMovingTo, GetComponent<Character>().ViewDistance);
 
         bool fight = false;
-        if (!myCharacter.Stealthed)
+        if (!myCharacter.GetStealthed())
         {
             fight = myCharacter.CheckToFight(); 
         }

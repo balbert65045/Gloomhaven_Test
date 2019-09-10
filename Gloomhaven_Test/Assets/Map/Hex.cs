@@ -11,7 +11,6 @@ public class Hex : MonoBehaviour {
     public bool MovedTo = false;
     public bool InEnemySeight = false;
 
-
     public Material SelectionHighlightMaterial;
     public Material MovePointHighlightMaterial;
     public Material MoveRangeHighlightMaterial;
@@ -20,15 +19,10 @@ public class Hex : MonoBehaviour {
     public Material HealPointHighlightMaterial;
     public Material HealRangeHighlightMaterial;
     public Material ShieldRangeHighlightMaterial;
-
     public Material InvisibleMaterial;
     public Material SlightlyVisibleMaterial;
-
     public Material OGMaterial;
-
     public Material previousMaterial;
-
-    public bool BlockingLineOfSight = false;
 
     public Node HexNode;
 
@@ -144,38 +138,31 @@ public class Hex : MonoBehaviour {
 
     public void HighlightSelection()
     {
-       // if (SelectionHighlightMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = SelectionHighlightMaterial;
-        //previousMaterial = GetComponent<MeshRenderer>().material;
     }
 
     public void HighlightShieldlRange()
     {
-        //if (ShieldRangeHighlightMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = ShieldRangeHighlightMaterial;
     }
 
     public void HighlightHealRPoint()
     {
-        //if (HealPointHighlightMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = HealPointHighlightMaterial;
     }
 
     public void HighlightHealRange()
     {
-        //if (HealRangeHighlightMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = HealRangeHighlightMaterial;
     }
 
     public void HighlightMovePoint()
     {
-        //if (MovePointHighlightMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = MovePointHighlightMaterial;
     }
 
     public void HighlightMoveRange()
     {
-        //if (MoveRangeHighlightMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = MoveRangeHighlightMaterial;
     }
 
@@ -198,7 +185,6 @@ public class Hex : MonoBehaviour {
 
     public void UnHighlight()
     {
-        //if (OGMaterial != GetComponent<MeshRenderer>().material) { previousMaterial = GetComponent<MeshRenderer>().material; }
         GetComponent<MeshRenderer>().material = OGMaterial;
         previousMaterial = GetComponent<MeshRenderer>().material;
     }

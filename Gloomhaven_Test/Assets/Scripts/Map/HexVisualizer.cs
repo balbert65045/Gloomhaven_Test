@@ -74,7 +74,7 @@ public class HexVisualizer : MonoBehaviour {
 
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
         {
-            if (myCharacter.Moving) { return; }
+            if (myCharacter.GetMoving()) { return; }
             if (outOfCombatcontroller.cardUsing == null)
             {
                 ClearLastChangedHexes();
@@ -151,12 +151,12 @@ public class HexVisualizer : MonoBehaviour {
             {
                 case ActionType.Movement:
                 {
-                        if (myCharacter.Moving) { return; }
+                        if (myCharacter.GetMoving()) { return; }
                         if (LastHexesChanged.Count != 0)
                         {
                             foreach (Hex lastHex in LastHexesChanged)
                             {
-                                if (myCharacter.HexInMoveRange(lastHex, myCharacter.CurrentMoveRange))
+                                if (myCharacter.HexInMoveRange(lastHex, myCharacter.GetCurrentMoveRange()))
                                 {
                                     // The hex my character is on keep OG color
                                     if (myCharacter.HexOn == lastHex) { lastHex.UnHighlight(); }
@@ -170,7 +170,7 @@ public class HexVisualizer : MonoBehaviour {
                             }
                             LastHexesChanged.Clear();
                         }
-                        if (myCharacter.HexInMoveRange(hex, myCharacter.CurrentMoveRange))
+                        if (myCharacter.HexInMoveRange(hex, myCharacter.GetCurrentMoveRange()))
                         {
                             HighlightMovePath(hex);
                         }
@@ -179,12 +179,12 @@ public class HexVisualizer : MonoBehaviour {
                 case ActionType.Attack:
                 {
                         if (combatcontroller.Attacking) { return; }
-                        if (myCharacter.CheckIfinAttackRange(hex, myCharacter.CurrentAttackRange))
+                        if (myCharacter.CheckIfinAttackRange(hex, myCharacter.GetCurrentAttackRange()))
                         {
                             if (LastHexesChanged.Count != 0) {
                                 foreach (Hex lastHex in LastHexesChanged)
                                 {
-                                    if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.CurrentAttackRange))
+                                    if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.GetCurrentAttackRange()))
                                     {
                                         lastHex.HighlightAttackRange();
                                     }
@@ -203,7 +203,7 @@ public class HexVisualizer : MonoBehaviour {
                             {
                                 foreach (Hex lastHex in LastHexesChanged)
                                 {
-                                    if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.CurrentAttackRange))
+                                    if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.GetCurrentAttackRange()))
                                     {
                                         lastHex.HighlightAttackRange();
                                     }

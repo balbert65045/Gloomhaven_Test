@@ -80,7 +80,7 @@ public class EnemyGroup : MonoBehaviour {
         else if (currentCharacterIndex < linkedCharacters.Count)
         {
             EnemyCharacter character = linkedCharacters[currentCharacterIndex];
-            if (character.hasSummonSickness())
+            if (character.GetSummonSickness())
             {
                 currentCharacterIndex++;
                 performNextCharacterAction();
@@ -111,7 +111,7 @@ public class EnemyGroup : MonoBehaviour {
         foreach (Character character in linkedCharacters)
         {
             character.DecreaseBuffsDuration();
-            character.resetShield(character.Armor);
+            character.resetShield(character.GetArmor());
             character.SetSummonSickness(false);
         }
     }
@@ -122,7 +122,7 @@ public class EnemyGroup : MonoBehaviour {
         myCamera.SetTarget(character.transform);
         characterViewer.ShowCharacterStats(character.CharacterName, character.enemySprite, character);
         characterViewer.ShowActionCard(currentAction.gameObject);
-        currentAction.setUpCard(character.Strength, character.Agility, character.Dexterity);
+        currentAction.setUpCard(character.GetStrength(), character.GetAgility(), character.GetDexterity());
         yield return new WaitForSeconds(.5f);
         currentCharacterIndex++;
         character.PerformAction(currentAction.Movement, currentAction.Damage, currentAction.Range, currentAction.MovementAvailable, currentAction.AttackAvailable, currentAction.HealAmount, currentAction.ShieldAmount);

@@ -142,7 +142,7 @@ public class CombatPlayerHand : Hand {
             cardButton.putBackInHand();
             myCardsInHand.Add(cardButton);
         }
-        playerController.SetHandSize(myCardsInHand.Count - 1);
+        //playerController.SetHandSize(myCardsInHand.Count - 1);
     }
 
     public void LongRest()
@@ -155,7 +155,7 @@ public class CombatPlayerHand : Hand {
                 myCardsInHand.Add(cardButton);
             }
         }
-        playerController.SetHandSize(myCardsInHand.Count - 1);
+        //playerController.SetHandSize(myCardsInHand.Count - 1);
     }
 
     //Change this to better code for this functunallity

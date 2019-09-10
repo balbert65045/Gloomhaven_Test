@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour {
     private OutOfCombatActionController outOfCombatController;
     private CombatActionController combatController;
     private EndTurnButton endTurnButton;
-    private CharacterSelectionButton[] characterButtons;
+    public CharacterSelectionButton[] characterButtons;
     private PlayerActionButton actionButton;
     private InitiativeBoard initBoard;
     private MyCameraController myCamera;
@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour {
         foreach (PlayerCharacter character in myCharacters)
         {
             character.DecreaseBuffsDuration();
-            character.resetShield(character.Armor);
+            character.resetShield(character.GetArmor());
             character.GetMyCombatHand().discardSelectedCard();
             character.SetMyCurrentCombatCard(null);
         }
@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour {
         foreach (PlayerCharacter character in myCharacters)
         {
             character.DecreaseBuffsDuration();
-            character.resetShield(character.Armor);
+            character.resetShield(character.GetArmor());
             character.SwitchCombatState(false);
             if (character.GetMyCombatHand().getSelectedCard() != null)
             {
@@ -225,10 +225,10 @@ public class PlayerController : MonoBehaviour {
                         break;
                     case CombatState.SelectingCombatCards:
                         SelectPlayerCharacter.GetMyCombatHand().HideHand();
-                        foreach (PlayerCharacter character in myCharacters)
-                        {
-                            if (!character.GetMyCombatHand().selectedCardLinkedButton.basicAttack) { LoseCardForCharacter(character); }
-                        }
+                        //foreach (PlayerCharacter character in myCharacters)
+                        //{
+                        //    if (!character.GetMyCombatHand().selectedCardLinkedButton.basicAttack) { LoseCardForCharacter(character); }
+                        //}
                         HideCharacterSelection();
                         FindObjectOfType<EndTurnButton>().DisableEndTurn();
                         FindObjectOfType<CombatManager>().PlayerDonePickingCombatCards();
@@ -273,16 +273,16 @@ public class PlayerController : MonoBehaviour {
         if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedShielding(); }
     }
 
-    //Character Health to Card control
-    public void SetHandSize(int size)
-    {
-        SelectPlayerCharacter.SetNewHandSize(size);
-    }
+    ////Character Health to Card control
+    //public void SetHandSize(int size)
+    //{
+    //    SelectPlayerCharacter.SetNewHandSize(size);
+    //}
 
-    public void LoseCardForCharacter(PlayerCharacter character)
-    {
-        character.LoseCard();
-    }
+    //public void LoseCardForCharacter(PlayerCharacter character)
+    //{
+    //    character.LoseCard();
+    //}
 
     //Character selection
     void selectAnotherCharacter()
@@ -327,7 +327,7 @@ public class PlayerController : MonoBehaviour {
         if (myState == PlayerState.OutofCombat)
         {
             if (outOfCombatController.MovingIntoCombat) { return; }
-            if (playerCharacter.Moving) { return; }
+            if (playerCharacter.GetMoving()) { return; }
 
             UnHighlightHexes();
             if (SelectPlayerCharacter != null) { SelectPlayerCharacter.myDecks.SetActive(false); }
@@ -390,7 +390,7 @@ public class PlayerController : MonoBehaviour {
     {
         foreach (PlayerCharacter character in myCharacters)
         {
-            if (character.Moving) { return true; }
+            if (character.GetMoving()) { return true; }
         }
         return false;
     }
@@ -461,6 +461,7 @@ public class PlayerController : MonoBehaviour {
     {
         foreach (CharacterSelectionButton button in characterButtons)
         {
+            if (button.CharacterDead) { continue; }
             button.showCardIndicators();
         }
     }
@@ -469,6 +470,7 @@ public class PlayerController : MonoBehaviour {
     {
         foreach (CharacterSelectionButton button in characterButtons)
         {
+            if (button.CharacterDead) { continue; }
             button.gameObject.SetActive(true);
             button.ReturnToColor();
         }
@@ -476,7 +478,7 @@ public class PlayerController : MonoBehaviour {
 
     void CheckToAllowExitFloorOrOpenDoor()
     {
-        if (SelectPlayerCharacter.HexOn.GetComponent<Door>() != null && !SelectPlayerCharacter.HexOn.GetComponent<Door>().isOpen)
+        if (SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>() != null && !SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>().door.isOpen)
         {
             AllowOpenDoor();
             return;
@@ -509,7 +511,7 @@ public class PlayerController : MonoBehaviour {
 
     public void CheckToHideOpenDoor()
     {
-        if (SelectPlayerCharacter.HexOn.GetComponent<Door>() != null && !SelectPlayerCharacter.HexOn.GetComponent<Door>().isOpen)
+        if (SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>() != null && !SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>().door.isOpen)
         {
             AllowOpenDoor();
         }
@@ -558,10 +560,10 @@ public class PlayerController : MonoBehaviour {
     public void CharacterDied(PlayerCharacter character)
     {
         myCharacters.Remove(character);
-        CharacterSelectionButton[] characterButtons = FindObjectsOfType<CharacterSelectionButton>();
         foreach(CharacterSelectionButton button in characterButtons)
         {
             if (button.characterLinkedTo == character) {
+                button.SetCharacterDeadValue(true);
                 button.gameObject.SetActive(false);
                 break;
             }

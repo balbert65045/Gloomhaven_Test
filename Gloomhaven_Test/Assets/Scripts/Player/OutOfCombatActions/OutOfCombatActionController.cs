@@ -90,7 +90,7 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void CheckToMoveOutOfCombat(Character myCharacter)
     {
-        if (myCharacter.Moving) { return; }
+        if (myCharacter.GetMoving()) { return; }
         RaycastHit Hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out Hit, 100f, MapLayer))

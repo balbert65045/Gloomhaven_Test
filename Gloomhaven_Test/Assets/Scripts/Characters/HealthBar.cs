@@ -62,6 +62,30 @@ public class HealthBar : MonoBehaviour {
     public List<GameObject> CurrentArmorPieces = new List<GameObject>();
     public List<GameObject> CurrentHealthPieces = new List<GameObject>();
 
+    public GameObject SavingThrowCoin;
+    public void FlipSavingThrow()
+    {
+        SavingThrowCoin.SetActive(true);
+        int flip = Random.Range(0, 2);
+        if (flip == 0) { SavingThrowCoin.GetComponent<Animator>().SetTrigger("DeathFlip"); }
+        else if(flip == 1) { SavingThrowCoin.GetComponent<Animator>().SetTrigger("SavedFlip"); }
+    }
+
+    public void SavingThrowSaved()
+    {
+        GetComponentInParent<Character>().SavedBySavingThrow();
+        GetComponentInParent<Character>().finishedTakingDamage();
+    }
+
+    public void SavingThrowDead()
+    {
+        GameObject healthPiece = CurrentHealthPieces[0];
+        healthPiece.GetComponent<SpriteRenderer>().sprite = NoHealth;
+        textMesh.text = (0).ToString();
+        GetComponentInParent<Character>().DeadBySavingThrow();
+        GetComponentInParent<Character>().finishedTakingDamage();
+    }
+
     public void AddBuff(BuffType buff)
     {
         if (!Buff1.activeSelf)
@@ -308,13 +332,13 @@ public class HealthBar : MonoBehaviour {
         GetComponentInParent<Character>().LetAttackerAttack();
     }
 
-    public void LoseHealth(int totalHealthLoss)
+    public void LoseHealth(int totalHealthLoss, bool usingSavingThrow)
     {
-        IEnumerator LoseHealthCoroutine = LosingHealth(totalHealthLoss);
+        IEnumerator LoseHealthCoroutine = LosingHealth(totalHealthLoss, usingSavingThrow);
         StartCoroutine(LoseHealthCoroutine);
     }
 
-    IEnumerator LosingHealth(int totalDamageIncomming)
+    IEnumerator LosingHealth(int totalDamageIncomming, bool usingSavingThrow)
     {
         yield return new WaitForSeconds(.2f);
         int totalHealthLoss = totalDamageIncomming - CurrentShield;
@@ -332,7 +356,8 @@ public class HealthBar : MonoBehaviour {
         AttackSymbol.SetActive(false);
         AttackValue.gameObject.SetActive(false);
         resetPositions();
-        GetComponentInParent<Character>().finishedTakingDamage();
+        if (usingSavingThrow) { FlipSavingThrow(); }
+        else { GetComponentInParent<Character>().finishedTakingDamage(); }
         yield return null;
     }
 

@@ -58,11 +58,9 @@ public class CombatCardAbility : MonoBehaviour {
         }
     }
 
-    public void HideAbility()
-    {
-        Color HideColor = new Color(0, 0, 0, .5f);
-        //GetComponent<Image>().color = HideColor;
-    }
+    public void HideAbility() { Color HideColor = new Color(0, 0, 0, .5f); }
+
+    public void UnHighlightAbility() { GetComponent<Image>().color = OGColor; }
 
     public void HighlightAbility()
     {
@@ -70,15 +68,4 @@ public class CombatCardAbility : MonoBehaviour {
         GetComponent<Image>().color = HighlightColor;
     }
 
-    public void UnHighlightAbility()
-    {
-        GetComponent<Image>().color = OGColor;
-    }
-
-
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

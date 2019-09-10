@@ -30,9 +30,7 @@ public class Character : Entity {
     public enum CharacterType { Good, Bad }
     public CharacterType myCT;
 
-    protected HexMapController HexMap;
-    protected AStar aStar;
-
+    public int health = 10;
     public int ViewDistance = 4;
 
     public int baseStrength = 0;
@@ -40,44 +38,61 @@ public class Character : Entity {
     public int baseDexterity = 0;
     public int baseArmor = 0;
 
-    public int Agility = 0;
-    public int Strength = 0;
-    public int Dexterity = 0;
-    public int Armor = 0;
+    protected HealthBar myHealthBar;
+    protected int maxHealth;
 
-    public int CurrentArmor = 0;
-    public int CurrentAttackRange = 3;
-    public int CurrentMoveRange = 4;
+    protected List<Node> NodesInWalkingDistance = new List<Node>();
+    protected List<Node> NodesInAttackRange = new List<Node>();
 
-    public int health = 10;
+    protected HexMapController HexMap;
+    protected AStar aStar;
 
-    public bool summonSickness = false;
+    protected Hex HexMovingTo;
 
-    public int maxHealth;
+    protected int CurrentArmor = 0;
+    public int GetCurrentArmor() { return CurrentArmor; }
+    protected int CurrentAttack = 0;
+    public int GetCurrentAttack() { return CurrentAttack; }
+    protected int CurrentAttackRange = 0;
+    public int GetCurrentAttackRange() { return CurrentAttackRange; }
+    public void SetCurrentAttackRange(int range) { CurrentAttackRange = range; }
+    protected int CurrentMoveRange = 0;
+    public int GetCurrentMoveRange() { return CurrentMoveRange; }
 
-    public HealthBar myHealthBar;
+    private int Agility = 0;
+    public int GetAgility() { return Agility; }
+    private int Strength = 0;
+    public int GetStrength() { return Strength; }
+    private int Dexterity = 0;
+    public int GetDexterity() { return Dexterity; }
+    private int Armor = 0;
+    public int GetArmor() { return Armor; }
+ 
+    private bool summonSickness = false;
+    public bool GetSummonSickness() { return summonSickness; }
+    public void SetSummonSickness(bool value) { summonSickness = value; }
 
     private Character characterThatAttackedMe;
     private List<Character> charactersAttackingAt;
 
-    public List<Node> NodesInWalkingDistance = new List<Node>();
-    public List<Node> NodesInAttackRange = new List<Node>();
+    private int TotalHealthLosing;
+    private bool GoingToDie = false;
+    public bool GetGoingToDie() { return GoingToDie; }
 
-    int TotalHealthLosing;
-    public bool GoingToDie = false;
+    private List<Buff> Buffs = new List<Buff>();
+    public List<Buff> GetBuffs() { return Buffs; }
 
-    public List<Buff> Buffs = new List<Buff>();
+    private bool Stealthed = false;
+    public bool GetStealthed() { return Stealthed; }
+    private int StealthDuration = 0;
 
-    public bool Stealthed = false;
-    public int StealthDuration = 0;
-
-    public bool Moving = false;
+    private bool Moving = false;
+    public bool GetMoving() { return Moving; }
     public void SetMoving(bool value) { Moving = value; }
 
-    public bool Attacking = false;
+    private bool Attacking = false;
+    public bool GetAttacking() { return Attacking; }
     public void SetAttacking(bool value) { Attacking = value; }
-
-    protected Hex HexMovingTo;
 
     public void ApplyBuff(int value, int duration, BuffType buffType)
     {
@@ -187,8 +202,20 @@ public class Character : Entity {
     {
         transform.LookAt(characterThatAttackedMe.transform);
         GetComponent<CharacterAnimationController>().GetHit();
-        myHealthBar.LoseHealth(TotalHealthLosing);
-        if (health <= 0) { GoingToDie = true; }
+
+        int healthBeforeDamage = health;
+        health -= Mathf.Clamp((TotalHealthLosing - CurrentArmor), 0, 1000);
+        bool UsingSavingThrow = GetComponent<PlayerCharacter>() != null && health <= 0 ;
+        if (UsingSavingThrow)
+        {
+            int HealthDifference = healthBeforeDamage - 1;
+            TotalHealthLosing = CurrentArmor + HealthDifference;
+        }
+        else
+        {
+            if (health <= 0) { GoingToDie = true; }
+        }
+        myHealthBar.LoseHealth(TotalHealthLosing, UsingSavingThrow);
     }
 
     public void SwitchCombatState(bool InCombat)
@@ -196,16 +223,8 @@ public class Character : Entity {
         GetComponent<CharacterAnimationController>().SwitchCombatState(InCombat);
     }
 
-    // SUMMON SICKNESS
-    public void SetSummonSickness(bool value)
-    {
-        summonSickness = value;
-    }
-
-    public bool hasSummonSickness()
-    {
-        return summonSickness;
-    }
+    public void SavedBySavingThrow() { health = 1; }
+    public void DeadBySavingThrow() { GoingToDie = true; }
 
 
     //HEALING
@@ -285,20 +304,7 @@ public class Character : Entity {
             totalDamage = damage * int.Parse(modifier[1].ToString());
         }
 
-        int healthBeforeDamage = health;
-        health -= Mathf.Clamp((totalDamage - CurrentArmor), 0, 1000);
-
         TotalHealthLosing = totalDamage;
-        //if saving throw
-        if (health <= 0)
-        {
-            if (SavingThrow())
-            {
-                health = 1;
-                int HealthDifference = healthBeforeDamage - 1;
-                TotalHealthLosing = CurrentArmor + HealthDifference;
-            }
-        }
         myHealthBar.LoseCalculateDamage(damage, modifier, totalDamage);
     }
 
@@ -350,7 +356,7 @@ public class Character : Entity {
     public void ShowAttack(int Range)
     {
         CurrentAttackRange = Range;
-        List<Node> nodes = HexMap.LineOfSight(Range, HexOn);
+        List<Node> nodes = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, Range);
         NodesInAttackRange.Clear();
         foreach (Node node in nodes)
         {

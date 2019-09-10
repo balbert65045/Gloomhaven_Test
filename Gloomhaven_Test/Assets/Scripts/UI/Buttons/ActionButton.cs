@@ -39,11 +39,11 @@ public class ActionButton : MonoBehaviour {
         {
             case ActionType.Attack:
                 MainImage.sprite = AttackSprite;
-                MainValue.text = (action.thisAOE.Damage + character.Strength).ToString();
+                MainValue.text = (action.thisAOE.Damage + character.GetStrength()).ToString();
                 if (action.Range > 1) {
                     RangeImage.gameObject.SetActive(true);
                     RangeValue.gameObject.SetActive(true);
-                    RangeValue.text = (action.Range + character.Dexterity).ToString();
+                    RangeValue.text = (action.Range + character.GetDexterity()).ToString();
                 } else
                 {
                     RangeImage.gameObject.SetActive(false);
@@ -52,7 +52,7 @@ public class ActionButton : MonoBehaviour {
                 break;
             case ActionType.Movement:
                 MainImage.sprite = MoveSprite;
-                MainValue.text = (action.Range + character.Agility).ToString();
+                MainValue.text = (action.Range + character.GetAgility()).ToString();
                 RangeImage.gameObject.SetActive(false);
                 RangeValue.gameObject.SetActive(false);
                 break;

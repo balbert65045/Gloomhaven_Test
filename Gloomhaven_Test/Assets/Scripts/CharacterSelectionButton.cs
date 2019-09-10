@@ -13,6 +13,8 @@ public class CharacterSelectionButton : MonoBehaviour {
     public Sprite HasCardSprite;
 
     public Image CardIndicatorImage;
+    public bool CharacterDead = false;
+    public void SetCharacterDeadValue(bool value) { CharacterDead = value;  }
 
 	// Use this for initialization
 	void Start () {

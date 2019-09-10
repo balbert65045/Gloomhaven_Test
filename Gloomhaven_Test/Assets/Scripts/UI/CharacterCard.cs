@@ -28,13 +28,13 @@ public class CharacterCard : MonoBehaviour
 
         Name.text = name;
         CharacterIcon.sprite = charIcon;
-        setValue(AttackPanel, AttackValue, character.Strength, character.baseStrength, -10);
-        setValue(MovePanel, MoveValue, character.Agility, character.baseAgility, -10);
-        setValue(DexterityPanel, RangeValue, character.Dexterity, character.baseDexterity, 0);
-        setValue(ShieldPanel, ShieldValue, character.Armor, character.baseArmor, 0);
+        setValue(AttackPanel, AttackValue, character.GetStrength(), character.baseStrength, -10);
+        setValue(MovePanel, MoveValue, character.GetAgility(), character.baseAgility, -10);
+        setValue(DexterityPanel, RangeValue, character.GetDexterity(), character.baseDexterity, 0);
+        setValue(ShieldPanel, ShieldValue, character.GetArmor(), character.baseArmor, 0);
         ViewPanel.SetActive(true);
 
-        foreach (Buff buff in character.Buffs)
+        foreach (Buff buff in character.GetBuffs())
         {
             switch (buff.myBuffType)
             {

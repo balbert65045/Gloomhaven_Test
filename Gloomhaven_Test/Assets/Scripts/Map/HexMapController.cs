@@ -164,65 +164,6 @@ public class HexMapController : MonoBehaviour {
         return NodesinAOE;
     }
 
-    public List<Node> LineOfSight(int Range, Hex hexFrom)
-    {
-        List<Node> NodesChecked = new List<Node>();
-        List<Node> NodesToCheckLOS = new List<Node>();
-        List<Node> NodesinLOS = new List<Node>();
-        NodesToCheckLOS.Add(hexFrom.HexNode);
-        for (int i = 0; i < Range; i++)
-        {
-            int CurrentAmountToCheck = NodesToCheckLOS.Count;
-            for (int j = 0; j < CurrentAmountToCheck; j++)
-            {
-                List<Node> AdjacentNodes = GetNodesAdjacent(NodesToCheckLOS[0]);
-                foreach (Node node in AdjacentNodes)
-                {
-                    if (NodesChecked.Contains(node)){ continue; }
-                    if (!CheckifBlocked(hexFrom.HexNode, node))
-                    {
-                        NodesinLOS.Add(node);
-                        NodesToCheckLOS.Add(node);
-                    }
-                }
-                NodesChecked.Add(NodesToCheckLOS[0]);
-                NodesToCheckLOS.Remove(NodesToCheckLOS[0]);
-            }
-        }
-        return NodesinLOS;
-    }
-
-    bool CheckifBlocked(Node StartNode, Node EndNode)
-    {
-        //Way to intensive!!
-        Vector3 DirectionVector = (EndNode.transform.position - StartNode.transform.position).normalized;
-        float Distance = (EndNode.transform.position - StartNode.transform.position).magnitude;
-        Ray NodeRay = new Ray(StartNode.transform.position + Vector3.up * .1f, DirectionVector);
-        RaycastHit[] hits = Physics.RaycastAll(NodeRay, Distance, HexLayer);
-        foreach (RaycastHit hit in hits)
-        {
-            if (hit.transform.GetComponent<Hex>().BlockingLineOfSight)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-     List<Node> FindNodeNotBlockingLOSOrAlreadyChecked(Node StartNode, List<Node> NodesChecked)
-    {
-        List<Node> NodesInLOS = new List<Node>();
-        for (int j = 1; j < 7; j++)
-        {
-            List<Node> NodesInDirection = FindNodesInDirection((Direction)j, StartNode);
-            foreach (Node node in NodesInDirection)
-            {
-                if (!node.NodeHex.BlockingLineOfSight && !NodesChecked.Contains(node)) { NodesInLOS.Add(node); }
-            }
-        }
-        return NodesInLOS;
-    }
-
     public Direction FindDirection(Node StartNode, Node EndNode)
     {
         int Xdifference = EndNode.X - StartNode.X;

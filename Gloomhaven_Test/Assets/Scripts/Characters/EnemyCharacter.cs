@@ -8,23 +8,19 @@ public class EnemyCharacter : Character {
     public string CharacterName;
     public Sprite enemySprite;
 
-    public int modifiedAttack;
-    public int modifiedMovement;
-    public int modifiedAttackRange;
+    public bool InCombat = false;
+    public bool Alerted = false;
 
     public List<Node> nodesInView = new List<Node>();
 
-
     private bool MoveAvailable = false;
     private bool AttackAvailable = false;
+
     private int HealAmount = 0;
     private int ShieldAmount = 0;
 
     private Hex TargetHex;
     bool attackEnabled;
-
-    public bool InCombat = false;
-    public bool Alerted = false;
 
     PlayerCharacter ClosestCharacter;
 
@@ -59,15 +55,9 @@ public class EnemyCharacter : Character {
         }
     }
 
-    public void ResetBuffs()
-    {
-        resetShield(Armor);
-    }
+    public void ResetBuffs() { resetShield(GetArmor()); }
 
-    void SetAttack(bool value)
-    {
-        attackEnabled = value;
-    }
+    void SetAttack(bool value) { attackEnabled = value; }
 
     //VIEW//
 
@@ -197,10 +187,10 @@ public class EnemyCharacter : Character {
     public void PerformAction(int ActionMove, int ActionAttack, int ActionRange, bool moveAvailable, bool attackAvailable, int healAmount, int shieldAmount)
     {
         bool meleeAtack = ActionRange == 1;
-        modifiedAttackRange = meleeAtack ? ActionRange : ActionRange + Dexterity;
+        CurrentAttackRange = meleeAtack ? ActionRange : ActionRange + GetDexterity();
 
-        modifiedAttack = Strength + ActionAttack;
-        modifiedMovement = Agility + ActionMove;
+        CurrentAttack = GetStrength() + ActionAttack;
+        CurrentMoveRange = GetAgility() + ActionMove;
 
         MoveAvailable = moveAvailable;
         AttackAvailable = attackAvailable;
@@ -270,8 +260,8 @@ public class EnemyCharacter : Character {
         PlayerCharacter ClosestCharacter = null;
         foreach (PlayerCharacter character in charactersOut)
         {
-            if (character.GoingToDie) { continue; }
-            List<Node> pathToCharacter = getPathToTarget(character.HexOn, modifiedAttackRange);
+            if (character.GetGoingToDie()) { continue; }
+            List<Node> pathToCharacter = getPathToTarget(character.HexOn, CurrentAttackRange);
             if (pathToCharacter.Count == 1 && pathToCharacter[0] == HexOn.HexNode) {continue;}
             if (pathToCharacter.Count < PathToClosestPlayerLength)
             {
@@ -292,8 +282,8 @@ public class EnemyCharacter : Character {
             return;
         }
         TargetHex = ClosestCharacter.HexOn;
-        GetAttackHexes(modifiedAttackRange);
-        if (HexAttackable(TargetHex, modifiedAttackRange))
+        GetAttackHexes(CurrentAttackRange);
+        if (HexAttackable(TargetHex, CurrentAttackRange))
         {
             CheckToAttack(ClosestCharacter);
         }
@@ -312,7 +302,7 @@ public class EnemyCharacter : Character {
             return;
         }
         TargetHex = CharacterToAttack.HexOn;
-        if (!HexAttackable(TargetHex, modifiedAttackRange) && MoveAvailable)
+        if (!HexAttackable(TargetHex, CurrentAttackRange) && MoveAvailable)
         {
             IEnumerator movethenAttack = MoveThenAttack();
             StartCoroutine(movethenAttack);
@@ -325,11 +315,11 @@ public class EnemyCharacter : Character {
 
     IEnumerator MoveThenAttack()
     {
-        List<Node> nodePath = getPathToTarget(TargetHex, modifiedAttackRange);
+        List<Node> nodePath = getPathToTarget(TargetHex, CurrentAttackRange);
         HexOn.HighlightSelection();
         yield return new WaitForSeconds(.5f);
         int distanceToTravel = nodePath.Count;
-        if (nodePath.Count > modifiedMovement) { distanceToTravel = modifiedMovement; }
+        if (nodePath.Count > CurrentMoveRange) { distanceToTravel = CurrentMoveRange; }
         Hex hexToMoveTo = null;
         //Loop and eliminate last node if it has something on it
         for (int i = distanceToTravel - 1; i > 0; i--)
@@ -376,8 +366,8 @@ public class EnemyCharacter : Character {
             return;
         }
         TargetHex = characterToAttack.HexOn;
-        GetAttackHexes(modifiedAttackRange);
-        if (HexAttackable(TargetHex, modifiedAttackRange)) { StartCoroutine("ShowAttack"); }
+        GetAttackHexes(CurrentAttackRange);
+        if (HexAttackable(TargetHex, CurrentAttackRange)) { StartCoroutine("ShowAttack"); }
         else { FinishedAttacking(); }
     }
 
@@ -391,12 +381,12 @@ public class EnemyCharacter : Character {
         {
             character.HexOn.HighlightAttackArea();
         }
-        Attack(modifiedAttack, charactersAttacking);
+        Attack(CurrentAttack, charactersAttacking);
     }
 
     public void GetAttackHexes(int Range)
     {
-        CurrentAttackRange = Range;
+        SetCurrentAttackRange(Range);
         List<Node> nodes = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, Range);
         NodesInAttackRange.Clear();
         foreach (Node node in nodes)

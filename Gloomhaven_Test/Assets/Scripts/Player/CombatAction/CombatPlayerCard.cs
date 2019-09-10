@@ -22,7 +22,7 @@ public class CombatPlayerCard : Card
     public void SetUpCardActions()
     {      
         Character character = FindObjectOfType<PlayerController>().SelectPlayerCharacter;
-        CardAbility.setUpCard(character.Strength, character.Agility, character.Dexterity);
+        CardAbility.setUpCard(character.GetStrength(), character.GetAgility(), character.GetDexterity());
     }
 
     void IncreaseSize()

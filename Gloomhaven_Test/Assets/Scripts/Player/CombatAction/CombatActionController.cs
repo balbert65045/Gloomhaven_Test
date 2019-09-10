@@ -212,7 +212,7 @@ public class CombatActionController : MonoBehaviour {
 
         List<Character> charactersAttacking = new List<Character>();
         bool meleeAtack = action.Range == 1;
-        int range = meleeAtack ? action.Range : action.Range + myCharacter.Dexterity;
+        int range = meleeAtack ? action.Range : action.Range + myCharacter.GetDexterity();
         if (!myCharacter.HexAttackable(hexSelected, range)) { return false; }
         foreach (Node node in nodes)
         {
@@ -231,7 +231,7 @@ public class CombatActionController : MonoBehaviour {
         }
         if ( charactersAttacking.Count == 0) { return false; }
         playerController.DisableEndTurn();
-        myCharacter.Attack(action.thisAOE.Damage + myCharacter.Strength, charactersAttacking);
+        myCharacter.Attack(action.thisAOE.Damage + myCharacter.GetStrength(), charactersAttacking);
         PerformingAction = true;
         return success;
     }
@@ -239,16 +239,16 @@ public class CombatActionController : MonoBehaviour {
     bool CheckForMove(Action action, Hex hexSelected)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        if (myCharacter.HexInMoveRange(hexSelected, action.Range + myCharacter.Agility))
+        if (myCharacter.HexInMoveRange(hexSelected, action.Range + myCharacter.GetAgility()))
         {
             UnHighlightHexes();
             myCharacter.ShowPath(hexSelected.HexNode);
 
             myCharacter.MoveOnPath(hexSelected);
-            if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().isOpen)
-            {
-                hexSelected.GetComponent<Door>().OpenHexes();
-            }
+            //if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().isOpen)
+            //{
+            //    hexSelected.GetComponent<Door>().OpenHexes();
+            //}
             FindObjectOfType<MyCameraController>().SetTarget(myCharacter.transform);
             playerController.DisableEndTurn();
             PerformingAction = true;
@@ -343,12 +343,12 @@ public class CombatActionController : MonoBehaviour {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCurrentAction.thisActionType == ActionType.Movement)
         {
-            ShowMoveDistance(action.Range + myCharacter.Agility);
+            ShowMoveDistance(action.Range + myCharacter.GetAgility());
         }
         else if (myCurrentAction.thisActionType == ActionType.Attack)
         {
             bool meleeAtack = action.Range == 1;
-            int range = meleeAtack ? action.Range : action.Range + myCharacter.Dexterity;
+            int range = meleeAtack ? action.Range : action.Range + myCharacter.GetDexterity();
             ShowAttack(range);
         }
         else if (myCurrentAction.thisActionType == ActionType.Heal)
@@ -391,7 +391,7 @@ public class CombatActionController : MonoBehaviour {
             if (hit.transform.GetComponent<Hex>())
             {
                 Hex hex = hit.transform.GetComponent<Hex>();
-                if (myCharacter.CheckIfinAttackRange(hex, myCharacter.CurrentAttackRange) && !Attacking)
+                if (myCharacter.CheckIfinAttackRange(hex, myCharacter.GetCurrentAttackRange()) && !Attacking)
                 {
                     FindObjectOfType<HexVisualizer>().HighlightAttackArea(hex);
                 }
@@ -406,7 +406,7 @@ public class CombatActionController : MonoBehaviour {
 
         if (myCurrentAction.thisActionType == ActionType.Movement)
         {
-            ShowMoveDistance(myCurrentAction.Range + myCharacter.Agility);
+            ShowMoveDistance(myCurrentAction.Range + myCharacter.GetAgility());
         }
     }
 
