@@ -46,7 +46,7 @@ public class PlayerCharacter : Character
     {
         Node StartNode = HexOn.HexNode;
         Node EndNode = NodeToMoveTo;
-        List<Node> NodePath = FindObjectOfType<AStar>().FindPath(StartNode, EndNode, HexMap.Map, myCT);
+        List<Node> NodePath = FindObjectOfType<AStar>().FindPath(StartNode, EndNode, myCT);
         foreach (Node node in NodePath)
         {
             node.GetComponent<Hex>().HighlightMoveRange();
@@ -67,8 +67,8 @@ public class PlayerCharacter : Character
 
     public override void ShowViewArea(Hex hex, int distance)
     {
-        List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1, true);
-        List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance, true);
+        List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1);
+        List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance);
         foreach (Node node in nodesAlmostSeen)
         {
             if (!node.Shown && nodesSeen.Contains(node))

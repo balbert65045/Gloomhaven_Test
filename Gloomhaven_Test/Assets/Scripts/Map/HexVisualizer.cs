@@ -17,6 +17,7 @@ public class HexVisualizer : MonoBehaviour {
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         List<Node> NodePath = myCharacter.GetPath(hex.HexNode);
+        if (NodePath == null) { return; }
         foreach (Node node in NodePath)
         {
             LastHexesChanged.Add(node.NodeHex);

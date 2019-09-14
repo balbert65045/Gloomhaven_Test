@@ -416,7 +416,7 @@ public class Character : Entity {
         foreach (Node node in nodesInDistance)
         {
             if (node.NodeHex.EntityHolding != null || !node.Shown) { continue; }
-            if (aStar.FindPath(HexOn.HexNode, node, HexMap.Map, myCT).Count <= CurrentMoveRange)
+            if (aStar.FindPath(HexOn.HexNode, node, myCT).Count <= CurrentMoveRange)
             {
                 NodesInWalkingDistance.Add(node);
                 node.NodeHex.HighlightMoveRange();
@@ -430,7 +430,7 @@ public class Character : Entity {
         Node nodeToMoveTo = null;
         foreach(Node node in nodes)
         {
-            List<Node> path = aStar.FindPath(HexOn.HexNode, node, HexMap.Map, myCT);
+            List<Node> path = aStar.FindPath(HexOn.HexNode, node, myCT);
             int distance = path.Count;
             if (distance < shortestPath && distance != 0) {
                 nodeToMoveTo = node;
@@ -444,7 +444,7 @@ public class Character : Entity {
     {
         Node StartNode = HexOn.HexNode;
         Node EndNode = NodeToMoveTo;
-        return FindObjectOfType<AStar>().FindPath(StartNode, EndNode, HexMap.Map, myCT);
+        return FindObjectOfType<AStar>().FindPath(StartNode, EndNode, myCT);
     }
 
     public void MoveOnPath(Hex hex)

@@ -53,7 +53,7 @@ public class HexBuilderCube : MonoBehaviour {
             offset = hexWidth / 2;
         }
 
-        float x = hexWidth * (gridWidth / 2) - offset;
+        float x = hexWidth * (gridWidth / 2);
         float z = hexHeight * .75f * (gridHeight / 2);
 
         startPos = new Vector3(x, 0, z);
@@ -74,16 +74,16 @@ public class HexBuilderCube : MonoBehaviour {
                 hex.SetParent(this.transform);
                 hex.name = "Hex " + r + "|" + q;
 
-                hex.GetComponent<Node>().SetNode(r, q);
-                GetComponent<AxialHexController>().AddHex(hex.GetComponent<Node>());
+                hex.GetComponent<Node2>().SetNode(r, q);
+                GetComponent<AxialHexController>().AddHex(hex.GetComponent<Node2>());
             }
         }
+        AxialHexController hexController = GetComponent<AxialHexController>();
+        Debug.Log(hexController.HexDistance(hexController.GetNode(0, 0), hexController.GetNode(2, 2)));
     }
 
     Vector3 CalculateWorldPos(Vector2 gridPos)
     {
-        float offset = 0;
-
         float x = gridPos.x * hexWidth;
         float y = gridPos.y * hexHeight;
 

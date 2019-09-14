@@ -112,10 +112,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RoomName:
   - A
+  edge: 0
   isAvailable: 1
   Shown: 0
-  X: 0
-  Y: 0
+  q: 0
+  r: 0
+  s: 0
+  IsWalkable: 0
+  G: 0
+  H: 0
   NodeHex: {fileID: 0}
 --- !u!114 &114831510539766018
 MonoBehaviour:
@@ -132,6 +137,8 @@ MonoBehaviour:
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   Hidden: 1
+  MovedTo: 0
+  InEnemySeight: 0
   SelectionHighlightMaterial: {fileID: 2100000, guid: 3a53c79cf1c4cec4a8d2a56198903aea,
     type: 2}
   MovePointHighlightMaterial: {fileID: 2100000, guid: 74fead4eaef962140ad42ba9bc770dd0,
@@ -152,5 +159,5 @@ MonoBehaviour:
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
   OGMaterial: {fileID: 2100000, guid: c9440004964558b448555bcda7fbe1d1, type: 2}
-  BlockingLineOfSight: 0
+  previousMaterial: {fileID: 0}
   HexNode: {fileID: 0}

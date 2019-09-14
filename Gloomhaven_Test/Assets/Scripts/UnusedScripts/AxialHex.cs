@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct AxialHex  {
+public class AxialHex  {
     public int q, r, s;
 
     public AxialHex(int q_, int r_) {

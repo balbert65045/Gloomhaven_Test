@@ -5,9 +5,7 @@ using UnityEngine;
 public class HexMapBuilder : MonoBehaviour {
 
     public Transform HexPrefab;
-
-    public int gridHeight = 11;
-    public int gridWidth = 11;
+    public int map_radius = 11;
 
     float hexHeight = 2.0f;
     float hexWidth = 1.732f;
@@ -29,6 +27,7 @@ public class HexMapBuilder : MonoBehaviour {
 
     public void DestroyMap()
     {
+        if (GetComponent<HexMapController>().Map != null) { GetComponent<HexMapController>().Map.Clear(); }
         Hex[] hexes = GetComponentsInChildren<Hex>();
         if (hexes.Length <= 0) { return; }
         foreach (Hex hex in hexes)
@@ -45,49 +44,38 @@ public class HexMapBuilder : MonoBehaviour {
 
     void CalculateStartPos()
     {
-        float offset = 0;
-        if (gridHeight / 2 % 2 != 0)
-        {
-            offset = hexWidth / 2;
-        }
-
-        float x = hexWidth * (gridWidth / 2) - offset;
-        float z = hexHeight * .75f * (gridHeight / 2);
-
-        startPos = new Vector3(x, 0, z);
+        startPos = new Vector3(0, 0, 0);
     }
 
     void CreateGrid()
     {
-        for (int y = 0; y < gridHeight; y++)
+        for (int q = -map_radius; q <= map_radius; q++)
         {
-            for (int x = 0; x < gridWidth; x++)
+            int r1 = Mathf.Max(-map_radius, -q - map_radius);
+            int r2 = Mathf.Min(map_radius, -q + map_radius);
+            for (int r = r1; r <= r2; r++)
             {
                 Transform hex = Instantiate(HexPrefab) as Transform;
-                Vector2 gridPos = new Vector2(x, y);
+                Vector2 gridPos = new Vector2(r, q);
                 hex.position = CalculateWorldPos(gridPos);
+
                 hex.SetParent(this.transform);
-                hex.name = "Hex " + x + "|" + y;
+                hex.name = "Hex " + q + "|" + r;
 
-                // Node stuff
-                hex.GetComponent<Node>().SetNode(x, y);
-
+                hex.GetComponent<Node>().SetNode(q, r);
             }
         }
     }
 
     Vector3 CalculateWorldPos(Vector2 gridPos)
     {
-        float offset = 0;
-        if (gridPos.y % 2 != 0)
-        {
-            offset = hexWidth / 2;
-        }
+        float x = gridPos.x * hexWidth;
+        float y = gridPos.y * hexHeight;
 
-        float x = startPos.x + gridPos.x * hexWidth + offset;
-        float z = startPos.z - gridPos.y * hexHeight *.75f;
+        float x_ = startPos.x + x + ((gridPos.y * hexWidth) / 2);
+        float z_ = startPos.z - y * .75f;
 
-        return new Vector3(x, 0, z);
+        return new Vector3(x_, 0, z_);
     } 
 
 }

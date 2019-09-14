@@ -16,116 +16,142 @@ public enum Direction
 public class HexMapController : MonoBehaviour {
 
     // Use this for initialization
-    int gridHeight;
-    int gridWidth;
     HexMapBuilder hexBuilder;
     public LayerMask HexLayer;
 
-    public Node[,] Map;
+    public Hashtable Map = new Hashtable();
     public Hex[] AllHexes;
-        //= new Node[11, 11];
 
 
     void Awake () {
         hexBuilder = FindObjectOfType<HexMapBuilder>();
-        gridHeight = hexBuilder.gridHeight;
-        gridWidth = hexBuilder.gridWidth;
-        Map = new Node[gridWidth, gridHeight];
         AllHexes = GetComponentsInChildren<Hex>();
+        Node[] nodes = GetComponentsInChildren<Node>();
+        foreach (Node node in nodes)
+        {
+            AddHex(node);
+        }
     }
 
+    public void AddHex(Node node) { Map.Add(GetHexHash(node.q, node.r), node); }
+    public string GetHexHash(int x, int y) { return x.ToString() + "," + y.ToString(); }
+    public Node GetNode(int x, int y) { return (Node)Map[GetHexHash(x, y)]; }
 
-
-    public void SetNodeMap(Node node, int X, int Y)
+    public Node[] GetNeighbors(Node node)
     {
-        Map[X, Y] = node;
+        return new Node[] {
+            GetNode(node.q + 1, node.r),
+            GetNode(node.q + 1, node.r - 1),
+            GetNode(node.q, node.r - 1),
+            GetNode(node.q - 1, node.r),
+            GetNode(node.q - 1, node.r + 1),
+            GetNode(node.q, node.r + 1),
+        };
     }
+
+    public List<Node> GetRealNeighbors(Node node)
+    {
+        List<Node> RealNodes = new List<Node>();
+        Node[] nodes = GetNeighbors(node);
+        foreach (Node n in nodes)
+        {
+            if (node != null) {
+                RealNodes.Add(n);
+            }
+        }
+        return RealNodes;
+    }
+
+    public Vector2[] GetDirections()
+    {
+        return new Vector2[] {
+            //East
+            new Vector2(1, 0),
+            //NorthEast
+            new Vector2(1, -1),
+            //NorthWest
+            new Vector2(0, -1),
+            //West
+            new Vector2(-1, 0),
+            //SouthWest
+            new Vector2(-1, +1),
+            //SouthEast
+            new Vector2(0, +1),
+        };
+    }
+
+    public int GetDirectionIndex(Vector2 direction)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (direction == GetDirections()[i]) { return i; }
+        }
+        return -1;
+    }
+
+    public int GetDistance(Node start, Node end)
+    {
+        return (Mathf.Abs(end.r - start.r) + Mathf.Abs(end.s - start.s) + Mathf.Abs(end.q - start.q)) / 2;
+    }
+
+    public List<Node> GetRange(Node StartNode, int MoveDistance)
+    {
+        List<Node> nodes = new List<Node>();
+        for (int x = -MoveDistance; x <= MoveDistance; x++)
+        {
+            for (int y = -MoveDistance; y <= MoveDistance; y++)
+            {
+                for (int z = -MoveDistance; z <= MoveDistance; z++)
+                {
+                    if (x + y + z == 0) { nodes.Add(GetNode(StartNode.q + x, StartNode.r + y)); }
+                }
+            }
+        }
+        return nodes;
+    }
+
 
     public List<Node> GetDistanceRange(Node StartNode, int MoveDistance, Character.CharacterType CT)
     {
-        List<Node> NodesInDistance = new List<Node>(); ;
-        List<Node> NodesToCheck = new List<Node>();
-        List<Node> NextNodesToCheck = new List<Node>();
-        NodesToCheck.Add(StartNode);
-        NodesInDistance.Add(StartNode);
-        while (MoveDistance > 0)
+        List<Node> NodesInRange = GetRange(StartNode, MoveDistance);
+        List<Node> NodesInDistance = new List<Node>();
+        foreach(Node node in NodesInRange)
         {
-            foreach (Node node in NodesToCheck)
+            if (node == null) { continue; }
+            if (node.isConnectedToRoom(node))
             {
-                List<Node> AdjacentNodes = GetNodesAdjacent(node);
-                foreach (Node N in AdjacentNodes)
-                {
-                    if (!NodesInDistance.Contains(N))
-                    {
-                        NodesInDistance.Add(N);
-                        NextNodesToCheck.Add(N);
-                    }
-                }
-            }
-            NodesToCheck.Clear();
-            foreach (Node node in NextNodesToCheck) {
                 if (node.NodeHex.EntityHolding == null || (node.NodeHex.EntityHolding.GetComponent<Character>() != null && node.NodeHex.EntityHolding.GetComponent<Character>().myCT == CT))
                 {
-                    NodesToCheck.Add(node);
+                    NodesInDistance.Add(node);
                 }
             }
-            NextNodesToCheck.Clear();
-            MoveDistance--;
         }
         return NodesInDistance;
     }
 
 
-    public List<Node> GetNodesAtDistanceFromNode(Node StartNode, int distance, bool edge = false)
+    public List<Node> GetNodesAtDistanceFromNode(Node StartNode, int distance)
     {
-        List<Node> NodesChecked = new List<Node>();
-        List<Node> NodesToCheckInDistance = new List<Node>();
+        List<Node> NodesInRange = GetRange(StartNode, distance);
         List<Node> NodesinInDistance = new List<Node>();
-        NodesToCheckInDistance.Add(StartNode);
-        for (int i = 0; i < distance; i++)
+        foreach (Node node in NodesInRange)
         {
-            int CurrentAmountToCheck = NodesToCheckInDistance.Count;
-            for (int j = 0; j < CurrentAmountToCheck; j++)
-            {
-                List<Node> AdjacentNodes = GetNodesAdjacent(NodesToCheckInDistance[0], edge);
-                foreach (Node node in AdjacentNodes)
-                {
-                    if (NodesChecked.Contains(node) || NodesToCheckInDistance.Contains(node)) { continue; }
-                    NodesinInDistance.Add(node);
-                    NodesToCheckInDistance.Add(node);
-                }
-                NodesChecked.Add(NodesToCheckInDistance[0]);
-                NodesToCheckInDistance.Remove(NodesToCheckInDistance[0]);
-            }
+            if (node == null) { continue; }
+            if (node.isAvailable == false) { continue; }
+            NodesinInDistance.Add(node);
         }
         return NodesinInDistance;
     }
 
 
-    public List<Node> GetNodesAdjacent(Node node, bool edge = false)
+    public List<Node> GetNodesAdjacent(Node node)
     {
-        List<Node> AdjacentNodes = new List<Node>();
-
-        if (node.Y + 1 <= gridHeight - 1) { AdjacentNodes.Add(Map[node.X, node.Y + 1]); }
-        if (node.Y - 1 >= 0) { AdjacentNodes.Add(Map[node.X, node.Y - 1]); }
-        if (node.X + 1 <= gridWidth - 1) { AdjacentNodes.Add(Map[node.X + 1, node.Y]); }
-        if (node.X - 1 >= 0) { AdjacentNodes.Add(Map[node.X - 1, node.Y]); }
-        // x - 1 and x
-        if (node.Y % 2 == 0)
-        {
-            if (node.Y + 1 <= gridHeight - 1 && node.X - 1 >= 0) { AdjacentNodes.Add(Map[node.X - 1, node.Y + 1]); }
-            if (node.Y - 1 >= 0 && node.X - 1 >= 0) { AdjacentNodes.Add(Map[node.X - 1, node.Y - 1]); }
-        }
-        else
-        {
-            if (node.Y + 1 <= gridHeight - 1 && node.X + 1 <= gridWidth -1) { AdjacentNodes.Add(Map[node.X + 1, node.Y + 1]); }
-            if (node.Y - 1 >= 0 && node.X + 1 <= gridWidth - 1) { AdjacentNodes.Add(Map[node.X + 1, node.Y - 1]); }
-        }
+        List<Node> NeighborsNodes = GetRealNeighbors(node);
 
         List<Node> AdjacentNodesAvailable = new List<Node>();
-        foreach(Node aNode in AdjacentNodes)
+        foreach(Node aNode in NeighborsNodes)
         {
-            if (node.isConnectedToRoom(aNode, edge)) { AdjacentNodesAvailable.Add(aNode); }
+            if (node.isConnectedToRoom(aNode)) { AdjacentNodesAvailable.Add(aNode); }
         }
 
         return AdjacentNodesAvailable;
@@ -137,13 +163,13 @@ public class HexMapController : MonoBehaviour {
         switch (aoeType)
         {
             case AOEType.Cleave:
-                Direction direction = FindDirection(OriginNode, StartNode);
+                Vector2 direction = FindDirection(OriginNode, StartNode);
                 Node nodeInCleave = GetNextCounterClockwizeNode(OriginNode, StartNode, direction);
                 NodesinAOE.Add(StartNode);
                 NodesinAOE.Add(nodeInCleave);
                 break;
             case AOEType.Line:
-                Direction lineDirection = FindDirection(OriginNode, StartNode);
+                Vector2 lineDirection = FindDirection(OriginNode, StartNode);
                 Node node = GetNextNodeInDirection(StartNode, lineDirection);
                 NodesinAOE.Add(StartNode);
                 NodesinAOE.Add(node);
@@ -164,226 +190,47 @@ public class HexMapController : MonoBehaviour {
         return NodesinAOE;
     }
 
-    public Direction FindDirection(Node StartNode, Node EndNode)
+    public Vector2 FindDirection(Node StartNode, Node EndNode)
     {
-        int Xdifference = EndNode.X - StartNode.X;
-        int Ydifference = EndNode.Y - StartNode.Y;
-        if (StartNode.Y % 2 != 0)
-        {
-            if(Xdifference == 0 && Ydifference == 1) { return Direction.NorthWest; }
-            else if (Xdifference == 1 && Ydifference == 1) { return Direction.SouthWest; }
-            else if (Xdifference == 0 && Ydifference == -1) { return Direction.NorthEast; }
-            else if (Xdifference == 1 && Ydifference == -1) { return Direction.SouthEast; }
-            else if (Xdifference == -1 && Ydifference == 0) { return Direction.North; }
-            else if (Xdifference == 1 && Ydifference == 0) { return Direction.South; }
-        }
-        else
-        {
-            if (Xdifference == -1 && Ydifference == 1) { return Direction.NorthWest; }
-            else if (Xdifference == 0 && Ydifference == 1) { return Direction.SouthWest; }
-            else if (Xdifference == -1 && Ydifference == -1) { return Direction.NorthEast; }
-            else if (Xdifference == 0 && Ydifference == -1) { return Direction.SouthEast; }
-            else if (Xdifference == -1 && Ydifference == 0) { return Direction.North; }
-            else if (Xdifference == 1 && Ydifference == 0) { return Direction.South; }
-        }
-        return Direction.North;
+        int Xdifference = EndNode.q - StartNode.q;
+        int Ydifference = EndNode.r - StartNode.r;
+        return (new Vector2(Xdifference, Ydifference));
     }
 
     public List<Node> GetNodesSurrounding(Node StartNode)
     {
         List<Node> nodes = new List<Node>();
-        nodes.Add(GetNodeInDirection(Direction.North, StartNode));
-        nodes.Add(GetNodeInDirection(Direction.NorthEast, StartNode));
-        nodes.Add(GetNodeInDirection(Direction.SouthEast, StartNode));
-        nodes.Add(GetNodeInDirection(Direction.South, StartNode));
-        nodes.Add(GetNodeInDirection(Direction.SouthWest, StartNode));
-        nodes.Add(GetNodeInDirection(Direction.NorthWest, StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[0], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[1], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[2], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[3], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[4], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[5], StartNode));
         return nodes;
     }
 
-    public Node GetNextNodeInDirection(Node StartNode, Direction direction)
+    public Node GetNextNodeInDirection(Node StartNode, Vector2 direction)
     {
         Node nextNode = GetNodeInDirection(direction, StartNode);
         return nextNode;
     }
 
-    public Node GetNextCounterClockwizeNode(Node StartNode, Node EndNode, Direction DirectionOfEndNode)
+    public Node GetNextCounterClockwizeNode(Node StartNode, Node EndNode, Vector2 DirectionOfEndNode)
     {
-        Direction nextDirection = (int)DirectionOfEndNode == 1 ? Direction.NorthWest : (Direction)((int)(DirectionOfEndNode) - 1);
+        int index = GetDirectionIndex(DirectionOfEndNode);
+        if (index == -1) {
+            Debug.LogError("Direction found is incompatable");
+            return null;
+        }
+        index = index == 5 ? 0 : index + 1;
+        Vector2 nextDirection = GetDirections()[index];
         Node nextNode = GetNodeInDirection(nextDirection, StartNode);
         return nextNode;
     }
 
-    Node GetNodeInDirection(Direction direction, Node startNode)
+    Node GetNodeInDirection(Vector2 direction, Node startNode)
     {
-        Node nodeInDirection = null;
-
-        if (startNode.Y % 2 != 0)
-        {
-            switch (direction)
-            {
-                case Direction.North:
-                    if (startNode.X <= 0) { return null; }
-                    nodeInDirection = Map[startNode.X - 1, startNode.Y];
-                    break;
-                case Direction.NorthEast:
-                    if (startNode.Y <= 0) { return null; }
-                    nodeInDirection = (Map[startNode.X, startNode.Y - 1]);
-                    break;
-                case Direction.SouthEast:
-                    if (startNode.X >= gridWidth - 1) { return null; }
-                    if (startNode.Y <= 0) { return null; }
-                    nodeInDirection = (Map[startNode.X + 1, startNode.Y - 1]);
-                    break;
-                case Direction.South:
-                    if (startNode.X >= gridWidth - 1) { return null; }
-                    nodeInDirection = (Map[startNode.X + 1, startNode.Y]);
-                    break;
-                case Direction.SouthWest:
-                    if (startNode.X >= gridWidth - 1) { return null; }
-                    if (startNode.Y >= gridHeight - 1) { return null; }
-                    nodeInDirection = (Map[startNode.X + 1, startNode.Y + 1]);
-                    break;
-                case Direction.NorthWest:
-                    if (startNode.Y >= gridHeight - 1) { return null; }
-                    nodeInDirection = (Map[startNode.X, startNode.Y + 1]);
-                    break;
-            }
-        } 
-        else
-        {
-            switch (direction)
-            {
-                case Direction.North:
-                    if (startNode.X <= 0) { return null; }
-                    nodeInDirection = (Map[startNode.X - 1, startNode.Y]);
-                    break;
-                case Direction.NorthEast:
-                    if (startNode.X <= 0) { return null; }
-                    if (startNode.Y <= 0) { return null; }
-                    nodeInDirection = (Map[startNode.X - 1, startNode.Y - 1]);
-                    break;
-                case Direction.SouthEast:
-                    if (startNode.Y <= 0) { return null; }
-                    nodeInDirection = (Map[startNode.X, startNode.Y - 1]);
-                    break;
-                case Direction.South:
-                    if (startNode.X >= gridWidth - 1) { return null; }
-                    nodeInDirection = (Map[startNode.X + 1, startNode.Y]);
-                    break;
-                case Direction.SouthWest:
-                    if (startNode.Y >= gridHeight - 1) { return null; }
-                    nodeInDirection = (Map[startNode.X, startNode.Y + 1]);
-                    break;
-                case Direction.NorthWest:
-                    if (startNode.Y >= gridHeight - 1) { return null; }
-                    if (startNode.X <= 0) { return null; }
-                    nodeInDirection = (Map[startNode.X - 1, startNode.Y + 1]);
-                    break;
-            }
-        }
-        return nodeInDirection;
+        return GetNode(startNode.q + (int)direction.x, startNode.r + (int)direction.y);
     }
-
-
-
-    //THIS NEEDS TO BE CHANGED!!
-     List<Node> FindNodesInDirection(Direction direction, Node node)
-    {
-        // Directions should be as follows: (1,0), (-1,0), (0,1) (0,-1)
-        //depending on what y value: (1,1), (1,-1) or (-1,1), (-1,-1)
-        List<Node> NextNodes = new List<Node>();
-        switch (direction)
-        {
-            case Direction.NorthEast:
-                if (node.Y % 2 == 0)
-                {
-                    NextNodes.Add(Map[node.X, node.Y + 1]); //UpLeft
-                    NextNodes.Add(Map[node.X - 1, node.Y + 1]); //UpRight
-                    NextNodes.Add(Map[node.X - 1, node.Y]); //Right
-                }
-                else
-                {
-                    NextNodes.Add(Map[node.X + 1, node.Y + 1]); //UpLeft
-                    NextNodes.Add(Map[node.X, node.Y + 1]); //UpRight
-                    NextNodes.Add(Map[node.X - 1, node.Y]); //Right
-                }
-                break;
-            case Direction.North:
-                if (node.Y % 2 == 0)
-                {
-                    NextNodes.Add(Map[node.X - 1, node.Y + 1]); //UpRight
-                    NextNodes.Add(Map[node.X - 1, node.Y]); //Right
-                    NextNodes.Add(Map[node.X - 1, node.Y - 1]); //DownRight
-                }
-                else
-                {
-                    NextNodes.Add(Map[node.X, node.Y + 1]); //UpRight
-                    NextNodes.Add(Map[node.X - 1, node.Y]); //Right
-                    NextNodes.Add(Map[node.X, node.Y - 1]); //DownRight
-                }
-                break;
-            case Direction.SouthEast:
-                if (node.Y % 2 == 0)
-                {
-                    NextNodes.Add(Map[node.X - 1, node.Y]); //Right
-                    NextNodes.Add(Map[node.X - 1, node.Y - 1]); //DownRight
-                    NextNodes.Add(Map[node.X, node.Y - 1]); //DownLeft
-                }
-                else
-                {
-                    NextNodes.Add(Map[node.X - 1, node.Y]); //Right
-                    NextNodes.Add(Map[node.X, node.Y - 1]); //DownRight
-                    NextNodes.Add(Map[node.X + 1, node.Y - 1]); //DownLeft
-                }
-                break;
-            case Direction.SouthWest:
-                if (node.Y % 2 == 0)
-                {
-                    NextNodes.Add(Map[node.X + 1, node.Y]); //Left
-                    NextNodes.Add(Map[node.X - 1, node.Y - 1]); //DownRight
-                    NextNodes.Add(Map[node.X, node.Y - 1]); //DownLeft
-                }
-                else
-                {
-                    NextNodes.Add(Map[node.X + 1, node.Y]); //Left
-                    NextNodes.Add(Map[node.X, node.Y - 1]); //DownRight
-                    NextNodes.Add(Map[node.X + 1, node.Y - 1]); //DownLeft
-                }
-                break;
-            case Direction.South:
-                if (node.Y % 2 == 0)
-                {
-                    NextNodes.Add(Map[node.X + 1, node.Y]); //Left
-                    NextNodes.Add(Map[node.X, node.Y + 1]); //UpLeft
-                    NextNodes.Add(Map[node.X, node.Y - 1]); //DownLeft
-                }
-                else
-                {
-                    NextNodes.Add(Map[node.X + 1, node.Y]); //Left
-                    NextNodes.Add(Map[node.X + 1, node.Y + 1]); //UpLeft
-                    NextNodes.Add(Map[node.X + 1, node.Y - 1]); //DownLeft
-                }
-                break;
-            case Direction.NorthWest:
-                if (node.Y % 2 == 0)
-                {
-                    NextNodes.Add(Map[node.X + 1, node.Y]); //Left
-                    NextNodes.Add(Map[node.X, node.Y + 1]); //UpLeft
-                    NextNodes.Add(Map[node.X - 1, node.Y + 1]); //UpRight
-                }
-                else
-                {
-                    NextNodes.Add(Map[node.X + 1, node.Y]); //Left
-                    NextNodes.Add(Map[node.X + 1, node.Y + 1]); //UpLeft
-                    NextNodes.Add(Map[node.X, node.Y + 1]); //UpRight
-                }
-                break;
-        }
-        return NextNodes;
-
-
-    }
-
 
 }

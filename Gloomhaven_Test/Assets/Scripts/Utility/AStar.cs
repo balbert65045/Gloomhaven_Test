@@ -7,22 +7,24 @@ public class AStar : MonoBehaviour
 
     // For more detail on the A* algorithm follow this link http://blog.two-cats.com/2014/06/a-star-example/ 
 
-    //TODO adjust these automatically for TerrainMap
-    public int MaxWidth = 7;
-    public int MaxHeight = 7;
+    HexMapController controller;
 
-    private Node[,] nodes;
+    private Node[] nodes;
     private Node startNode;
     private Node endNode;
     private List<Node> OpenNodes;
     private List<Node> ClosedNodes;
 
+    private void Start()
+    {
+        controller = GetComponent<HexMapController>();
+        nodes = GetComponentsInChildren<Node>();
+    }
 
-    public bool PathAvailable(Node Begin, Node End, Node[,] Map)
+    public bool PathAvailable(Node Begin, Node End)
     {
         startNode = Begin;
         endNode = End;
-        nodes = Map;
         foreach (Node node in nodes)
         {
             node.CalculateG(startNode);
@@ -48,12 +50,11 @@ public class AStar : MonoBehaviour
         return (Search(startNode));
     }
 
-    public List<Node> GetRawPath(Node Begin, Node End, Node[,] Map)
+    public List<Node> GetRawPath(Node Begin, Node End)
     {
         // Initialize values and nodes
         startNode = Begin;
         endNode = End;
-        nodes = Map;
         foreach (Node node in nodes)
         {
             node.CalculateG(startNode);
@@ -86,12 +87,11 @@ public class AStar : MonoBehaviour
     }
 
 
-    public List<Node> ShowPathDistance(Node Begin, Node End, Node[,] Map)
+    public List<Node> ShowPathDistance(Node Begin, Node End)
     {
         // Initialize values and nodes
         startNode = Begin;
         endNode = End;
-        nodes = Map;
         foreach (Node node in nodes)
         {
             node.CalculateG(startNode);
@@ -134,12 +134,14 @@ public class AStar : MonoBehaviour
 
 
     // Finds a path between Tile A and B using the A* algorithm
-    public List<Node> FindPath(Node Begin, Node End, Node[,] Map, Character.CharacterType CT)
+    public List<Node> FindPath(Node Begin, Node End, Character.CharacterType CT)
     {
+        List<Node> path = new List<Node>();
         // Initialize values and nodes
+        if (Begin == End) { return null; }
+
         startNode = Begin;
         endNode = End;
-        nodes = Map;
         foreach (Node node in nodes)
         {
             node.CalculateG(startNode);
@@ -159,7 +161,6 @@ public class AStar : MonoBehaviour
         }
         OpenNodes = new List<Node>();
         ClosedNodes = new List<Node>();
-        List<Node> path = new List<Node>();
 
         // Add Starting point into list to become closed
         OpenNodes.Add(startNode);
@@ -205,7 +206,7 @@ public class AStar : MonoBehaviour
             }
 
             // If its the end then your done 
-            if (minFNode.Location == this.endNode.Location)
+            if (minFNode == this.endNode)
             {
                 return true;
             }
@@ -220,78 +221,38 @@ public class AStar : MonoBehaviour
         return false;
     }
 
-
-    private Point[] GetAdjacentLocations(Point location)
-    {
-        // Find the four adjacent nodes UP Down Left Right
-        // Six for hex
-
-        //Point[] AdjacentPoints = new Point[4];
-        //AdjacentPoints[0] = new Point(location.X, location.Y + 1);
-        //AdjacentPoints[1] = new Point(location.X, location.Y - 1);
-        //AdjacentPoints[2] = new Point(location.X + 1, location.Y);
-        //AdjacentPoints[3] = new Point(location.X - 1, location.Y);
-
-
-        Point[] AdjacentPoints = new Point[6];
-        // x - 1 and x
-        if (location.Y % 2 == 0)
-        {
-            AdjacentPoints[0] = new Point(location.X, location.Y + 1);
-            AdjacentPoints[1] = new Point(location.X - 1, location.Y + 1); //additional one with a hex
-            AdjacentPoints[2] = new Point(location.X, location.Y - 1);
-            AdjacentPoints[3] = new Point(location.X - 1, location.Y - 1); //additional one with a hex
-            AdjacentPoints[4] = new Point(location.X + 1, location.Y);
-            AdjacentPoints[5] = new Point(location.X - 1, location.Y);
-        }
-        // x+ 1 and x
-        else
-        {
-            AdjacentPoints[0] = new Point(location.X, location.Y + 1);
-            AdjacentPoints[1] = new Point(location.X + 1, location.Y + 1); //additional one with a hex
-            AdjacentPoints[2] = new Point(location.X, location.Y - 1);
-            AdjacentPoints[3] = new Point(location.X + 1, location.Y - 1); //additional one with a hex
-            AdjacentPoints[4] = new Point(location.X + 1, location.Y);
-            AdjacentPoints[5] = new Point(location.X - 1, location.Y);
-        }
-
-        return (AdjacentPoints);
-    }
-
     private List<Node> GetAdjacentWalkableNodes(Node fromNode)
     {
         List<Node> walkableNodes = new List<Node>();
-        IEnumerable<Point> nextLocations = GetAdjacentLocations(fromNode.Location);
+        List<Node> nextLocations = controller.GetRealNeighbors(fromNode);
 
-        foreach (var location in nextLocations)
+        foreach (Node location in nextLocations)
         {
-            int x = location.X;
-            int y = location.Y;
-
-            // Stay within the grid's boundaries
-            if (x < 0 || x >= this.MaxWidth || y < 0 || y >= this.MaxHeight)
+            Node node = location;
+            if (node == null)
                 continue;
-
-            Node node = this.nodes[x, y];
             // Ignore non-walkable nodes
             if (!node.IsWalkable)
                 continue;
 
             if (!node.isAvailable)
                 continue;
+
+            if (node.edge)
+                continue;
             // Ignore already-closed nodes
             if (node.State == NodeState.Closed)
                 continue;
 
-            if (!fromNode.isConnectedToRoom(node, false))
+            if (!fromNode.isConnectedToRoom(node))
                 continue;
 
             // Already-open nodes are only added to the list if their G-value is lower going via this route.
             if (node.State == NodeState.Open)
             {
-                float traversalCost = Node.GetTraversalCost(node.Location, node.ParentNode.Location);
+                float traversalCost = 1;
                 float gTemp = fromNode.G + traversalCost;
-                if (gTemp < node.G)
+                if (gTemp <= node.G)
                 {
                     node.ParentNode = fromNode;
                     walkableNodes.Add(node);

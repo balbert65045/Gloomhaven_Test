@@ -96,9 +96,9 @@ public class EnemyCharacter : Character {
     {
         yield return new WaitForSeconds(.1f);
         SwitchCombatState(true);
-        List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, ViewDistance + 1, true);
+        List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, ViewDistance + 1);
         nodesInView.Clear();
-        nodesInView = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, ViewDistance, true);
+        nodesInView = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, ViewDistance);
 
         EnemyCharacter[] EnemiesOut = FindObjectsOfType<EnemyCharacter>();
         foreach (EnemyCharacter character in EnemiesOut)
@@ -262,7 +262,7 @@ public class EnemyCharacter : Character {
         {
             if (character.GetGoingToDie()) { continue; }
             List<Node> pathToCharacter = getPathToTarget(character.HexOn, CurrentAttackRange);
-            if (pathToCharacter.Count == 1 && pathToCharacter[0] == HexOn.HexNode) {continue;}
+            if (pathToCharacter.Count == 0) {continue;}
             if (pathToCharacter.Count < PathToClosestPlayerLength)
             {
                 PathToClosestPlayerLength = pathToCharacter.Count;
@@ -316,39 +316,43 @@ public class EnemyCharacter : Character {
     IEnumerator MoveThenAttack()
     {
         List<Node> nodePath = getPathToTarget(TargetHex, CurrentAttackRange);
-        HexOn.HighlightSelection();
-        yield return new WaitForSeconds(.5f);
-        int distanceToTravel = nodePath.Count;
-        if (nodePath.Count > CurrentMoveRange) { distanceToTravel = CurrentMoveRange; }
-        Hex hexToMoveTo = null;
-        //Loop and eliminate last node if it has something on it
-        for (int i = distanceToTravel - 1; i > 0; i--)
+        if (nodePath.Count == 0) { FinishedMoving(HexOn); }
+        else
         {
-            if (nodePath[i].NodeHex.EntityHolding != null)
-            {
-                distanceToTravel--;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        for (int i = 0; i < distanceToTravel; i++)
-        {
-            if (i == distanceToTravel - 1)
-            {
-                nodePath[i].NodeHex.HighlightMovePoint();
-                hexToMoveTo = nodePath[i].NodeHex;
-            }
-            else
-            {
-                nodePath[i].NodeHex.HighlightMoveRange();
-            }
+            HexOn.HighlightSelection();
             yield return new WaitForSeconds(.5f);
+            int distanceToTravel = nodePath.Count;
+            if (nodePath.Count > CurrentMoveRange) { distanceToTravel = CurrentMoveRange; }
+            Hex hexToMoveTo = null;
+            //Loop and eliminate last node if it has something on it
+            for (int i = distanceToTravel - 1; i > 0; i--)
+            {
+                if (nodePath[i].NodeHex.EntityHolding != null)
+                {
+                    distanceToTravel--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            for (int i = 0; i < distanceToTravel; i++)
+            {
+                if (i == distanceToTravel - 1)
+                {
+                    nodePath[i].NodeHex.HighlightMovePoint();
+                    hexToMoveTo = nodePath[i].NodeHex;
+                }
+                else
+                {
+                    nodePath[i].NodeHex.HighlightMoveRange();
+                }
+                yield return new WaitForSeconds(.5f);
+            }
+            if (hexToMoveTo != null) { MoveOnPath(hexToMoveTo); }
+            else { Debug.LogWarning("No hex to move to"); }
         }
-        if (hexToMoveTo != null) { MoveOnPath(hexToMoveTo); }
-        else { Debug.LogWarning("No hex to move to"); }
         yield return null;
     }
 
@@ -400,6 +404,7 @@ public class EnemyCharacter : Character {
     public List<Node> getPathToTarget(Hex target, int range)
     {
         List<Node> possibleNodes = HexMap.GetNodesAtDistanceFromNode(target.HexNode, range);
+        if (possibleNodes.Contains(HexOn.HexNode)){ return new List<Node> { HexOn.HexNode }; }
         List<Node> OpenNodes = GetOpenNodes(possibleNodes);
         if (OpenNodes.Count > 0)
         {
@@ -409,13 +414,13 @@ public class EnemyCharacter : Character {
             return nodePath;
         }
         // if that doesnt work increase range and try again until the raw distance is larger then the range
-        if (FindObjectOfType<AStar>().GetRawPath(HexOn.HexNode, target.HexNode, HexMap.Map).Count - 1 > range)
+        if (FindObjectOfType<AStar>().GetRawPath(HexOn.HexNode, target.HexNode).Count - 1 > range)
         {
             return getPathToTarget(target, range + 1);
         }
         else
         {
-            return new List<Node> { HexOn.HexNode };
+            return new List<Node>();
         }
     }
 }
