@@ -573,12 +573,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f0de6a85ecc3c741831e8490407b1c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Discarded: 0
+  Lost: 0
+  OGColor: {r: 1, g: 1, b: 1, a: 1}
   myCard: {fileID: 0}
   showArea: {fileID: 0}
   InitText: {fileID: 114900661343404764}
   basicAttack: 0
-  Discarded: 0
-  Lost: 0
 --- !u!114 &114533728161325134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1192,7 +1193,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1268186101405006}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.876503, y: 53.50508, z: 0}
+  m_LocalPosition: {x: 2.876503, y: 46, z: 0}
   m_LocalScale: {x: 0.57131976, y: 0.57131976, z: 0.57131976}
   m_Children:
   - {fileID: 224127429135613454}
@@ -1203,7 +1204,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.876503, y: 53.50508}
+  m_AnchoredPosition: {x: 2.876503, y: 46}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224161045840376574

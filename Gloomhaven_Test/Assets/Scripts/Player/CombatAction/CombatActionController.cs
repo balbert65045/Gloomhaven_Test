@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CombatActionController : MonoBehaviour {
 
-    public LayerMask MapLayer;
+    private CameraRaycaster raycaster;
+    private HexVisualizer hexVisualizer;
 
     private CombatCardAbility CardAbilityUsing;
     private List<Action> SelectedCardActions = new List<Action>();
@@ -28,6 +29,8 @@ public class CombatActionController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         playerController = GetComponent<PlayerController>();
+        raycaster = FindObjectOfType<CameraRaycaster>();
+        hexVisualizer = FindObjectOfType<HexVisualizer>();
     }
 
     public Action NoAction()
@@ -37,16 +40,16 @@ public class CombatActionController : MonoBehaviour {
 
     public void CheckToShowCharacterStatsAndCard()
     {
-        RaycastHit Hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-          if (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>())
+            Hex hexSelected = HexHit.GetComponent<Hex>();
+            if (hexSelected.EntityHolding != null && hexSelected.EntityHolding.GetComponent<EnemyCharacter>())
             {
-                if (characterSelected != null) { characterSelected.HexOn.UnHighlight(); }
-                Hit.transform.GetComponent<Hex>().HighlightSelection();
-                characterSelected = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>();
-                EnemyCharacter character = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>();
+                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
+                hexVisualizer.HighlightSelectionHex(hexSelected);
+                characterSelected = hexSelected.EntityHolding.GetComponent<Character>();
+                EnemyCharacter character = hexSelected.EntityHolding.GetComponent<EnemyCharacter>();
                 FindObjectOfType<EnemyController>().ShowActionCard(character);
             }
             else
@@ -54,7 +57,7 @@ public class CombatActionController : MonoBehaviour {
                 if (characterSelected != null) {
                     FindObjectOfType<CharacterViewer>().HideCharacterStats();
                     FindObjectOfType<CharacterViewer>().HideActionCard();
-                    characterSelected.HexOn.UnHighlight();
+                    hexVisualizer.UnHighlightHex(characterSelected.HexOn);
                 }
             }
         }
@@ -62,23 +65,23 @@ public class CombatActionController : MonoBehaviour {
 
     public void CheckToShowCharacterStats()
     {
-        RaycastHit Hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            if (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>())
+            Hex hexSelected = HexHit.GetComponent<Hex>();
+            if (hexSelected.EntityHolding != null && hexSelected.EntityHolding.GetComponent<EnemyCharacter>())
             {
-                if (characterSelected != null) { characterSelected.HexOn.UnHighlight(); }
-                Hit.transform.GetComponent<Hex>().HighlightSelection();
-                characterSelected = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>();
-                EnemyCharacter character = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>();
+                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
+                hexVisualizer.HighlightSelectionHex(hexSelected);
+                characterSelected = hexSelected.EntityHolding.GetComponent<Character>();
+                EnemyCharacter character = hexSelected.EntityHolding.GetComponent<EnemyCharacter>();
                 FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
             }
-            else if  (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<PlayerCharacter>())
+            else if  (hexSelected.EntityHolding != null && hexSelected.EntityHolding.GetComponent<PlayerCharacter>())
             {
-                if (characterSelected != null) { characterSelected.HexOn.UnHighlight(); }
-                Hit.transform.GetComponent<Hex>().HighlightSelection();
-                characterSelected = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>();
+                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
+                hexVisualizer.HighlightSelectionHex(hexSelected);
+                characterSelected = hexSelected.EntityHolding.GetComponent<Character>();
                 FindObjectOfType<CharacterViewer>().ShowCharacterStats(characterSelected.GetComponent<PlayerCharacter>().CharacterName, characterSelected.GetComponent<PlayerCharacter>().characterIcon, characterSelected);
             }
             else
@@ -87,7 +90,7 @@ public class CombatActionController : MonoBehaviour {
                 {
                     FindObjectOfType<CharacterViewer>().HideCharacterStats();
                     FindObjectOfType<CharacterViewer>().HideActionCard();
-                    characterSelected.HexOn.UnHighlight();
+                    hexVisualizer.UnHighlightHex(characterSelected.HexOn);
                 }
             }
         }
@@ -130,17 +133,7 @@ public class CombatActionController : MonoBehaviour {
     }
 
 
-    public void UnHighlightHexes()
-    {
-        Hex[] hexes = FindObjectOfType<HexMapController>().AllHexes;
-        foreach (Hex hex in hexes)
-        {
-            if (hex.HexNode.Shown)
-            {
-                hex.UnHighlight();
-            }
-        }
-    }
+    public void UnHighlightHexes() { hexVisualizer.UnhighlightHexes(); }
 
     public void CheckToUseActions()
     {
@@ -155,11 +148,10 @@ public class CombatActionController : MonoBehaviour {
     public bool UseAction(Action action)
     {
         if (PerformingAction) { return false; }
-        RaycastHit Hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            Hex hexSelected = Hit.transform.GetComponent<Hex>();
+            Hex hexSelected = HexHit.GetComponent<Hex>();
             if (myCurrentAction.thisActionType == ActionType.Movement)
             {
                 return CheckForMove(action, hexSelected);
@@ -222,7 +214,7 @@ public class CombatActionController : MonoBehaviour {
                 UnHighlightHexes();
                 foreach (Node node_highlight in nodes)
                 {
-                    node_highlight.NodeHex.HighlightAttackArea();
+                    hexVisualizer.HighlightAttackAreaHex(node_highlight.NodeHex);
                 }
                 Attacking = true;
                 charactersAttacking.Add(node.NodeHex.EntityHolding.GetComponent<Character>());
@@ -245,10 +237,6 @@ public class CombatActionController : MonoBehaviour {
             myCharacter.ShowPath(hexSelected.HexNode);
 
             myCharacter.MoveOnPath(hexSelected);
-            //if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().isOpen)
-            //{
-            //    hexSelected.GetComponent<Door>().OpenHexes();
-            //}
             FindObjectOfType<MyCameraController>().SetTarget(myCharacter.transform);
             playerController.DisableEndTurn();
             PerformingAction = true;
@@ -291,7 +279,7 @@ public class CombatActionController : MonoBehaviour {
     void MoveToNextAbility()
     {
         UnHighlightHexes();
-        playerController.SelectPlayerCharacter.HexOn.HighlightSelection();
+        hexVisualizer.HighlightSelectionHex(playerController.SelectPlayerCharacter.HexOn);
         characterSelected = null;
         FindObjectOfType<CharacterViewer>().HideCharacterStats();
         FindObjectOfType<CharacterViewer>().HideActionCard();
@@ -383,20 +371,15 @@ public class CombatActionController : MonoBehaviour {
     void HighlightHexForAttack(int Distance)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
-        if (raycastHits.Length == 0) { return; }
-        foreach (RaycastHit hit in raycastHits)
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            if (hit.transform.GetComponent<Hex>())
+            Hex hexSelected = HexHit.GetComponent<Hex>();
+            if (myCharacter.CheckIfinAttackRange(hexSelected, myCharacter.GetCurrentAttackRange()) && !Attacking)
             {
-                Hex hex = hit.transform.GetComponent<Hex>();
-                if (myCharacter.CheckIfinAttackRange(hex, myCharacter.GetCurrentAttackRange()) && !Attacking)
-                {
-                    FindObjectOfType<HexVisualizer>().HighlightAttackArea(hex);
-                }
-                return;
+                hexVisualizer.HighlightAttackArea(hexSelected);
             }
+            return;   
         }
     }
 
@@ -420,23 +403,13 @@ public class CombatActionController : MonoBehaviour {
     void HighlightHexOverForMove(int Distance)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
-        if (raycastHits.Length == 0) { return; }
-        foreach (RaycastHit hit in raycastHits)
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            if (hit.transform.GetComponent<Hex>())
-            {
-                Hex hex = hit.transform.GetComponent<Hex>();
-                if (myCharacter.HexInMoveRange(hex, Distance))
-                {
-                    FindObjectOfType<HexVisualizer>().HighlightMovePath(hex);
-                }
-                return;
-            }
+            Hex hexSelected = HexHit.GetComponent<Hex>();
+            if (myCharacter.HexInMoveRange(hexSelected, Distance)) { hexVisualizer.HighlightMovePath(hexSelected); }
         }
     }
-
 
     void ShowDistance(int Distance)
     {

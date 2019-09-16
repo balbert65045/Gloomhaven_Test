@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    public Text nameText;
     public bool Discarded = false;
     public bool Lost = false;
 
@@ -51,10 +52,10 @@ public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public virtual void showCard()
     {
+        myCard.gameObject.SetActive(true);
         myCard.transform.SetParent(showArea.transform);
         myCard.transform.localPosition = Vector3.zero;
         myCard.transform.localScale = OldScale;
-        myCard.gameObject.SetActive(true);
     }
 
     public void unShowCard()
@@ -77,6 +78,7 @@ public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     // Use this for initialization
     public virtual void Start () {
         myCard = GetComponentInChildren<Card>();
+        showArea = FindObjectOfType<HandCardShowArea>();
         //OGColor = GetComponent<Image>().color;
         OldScale = myCard.transform.localScale;
         myCard.gameObject.SetActive(false);

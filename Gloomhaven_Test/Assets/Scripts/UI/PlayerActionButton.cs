@@ -36,7 +36,7 @@ public class PlayerActionButton : MonoBehaviour {
     {
         if (openingDoor) {
             openingDoor = false;
-            FindObjectOfType<PlayerController>().OpenDoor();
+          //  FindObjectOfType<PlayerController>().OpenDoor();
         }
         else if (exiting) {
             exiting = false;

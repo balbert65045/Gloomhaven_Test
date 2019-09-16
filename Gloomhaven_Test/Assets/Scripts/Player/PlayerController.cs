@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    public LayerMask MapLayer;
-
     public List<PlayerCharacter> myCharacters = new List<PlayerCharacter>();
     public PlayerCharacter SelectPlayerCharacter;
 
@@ -38,9 +36,13 @@ public class PlayerController : MonoBehaviour {
     private PlayerActionButton actionButton;
     private InitiativeBoard initBoard;
     private MyCameraController myCamera;
+    private CameraRaycaster raycaster;
+    private HexVisualizer hexVisualizer;
 
     private void Start()
     {
+        hexVisualizer = FindObjectOfType<HexVisualizer>();
+        raycaster = FindObjectOfType<CameraRaycaster>();
         myCamera = FindObjectOfType<MyCameraController>();
         combatController = GetComponent<CombatActionController>();
         outOfCombatController = GetComponent<OutOfCombatActionController>();
@@ -181,7 +183,7 @@ public class PlayerController : MonoBehaviour {
 
             //Board
             combatController.UnHighlightHexes();
-            SelectPlayerCharacter.HexOn.HighlightSelection();
+            hexVisualizer.HighlightSelectionHex(SelectPlayerCharacter.HexOn);
             //Camera
             FindObjectOfType<MyCameraController>().LookAt(SelectPlayerCharacter.transform);
         }
@@ -225,10 +227,6 @@ public class PlayerController : MonoBehaviour {
                         break;
                     case CombatState.SelectingCombatCards:
                         SelectPlayerCharacter.GetMyCombatHand().HideHand();
-                        //foreach (PlayerCharacter character in myCharacters)
-                        //{
-                        //    if (!character.GetMyCombatHand().selectedCardLinkedButton.basicAttack) { LoseCardForCharacter(character); }
-                        //}
                         HideCharacterSelection();
                         FindObjectOfType<EndTurnButton>().DisableEndTurn();
                         FindObjectOfType<CombatManager>().PlayerDonePickingCombatCards();
@@ -273,17 +271,6 @@ public class PlayerController : MonoBehaviour {
         if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedShielding(); }
     }
 
-    ////Character Health to Card control
-    //public void SetHandSize(int size)
-    //{
-    //    SelectPlayerCharacter.SetNewHandSize(size);
-    //}
-
-    //public void LoseCardForCharacter(PlayerCharacter character)
-    //{
-    //    character.LoseCard();
-    //}
-
     //Character selection
     void selectAnotherCharacter()
     {
@@ -323,7 +310,6 @@ public class PlayerController : MonoBehaviour {
 
     public void SelectCharacter(PlayerCharacter playerCharacter)
     {
-        //if (AnyCharacterMoving()) { return; }
         if (myState == PlayerState.OutofCombat)
         {
             if (outOfCombatController.MovingIntoCombat) { return; }
@@ -335,7 +321,7 @@ public class PlayerController : MonoBehaviour {
 
             myCamera.SetTarget(SelectPlayerCharacter.transform);
 
-            SelectPlayerCharacter.HexOn.HighlightSelection();
+            hexVisualizer.HighlightSelectionHex(SelectPlayerCharacter.HexOn);
             SelectPlayerCharacter.myDecks.SetActive(true);
             SelectPlayerCharacter.GetMyCombatHand().HideHand();
             SelectPlayerCharacter.GetMyOutOfCombatHand().ShowHand();
@@ -369,18 +355,17 @@ public class PlayerController : MonoBehaviour {
                 ShowCharacterButtonSelected(SelectPlayerCharacter);
             }
         }
-        CheckToHideOpenDoor();
     }
 
     void CheckToSelectCharacter()
     {
-        RaycastHit Hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            if (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<PlayerCharacter>())
+            Hex hex = HexHit.GetComponent<Hex>();
+            if (hex.EntityHolding != null && hex.EntityHolding.GetComponent<PlayerCharacter>())
             {
-                SelectCharacter(Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<PlayerCharacter>());
+                SelectCharacter(hex.EntityHolding.GetComponent<PlayerCharacter>());
             }
         }
     }
@@ -397,17 +382,7 @@ public class PlayerController : MonoBehaviour {
 
 
     //Map
-    public void UnHighlightHexes()
-    {
-        Hex[] hexes = FindObjectOfType<HexMapController>().AllHexes;
-        foreach (Hex hex in hexes)
-        {
-            if (hex.HexNode.Shown)
-            {
-                hex.returnToPreviousColor();
-            }
-        }
-    }
+    public void UnHighlightHexes() { hexVisualizer.UnhighlightHexes(); }
 
     public void ShowCharacterView()
     {
@@ -478,12 +453,6 @@ public class PlayerController : MonoBehaviour {
 
     void CheckToAllowExitFloorOrOpenDoor()
     {
-        if (SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>() != null && !SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>().door.isOpen)
-        {
-            AllowOpenDoor();
-            return;
-        }
-
         bool exitAllowed = true;
         foreach (PlayerCharacter character in myCharacters)
         {
@@ -494,7 +463,6 @@ public class PlayerController : MonoBehaviour {
             return;
         }
         DisableExit();
-        CheckToHideOpenDoor();
     }
 
     void AllowExit()
@@ -509,41 +477,11 @@ public class PlayerController : MonoBehaviour {
         actionButton.gameObject.SetActive(false);
     }
 
-    public void CheckToHideOpenDoor()
-    {
-        if (SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>() != null && !SelectPlayerCharacter.HexOn.GetComponent<doorConnectionHex>().door.isOpen)
-        {
-            AllowOpenDoor();
-        }
-        else
-        {
-            HideOpenDoor();
-        }
-    }
-
     public void ExitLevel()
     {
         actionButton.gameObject.SetActive(false);
         Time.timeScale = 0;
         FindObjectOfType<LevelClearedPanel>().TurnOnPanel();
-    }
-
-    //Door Button
-    public void AllowOpenDoor()
-    {
-        actionButton.gameObject.SetActive(true);
-        actionButton.allowOpenDoorAction();
-    }
-
-    public void HideOpenDoor()
-    {
-        actionButton.gameObject.SetActive(false);
-    }
-
-    public void OpenDoor()
-    {
-        actionButton.gameObject.SetActive(false);
-        SelectPlayerCharacter.OpenDoor();
     }
 
     //End Turn Button

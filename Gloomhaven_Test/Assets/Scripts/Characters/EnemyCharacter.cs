@@ -45,14 +45,7 @@ public class EnemyCharacter : Character {
 
     void UnShowPath()
     {
-        Hex[] hexes = FindObjectOfType<HexMapController>().AllHexes;
-        foreach (Hex hex in hexes)
-        {
-            if (hex.HexNode.Shown)
-            {
-                hex.UnHighlight();
-            }
-        }
+        hexVisualizer.UnhighlightHexes();
     }
 
     public void ResetBuffs() { resetShield(GetArmor()); }
@@ -70,7 +63,7 @@ public class EnemyCharacter : Character {
         {
             foreach (Node node in nodesInView)
             {
-                if (node.Shown) { node.NodeHex.HighlightAttackArea(); }
+                if (node.Shown) { hexVisualizer.HighlightAttackAreaHex(node.NodeHex); }
             }
         }
     }
@@ -114,7 +107,7 @@ public class EnemyCharacter : Character {
             node.NodeHex.TakeAwayThreatArea();
             if (!node.Shown && nodesInView.Contains(node))
             {
-                node.GetComponent<Hex>().UnHighlight();
+                hexVisualizer.UnHighlightHex(node.NodeHex);
                 node.GetComponent<Hex>().ShowHexEnd();
                 node.Shown = true;
                 if (node.NodeHex.EntityToSpawn != null)
@@ -211,7 +204,7 @@ public class EnemyCharacter : Character {
     //Shielding 1.
     IEnumerator DoShieldThenOtherActions()
     {
-        HexOn.HighlightShieldlRange();
+        hexVisualizer.HighlightArmorPointHex(HexOn);
         yield return new WaitForSeconds(.5f);
         Shield(ShieldAmount);
         yield return null;
@@ -233,7 +226,7 @@ public class EnemyCharacter : Character {
 
     IEnumerator DoHealThenOtherActions()
     {
-        HexOn.HighlightHealRange();
+        hexVisualizer.HighlightHealRangeHex(HexOn);
         if (health != maxHealth)
         {
             yield return new WaitForSeconds(.5f);
@@ -319,7 +312,7 @@ public class EnemyCharacter : Character {
         if (nodePath.Count == 0) { FinishedMoving(HexOn); }
         else
         {
-            HexOn.HighlightSelection();
+            hexVisualizer.HighlightSelectionHex(HexOn);
             yield return new WaitForSeconds(.5f);
             int distanceToTravel = nodePath.Count;
             if (nodePath.Count > CurrentMoveRange) { distanceToTravel = CurrentMoveRange; }
@@ -341,12 +334,12 @@ public class EnemyCharacter : Character {
             {
                 if (i == distanceToTravel - 1)
                 {
-                    nodePath[i].NodeHex.HighlightMovePoint();
+                    hexVisualizer.HighlightMovePointHex(nodePath[i].NodeHex);
                     hexToMoveTo = nodePath[i].NodeHex;
                 }
                 else
                 {
-                    nodePath[i].NodeHex.HighlightMoveRange();
+                    hexVisualizer.HighlightMoveRangeHex(nodePath[i].NodeHex);
                 }
                 yield return new WaitForSeconds(.5f);
             }
@@ -383,7 +376,7 @@ public class EnemyCharacter : Character {
         charactersAttacking.Add(TargetHex.EntityHolding.GetComponent<Character>());
         foreach(Character character in charactersAttacking)
         {
-            character.HexOn.HighlightAttackArea();
+            hexVisualizer.HighlightAttackAreaHex(character.HexOn);
         }
         Attack(CurrentAttack, charactersAttacking);
     }

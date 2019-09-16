@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraRaycaster : MonoBehaviour {
 
@@ -11,25 +12,81 @@ public class CameraRaycaster : MonoBehaviour {
     public delegate void OnCursorOverHex(Hex hex); // declare new delegate type
     public event OnCursorOverHex notifyCursorOverHexObservers; // instantiate an observer set
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    public LayerMask InterActionMask;
+    public GameObject InteractableObjectOver;
 
+    public Sprite DoorSprite;
+    public Sprite ChestSprite;
+    public Sprite Pointer;
+    Image cursorImage;
+    HexVisualizer hexVisualizer;
+    PlayerController playerController;
+
+    Vector2 cursorPoint;
+
+    // Use this for initialization
+    void Awake()
+    {
+        Cursor.visible = false;
+        cursorImage = GetComponentInChildren<Image>();
+        cursorImage.sprite = Pointer;
+        hexVisualizer = FindObjectOfType<HexVisualizer>();
+        playerController = FindObjectOfType<PlayerController>();
+    }
+
+    public Transform HexRaycast()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit[] raycastHits = Physics.RaycastAll(ray, maxRaycastDepth, HexLayer);
-        if (raycastHits.Length == 0) { notifyCursorOverHexObservers(null); }
-        foreach (RaycastHit hit in raycastHits)
+        RaycastHit Hit;
+        if (Physics.Raycast(ray, out Hit, 100f, HexLayer)) { return Hit.transform;}
+        return null;
+    }
+
+    public Transform InteractableRaycast()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit Hit;
+        if (Physics.Raycast(ray, out Hit, 100f, InterActionMask)) { return Hit.transform; }
+        return null;
+    }
+
+    // Update is called once per frame
+    void Update () {
+
+        cursorPoint = Input.mousePosition;
+        transform.position = cursorPoint;
+
+        Transform ActionHit = null;
+        if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat){ ActionHit = InteractableRaycast(); }
+        if (ActionHit != null)
         {
-            if (hit.transform.GetComponent<Hex>())
+            if (InteractableObjectOver != ActionHit.gameObject)
             {
-                notifyCursorOverHexObservers(hit.transform.GetComponent<Hex>());
+                if (ActionHit.GetComponent<DoorObject>() != null && !ActionHit.GetComponent<DoorObject>().door.isOpen)
+                {
+                    cursorImage.sprite = DoorSprite;
+                    hexVisualizer.ShowDoorPath(ActionHit.GetComponent<DoorObject>().door);
+                    InteractableObjectOver = ActionHit.gameObject;
+                    return;
+                }
+                else if (ActionHit.GetComponent<CardChest>())
+                {
+                    cursorImage.sprite = ChestSprite;
+                    hexVisualizer.ShowChestPath(ActionHit.GetComponent<Entity>().HexOn);
+                    InteractableObjectOver = ActionHit.gameObject;
+                }
+            }
+        }
+        else
+        {
+            InteractableObjectOver = null;
+            cursorImage.sprite = Pointer;
+            Transform HexHit = HexRaycast();
+            if (HexHit != null && HexHit.GetComponent<Hex>())
+            {
+                notifyCursorOverHexObservers(HexHit.GetComponent<Hex>());
                 return;
             }
         }
-        //notifyCursorOverHexObservers(null);
     }
 }

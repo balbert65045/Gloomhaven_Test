@@ -38,6 +38,8 @@ public class Character : Entity {
     public int baseDexterity = 0;
     public int baseArmor = 0;
 
+    protected HexVisualizer hexVisualizer;
+
     protected HealthBar myHealthBar;
     protected int maxHealth;
 
@@ -162,6 +164,7 @@ public class Character : Entity {
 
     void Awake()
     {
+        hexVisualizer = FindObjectOfType<HexVisualizer>();
         HexMap = FindObjectOfType<HexMapController>();
         aStar = FindObjectOfType<AStar>();
 
@@ -238,7 +241,7 @@ public class Character : Entity {
     public void ShowHeal(int range)
     {
         //Change this to incorporate range
-        this.HexOn.HighlightHealRange();
+        hexVisualizer.HighlightHealRangeHex(this.HexOn);
     }
 
     //SHIELD
@@ -257,7 +260,7 @@ public class Character : Entity {
 
     public void ShowShield(int Range)
     {
-        this.HexOn.HighlightShieldlRange();
+        hexVisualizer.HighlightArmorPointHex(this.HexOn);
     }
 
 
@@ -362,7 +365,7 @@ public class Character : Entity {
         {
             if (!node.Shown) { continue; }
             NodesInAttackRange.Add(node);
-            node.NodeHex.HighlightAttackRange();
+            hexVisualizer.HighlightAttackRangeHex(node.NodeHex);
         }
     }
 
@@ -415,11 +418,11 @@ public class Character : Entity {
         NodesInWalkingDistance.Clear();
         foreach (Node node in nodesInDistance)
         {
-            if (node.NodeHex.EntityHolding != null || !node.Shown) { continue; }
+            if (node.NodeHex.EntityHolding != null || !node.Shown || node.edge) { continue; }
             if (aStar.FindPath(HexOn.HexNode, node, myCT).Count <= CurrentMoveRange)
             {
                 NodesInWalkingDistance.Add(node);
-                node.NodeHex.HighlightMoveRange();
+                hexVisualizer.HighlightMoveRangeHex(node.NodeHex);
             }
         }
     }

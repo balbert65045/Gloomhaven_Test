@@ -62,6 +62,26 @@ public class HexMapController : MonoBehaviour {
         return RealNodes;
     }
 
+    public Node GetClosestNodeFromNeighbors(Hex hexMovingNear, Character character)
+    {
+        List<Node> nodes =  GetRealNeighbors(hexMovingNear.GetComponent<Node>());
+        if (nodes.Contains(character.HexOn.HexNode)) { return character.HexOn.HexNode; }
+        Node ClosestNode = null;
+        int closestPathDistance = 100;
+        foreach (Node node in nodes)
+        {
+            if (node == null) { continue; }
+            if (!node.isAvailable || node.edge) { continue; }
+            int pathDistance = character.GetPath(node).Count;
+            if (pathDistance < closestPathDistance)
+            {
+                closestPathDistance = pathDistance;
+                ClosestNode = node;
+            }
+        }
+        return ClosestNode;
+    }
+
     public Vector2[] GetDirections()
     {
         return new Vector2[] {

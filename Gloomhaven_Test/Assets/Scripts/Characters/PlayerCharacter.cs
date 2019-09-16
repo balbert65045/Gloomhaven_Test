@@ -7,6 +7,13 @@ public class PlayerCharacter : Character
     public Sprite characterIcon;
     public string CharacterName;
 
+    public int CombatHandSize = 5;
+    public GameObject[] InitialCombatCards;
+    public int OutOfCombatHandSize = 5;
+    public GameObject[] InitialOutOfCombatCards;
+
+    public GameObject DeckPrefab;
+
     public GameObject myDecks;
     public CombatPlayerHand GetMyCombatHand(){ return myDecks.GetComponentInChildren<CombatPlayerHand>(); }
     public OutOfCombatHand GetMyOutOfCombatHand() { return myDecks.GetComponentInChildren<OutOfCombatHand>(); }
@@ -18,6 +25,12 @@ public class PlayerCharacter : Character
     private PlayerController playerController;
     private bool SavingThrowUsed = false;
 
+    private Door doorToOpen;
+    public void SetDoorToOpen(Door door) { doorToOpen = door; }
+
+    private CardChest ChestToOpen;
+    public void SetChestToOpen(CardChest chest) { ChestToOpen = chest; }
+
     void Start()
     {
         playerController = FindObjectOfType<PlayerController>();
@@ -27,9 +40,27 @@ public class PlayerCharacter : Character
             myHealthBar.CreateHealthBar(health);
         }
         maxHealth = health;
+        BuildDecks();
+    }
 
-        //int cardsInHand = myDecks.GetComponentInChildren<CombatPlayerHand>().CheckCardsInHand();
-        //SetHandSize(cardsInHand);
+    public void BuildDecks()
+    {
+        Transform deckParent = FindObjectOfType<PlayersDecks>().transform;
+        GameObject Deck = Instantiate(DeckPrefab, deckParent);
+        Deck.name = name + " Deck";
+        Deck.SetActive(false);
+        myDecks = Deck;
+        GetMyCombatHand().SetHandSize(CombatHandSize);
+        GetMyOutOfCombatHand().SetHandSize(OutOfCombatHandSize);
+
+        foreach (GameObject card in InitialCombatCards)
+        {
+            GetMyCombatHand().AddCard(card);
+        }
+        foreach (GameObject card in InitialOutOfCombatCards)
+        {
+            GetMyOutOfCombatHand().AddCard(card);
+        }
     }
 
     //VIEW//
@@ -38,7 +69,7 @@ public class PlayerCharacter : Character
         List<Node> nodesInDistance = HexMap.GetDistanceRange(HexOn.HexNode, Range, myCT);
         foreach (Node node in nodesInDistance)
         {
-            node.GetComponent<Hex>().HighlightMoveRange();
+           hexVisualizer.HighlightMoveRangeHex(node.NodeHex);
         }
     }
 
@@ -49,11 +80,11 @@ public class PlayerCharacter : Character
         List<Node> NodePath = FindObjectOfType<AStar>().FindPath(StartNode, EndNode, myCT);
         foreach (Node node in NodePath)
         {
-            node.GetComponent<Hex>().HighlightMoveRange();
+            hexVisualizer.HighlightMoveRangeHex(node.NodeHex);
         }
     }
 
-    public void Selected(){ if (!GetMoving()) { HexOn.HighlightSelection(); }}
+    public void Selected(){ if (!GetMoving()) { hexVisualizer.HighlightSelectionHex(HexOn); }}
 
     //placeholder
     public void ShowHexes(){ StartCoroutine("ShowNodes"); }
@@ -74,7 +105,7 @@ public class PlayerCharacter : Character
             if (!node.Shown && nodesSeen.Contains(node))
             {
                 node.GetComponent<Hex>().ShowHexEnd();
-                node.GetComponent<Hex>().UnHighlight();
+                hexVisualizer.UnHighlightHex(node.NodeHex);
                 node.Shown = true;
                 if (node.NodeHex.EntityToSpawn != null)
                 {
@@ -99,6 +130,16 @@ public class PlayerCharacter : Character
     {
         HexMovingTo.CharacterArrivedAtHex();
         FindObjectOfType<PlayerController>().FinishedMoving();
+        if (doorToOpen != null)
+        {
+            OpenDoor();
+            doorToOpen = null;
+        }
+        else if (ChestToOpen != null)
+        {
+            ChestToOpen.OpenChest();
+            ChestToOpen = null;
+        }
     }
 
     public override void FinishedAttacking()
@@ -127,37 +168,10 @@ public class PlayerCharacter : Character
         }
     }
 
-    //CARDS
-    //public override bool SavingThrow()
-    //{
-    //    SavingThrowUsed = GetMyCombatHand().LoseRandomCard();
-    //    return SavingThrowUsed;
-    //}
-
-    //public void SetHandSize(int size)
-    //{
-    //    myHealthBar.CreateHandSize(size);
-    //}
-
-    //public void SetNewHandSize(int size)
-    //{
-    //    myHealthBar.ResetHandSize(size);
-    //}
-
-    //public void LoseCard()
-    //{
-    //    myHealthBar.LoseCardInHand();
-    //}
-
     //Damage
     public override void GetHit()
     {
         base.GetHit();
-        //if (SavingThrowUsed)
-        //{
-        //    SavingThrowUsed = false;
-        //    LoseCard();
-        //}
     }
 
     public override void ShowNewMoveArea()

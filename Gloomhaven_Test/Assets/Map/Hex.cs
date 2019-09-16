@@ -79,9 +79,16 @@ public class Hex : MonoBehaviour {
 
     public bool HasSameType(Character.CharacterType CT)
     {
-        if (EntityHolding != null && EntityHolding.GetComponent<Character>() != null)
+        if (EntityHolding != null)
         {
-            return EntityHolding.GetComponent<Character>().myCT == CT;
+            if (EntityHolding.GetComponent<Character>() != null)
+            {
+                return EntityHolding.GetComponent<Character>().myCT == CT;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         return true;

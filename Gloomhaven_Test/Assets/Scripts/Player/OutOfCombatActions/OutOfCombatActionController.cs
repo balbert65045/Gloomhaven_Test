@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class OutOfCombatActionController : MonoBehaviour {
 
-    private LayerMask MapLayer;
     private PlayerController playerController;
+    private CameraRaycaster raycaster;
+    private HexVisualizer hexVisualizer;
     //private Character myCharacter;
     private Character characterSelected;
 
@@ -14,66 +15,55 @@ public class OutOfCombatActionController : MonoBehaviour {
     public bool MovingIntoCombat;
     public void FinishedMovingIntoCombat() { MovingIntoCombat = false; }
 
+    public bool LookingInChest = false;
+
     // Use this for initialization
     void Start () {
         playerController = GetComponent<PlayerController>();
-        MapLayer = playerController.MapLayer;
-        //myCharacter = playerController.myCharacter;
+        raycaster = FindObjectOfType<CameraRaycaster>();
+        hexVisualizer = FindObjectOfType<HexVisualizer>();
     }
 
     public void UnHighlightHexes()
     {
-        Hex[] hexes = FindObjectOfType<HexMapController>().AllHexes;
-        foreach (Hex hex in hexes)
-        {
-            if (hex.HexNode.Shown)
-            {
-                hex.returnToPreviousColor();
-            }
-        }
+        hexVisualizer.ReturntHexesToPreviousColor();
     }
 
     void HighlightHexOver()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit[] raycastHits = Physics.RaycastAll(ray, 100, playerController.MapLayer);
-        if (raycastHits.Length == 0) { return; }
-        foreach (RaycastHit hit in raycastHits)
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            if (hit.transform.GetComponent<Hex>())
-            {
-                FindObjectOfType<HexVisualizer>().HighlightMovePath(hit.transform.GetComponent<Hex>());
-                return;
-            }
+            hexVisualizer.HighlightMovePath(HexHit.GetComponent<Hex>());
+            return;
         }
     }
 
     public void FinishedMoving()
     {
-        //UnHighlightHexes();
+        UnHighlightHexes();
         playerController.SelectPlayerCharacter.Selected();
-        //HighlightHexOver();
     }
 
     public void CheckToShowCharacterStats()
     {
-        RaycastHit Hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            if (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>())
+            Hex hex = HexHit.GetComponent<Hex>();
+            if (hex.EntityHolding != null && hex.EntityHolding.GetComponent<EnemyCharacter>())
             {
-                if (characterSelected != null) { characterSelected.HexOn.UnHighlight(); }
-                Hit.transform.GetComponent<Hex>().HighlightSelection();
-                characterSelected = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>();
-                EnemyCharacter character = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<EnemyCharacter>();
+                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
+                hexVisualizer.HighlightSelectionHex(hex);
+                characterSelected = hex.EntityHolding.GetComponent<Character>();
+                EnemyCharacter character = hex.EntityHolding.GetComponent<EnemyCharacter>();
                 FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
             }
-            else if (Hit.transform.GetComponent<Hex>().EntityHolding != null && Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<PlayerCharacter>())
+            else if (hex.EntityHolding != null && hex.EntityHolding.GetComponent<PlayerCharacter>())
             {
-                if (characterSelected != null) { characterSelected.HexOn.UnHighlight(); }
-                Hit.transform.GetComponent<Hex>().HighlightSelection();
-                characterSelected = Hit.transform.GetComponent<Hex>().EntityHolding.GetComponent<Character>();
+                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
+                hexVisualizer.HighlightSelectionHex(hex);
+                characterSelected = hex.EntityHolding.GetComponent<Character>();
                 FindObjectOfType<CharacterViewer>().ShowCharacterStats(characterSelected.GetComponent<PlayerCharacter>().CharacterName, characterSelected.GetComponent<PlayerCharacter>().characterIcon, characterSelected);
             }
             else
@@ -82,36 +72,103 @@ public class OutOfCombatActionController : MonoBehaviour {
                 {
                     FindObjectOfType<CharacterViewer>().HideCharacterStats();
                     FindObjectOfType<CharacterViewer>().HideActionCard();
-                    characterSelected.HexOn.UnHighlight();
+                    hexVisualizer.UnHighlightHex(characterSelected.HexOn);
                 }
             }
         }
     }
 
-    public void CheckToMoveOutOfCombat(Character myCharacter)
+    public void CheckToMoveOrInteractOutOfCombat(Character myCharacter)
     {
         if (myCharacter.GetMoving()) { return; }
-        RaycastHit Hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
+        Transform InterActionHit = raycaster.InteractableRaycast();
+        if (InterActionHit != null)
         {
-            Hex hexSelected = Hit.transform.GetComponent<Hex>();
-            if (hexSelected == null || !hexSelected.HexNode.Shown) { return; }
-            if (!hexSelected.EntityHolding && !hexSelected.MovedTo)
+            if (InterActionHit.GetComponent<DoorObject>() != null)
             {
-                if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
-                myCharacter.MoveOnPath(hexSelected);
-                UnHighlightHexes();
+                MoveToDoor((PlayerCharacter)myCharacter, InterActionHit.GetComponent<DoorObject>().door);
                 return;
             }
+            else if (InterActionHit.GetComponent<CardChest>() != null)
+            {
+                CheckToMoveNearChest((PlayerCharacter)myCharacter, InterActionHit.GetComponent<Entity>().HexOn);
+                return;
+            }
+        }
+        else
+        {
+            Transform HexHit = raycaster.HexRaycast();
+            if (HexHit != null && HexHit.GetComponent<Hex>())
+            {
+                Hex hexSelected = HexHit.GetComponent<Hex>();
+                if (hexSelected == null || !hexSelected.HexNode.Shown) { return; }
+                if (!hexSelected.EntityHolding && !hexSelected.MovedTo)
+                {
+                    if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
+                    myCharacter.MoveOnPath(hexSelected);
+                    UnHighlightHexes();
+                    return;
+                }
+            }
+        }
+    }
+
+    public void CheckToMoveNearChest(PlayerCharacter myCharacter, Hex chestHex)
+    {
+        Node closestNode = FindObjectOfType<HexMapController>().GetClosestNodeFromNeighbors(chestHex, myCharacter);
+        if (closestNode == myCharacter.HexOn.HexNode) {
+            LookingInChest = true;
+            chestHex.EntityHolding.GetComponent<CardChest>().OpenChest();
+        }
+        else if (closestNode != null)
+        {
+            LookingInChest = true;
+            myCharacter.SetChestToOpen(chestHex.EntityHolding.GetComponent<CardChest>());
+            myCharacter.MoveOnPath(closestNode.NodeHex);
+        }
+    }
+
+    public void MoveToDoor(PlayerCharacter myCharacter, Door doorHex)
+    {
+        if (myCharacter.GetMoving()) { return; }
+        if (doorHex.GetComponent<Node>().isAvailable)
+        {
+            CheckToMoveToDoor(myCharacter, doorHex);
+        }
+        else
+        {
+            CheckToMoveNearDoor(myCharacter, doorHex);
+        }
+    }
+
+    public void CheckToMoveToDoor(PlayerCharacter myCharacter, Door doorHex)
+    {
+        if (myCharacter.HexOn == doorHex.GetComponent<Hex>())
+        {
+            myCharacter.OpenDoor();
+            return;
+        }
+        myCharacter.SetDoorToOpen(doorHex);
+        myCharacter.MoveOnPath(doorHex.GetComponent<Hex>());
+    }
+
+    public void CheckToMoveNearDoor(PlayerCharacter myCharacter, Door doorHex)
+    {
+        Node closestNode= FindObjectOfType<HexMapController>().GetClosestNodeFromNeighbors(doorHex.GetComponent<Hex>(), myCharacter);
+        if (closestNode == myCharacter.HexOn.HexNode) { myCharacter.OpenDoor(); }
+        else if (closestNode != null)
+        {
+            myCharacter.SetDoorToOpen(doorHex);
+            myCharacter.MoveOnPath(closestNode.NodeHex);
         }
     }
 
     public void UseAction(PlayerCharacter character)
     {
+        if (LookingInChest) { return; }
         if (cardUsing == null)
         {
-            CheckToMoveOutOfCombat(character);
+            CheckToMoveOrInteractOutOfCombat(character);
         }
         else
         {
@@ -126,17 +183,9 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void UseOutOfCombatAbility(PlayerCharacter character)
     {
-        RaycastHit Hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Transform HexHit = raycaster.HexRaycast();
         Hex hexSelected = null;
-        if (Physics.Raycast(ray, out Hit, 100f, MapLayer))
-        {
-            if (Hit.transform.GetComponent<Hex>() != null)
-            {
-                hexSelected = Hit.transform.GetComponent<Hex>();
-            }
-        }
-
+        if (HexHit != null && HexHit.GetComponent<Hex>()){ hexSelected = HexHit.GetComponent<Hex>(); }
         if (hexSelected == null) { return; }
 
         switch (cardUsing.actions[0].thisActionType)

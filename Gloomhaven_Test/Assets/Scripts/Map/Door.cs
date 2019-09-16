@@ -10,6 +10,7 @@ public class Door : MonoBehaviour {
 
     public void OpenHexes()
     {
+        door.layer = 0;
         GetComponent<Node>().isAvailable = true;
         door.GetComponent<Animator>().SetTrigger("Open");
         foreach (Hex hex in hexesToOpenTo)

@@ -8,10 +8,124 @@ public class HexVisualizer : MonoBehaviour {
     private PlayerController playerController;
     private CombatActionController combatcontroller;
     private OutOfCombatActionController outOfCombatcontroller;
-    //private Character myCharacter;
+    private HexMapController hexMap;
     private List<Hex> LastHexesChanged = new List<Hex>();
     private Hex LastHexOver;
 
+    public void UnhighlightHexes()
+    {
+        Hex[] hexes = hexMap.AllHexes;
+        foreach (Hex hex in hexes)
+        {
+            if (hex.HexNode.Shown)
+            {
+                hex.UnHighlight();
+            }
+        }
+    }
+
+    public void ReturntHexesToPreviousColor()
+    {
+        Hex[] hexes = hexMap.AllHexes;
+        foreach (Hex hex in hexes)
+        {
+            if (hex.HexNode.Shown)
+            {
+                hex.returnToPreviousColor();
+            }
+        }
+    }
+
+    public void UnHighlightHex(Hex hex)
+    {
+        hex.UnHighlight();
+    }
+
+    public void HighlightMoveRangeHex(Hex hex)
+    {
+        hex.HighlightMoveRange();
+    }
+
+    public void HighlightMovePointHex(Hex hex)
+    {
+        hex.HighlightMovePoint();
+    }
+
+    public void HighlightAttackRangeHex(Hex hex)
+    {
+        hex.HighlightAttackRange();
+    }
+
+    public void HighlightAttackAreaHex(Hex hex)
+    {
+        hex.HighlightAttackArea();
+    }
+
+    public void HighlightHealRangeHex(Hex hex)
+    {
+        hex.HighlightHealRange();
+    }
+
+    public void HighlightHealPointHex(Hex hex)
+    {
+        hex.HighlightHealRPoint();
+    }
+
+    public void HighlightArmorPointHex(Hex hex)
+    {
+        hex.HighlightShieldlRange();
+    }
+
+    public void HighlightSelectionHex(Hex hex)
+    {
+        hex.HighlightSelection();
+    }
+
+    public void ShowChestPath(Hex ChestHex)
+    {
+        if (outOfCombatcontroller.LookingInChest) { return; }
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
+        if (myCharacter.GetMoving()) { return; }
+        Node ClosestNode = GetClosestPathToAdjacentHexes(myCharacter, ChestHex);
+        if (ClosestNode != null)
+        {
+            ClearLastChangedHexes();
+            HighlightMovePath(ClosestNode.NodeHex);
+        }
+    }
+
+    public void ShowDoorPath(Door doorHex)
+    {
+        if (outOfCombatcontroller.LookingInChest) { return; }
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
+        if (myCharacter.GetMoving()) { return; }
+        if (myCharacter.HexOn == doorHex.GetComponent<Hex>())
+        {
+            ClearLastChangedHexes();
+            return;
+        }
+        if (doorHex.GetComponent<Node>().isAvailable)
+        {
+            ClearLastChangedHexes();
+            HighlightMovePath(doorHex.GetComponent<Hex>());
+        }
+        else
+        {
+            Node ClosestNode = GetClosestPathToAdjacentHexes(myCharacter, doorHex.GetComponent<Hex>());
+            if (ClosestNode != null)
+            {
+                ClearLastChangedHexes();
+                HighlightMovePath(ClosestNode.NodeHex);
+            }
+        }
+    }
+
+    public Node GetClosestPathToAdjacentHexes(Character character, Hex hex)
+    {
+        Node closestNode = FindObjectOfType<HexMapController>().GetClosestNodeFromNeighbors(hex, character);
+        if (closestNode == character.HexOn.HexNode) { ClearLastChangedHexes(); }
+        return closestNode;
+    }
 
     public void HighlightMovePath(Hex hex)
     {
@@ -37,7 +151,7 @@ public class HexVisualizer : MonoBehaviour {
         }
     } 
 
-    void ClearLastChangedHexes()
+    public void ClearLastChangedHexes()
     {
         if (LastHexesChanged.Count != 0)
         {
@@ -76,6 +190,7 @@ public class HexVisualizer : MonoBehaviour {
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
         {
             if (myCharacter.GetMoving()) { return; }
+            if (outOfCombatcontroller.LookingInChest) { return; }
             if (outOfCombatcontroller.cardUsing == null)
             {
                 ClearLastChangedHexes();
@@ -237,7 +352,7 @@ public class HexVisualizer : MonoBehaviour {
         outOfCombatcontroller = GetComponent<OutOfCombatActionController>();
         combatcontroller = GetComponent<CombatActionController>();
         playerController = GetComponent<PlayerController>();
-        //myCharacter = playerController.myCharacter;
+        hexMap = FindObjectOfType<HexMapController>();
         cameraRaycaster = FindObjectOfType<CameraRaycaster>();
         cameraRaycaster.notifyCursorOverHexObservers += OnHexChanged;
     }
