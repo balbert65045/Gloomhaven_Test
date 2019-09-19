@@ -9,7 +9,7 @@ public class CombatPlayerCard : Card
     public bool LostAbilityUsed = false;
 
     public int Initiative;
-    public CombatCardAbility CardAbility;
+    public CardAbility CardAbility;
 
     Color OGcolor;
 

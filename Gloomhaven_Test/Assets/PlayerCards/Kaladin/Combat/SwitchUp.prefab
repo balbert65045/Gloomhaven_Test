@@ -364,6 +364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dbffcf655ca2974db35b534829c7030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myType: 2
   LostAbilityUsed: 0
   Initiative: 77
   CardAbility: {fileID: 114571704559781950}
@@ -550,12 +551,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f0de6a85ecc3c741831e8490407b1c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameText: {fileID: 0}
+  Discarded: 0
+  Lost: 0
+  OGColor: {r: 0, g: 0, b: 0, a: 0}
   myCard: {fileID: 0}
   showArea: {fileID: 0}
   InitText: {fileID: 114010943272431784}
   basicAttack: 0
-  Discarded: 0
-  Lost: 0
 --- !u!114 &114384438198084158
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Card : MonoBehaviour {
 
+    public PlayerCharacterType myType;
+
 	// Use this for initialization
 	void Start () {
 		

@@ -17,7 +17,7 @@ public class PlayArea : MonoBehaviour {
     public Button HealButton;
     public Button ShieldButton;
 
-    public void showActions(CombatCardAbility cardAbility)
+    public void showActions(CardAbility cardAbility)
     {
         ActionsAvailable.SetActive(true);
         CheckToDisableActions(cardAbility.Actions);

@@ -41,6 +41,11 @@ public class HexVisualizer : MonoBehaviour {
         hex.UnHighlight();
     }
 
+    public void DeactivateHex(Hex hex)
+    {
+        hex.DeactivateHex();
+    }
+
     public void HighlightMoveRangeHex(Hex hex)
     {
         hex.HighlightMoveRange();
@@ -83,7 +88,7 @@ public class HexVisualizer : MonoBehaviour {
 
     public void ShowChestPath(Hex ChestHex)
     {
-        if (outOfCombatcontroller.LookingInChest) { return; }
+        if (outOfCombatcontroller.LookingInChest || outOfCombatcontroller.cardUsing != null) { return; }
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCharacter.GetMoving()) { return; }
         Node ClosestNode = GetClosestPathToAdjacentHexes(myCharacter, ChestHex);
@@ -96,9 +101,9 @@ public class HexVisualizer : MonoBehaviour {
 
     public void ShowDoorPath(Door doorHex)
     {
-        if (outOfCombatcontroller.LookingInChest) { return; }
+        if (outOfCombatcontroller.LookingInChest || outOfCombatcontroller.cardUsing != null) { return; }
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        if (myCharacter.GetMoving()) { return; }
+        if (myCharacter == null || myCharacter.GetMoving()) { return; }
         if (myCharacter.HexOn == doorHex.GetComponent<Hex>())
         {
             ClearLastChangedHexes();
@@ -199,9 +204,9 @@ public class HexVisualizer : MonoBehaviour {
             }
             else
             {
-                switch (outOfCombatcontroller.cardUsing.actions[0].thisActionType)
+                switch (outOfCombatcontroller.cardUsing.cardAbility.Actions[0].thisActionType)
                 {
-                    case OutOfCombatActionType.Scout:
+                    case ActionType.Scout:
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
@@ -209,7 +214,7 @@ public class HexVisualizer : MonoBehaviour {
                             LastHexesChanged.Add(hex);
                         }
                         break;
-                    case OutOfCombatActionType.Stealth:
+                    case ActionType.Stealth:
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
@@ -217,7 +222,7 @@ public class HexVisualizer : MonoBehaviour {
                             LastHexesChanged.Add(hex);
                         }
                         break;
-                    case OutOfCombatActionType.BuffAttack:
+                    case ActionType.BuffAttack:
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
@@ -225,7 +230,7 @@ public class HexVisualizer : MonoBehaviour {
                             LastHexesChanged.Add(hex);
                         }
                         break;
-                    case OutOfCombatActionType.BuffMove:
+                    case ActionType.BuffMove:
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
@@ -233,7 +238,7 @@ public class HexVisualizer : MonoBehaviour {
                             LastHexesChanged.Add(hex);
                         }
                         break;
-                    case OutOfCombatActionType.BuffRange:
+                    case ActionType.BuffRange:
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
@@ -241,7 +246,7 @@ public class HexVisualizer : MonoBehaviour {
                             LastHexesChanged.Add(hex);
                         }
                         break;
-                    case OutOfCombatActionType.BuffArmor:
+                    case ActionType.BuffArmor:
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
@@ -249,7 +254,7 @@ public class HexVisualizer : MonoBehaviour {
                             LastHexesChanged.Add(hex);
                         }
                         break;
-                    case OutOfCombatActionType.Heal:
+                    case ActionType.Heal:
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
@@ -260,7 +265,7 @@ public class HexVisualizer : MonoBehaviour {
                 }
             }
         }
-        else if (playerController.GetPlayerState() == PlayerController.PlayerState.InCombat && playerController.GetCombatState() == PlayerController.CombatState.UsingCombatCards)
+        else if (playerController.GetPlayerState() == PlayerController.PlayerState.InCombat && combatcontroller.GetCombatState() == CombatActionController.CombatState.UsingCombatCards)
         {
             if (hex == null || !hex.HexNode.Shown) { return; }
             switch (combatcontroller.GetMyCurrectAction().thisActionType)

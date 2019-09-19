@@ -69,7 +69,7 @@ public class CameraRaycaster : MonoBehaviour {
                     InteractableObjectOver = ActionHit.gameObject;
                     return;
                 }
-                else if (ActionHit.GetComponent<CardChest>())
+                else if (ActionHit.GetComponent<CardChest>() && !ActionHit.GetComponent<CardChest>().isOpen)
                 {
                     cursorImage.sprite = ChestSprite;
                     hexVisualizer.ShowChestPath(ActionHit.GetComponent<Entity>().HexOn);

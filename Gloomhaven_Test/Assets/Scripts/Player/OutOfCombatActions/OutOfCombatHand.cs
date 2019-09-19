@@ -37,7 +37,7 @@ public class OutOfCombatHand : Hand {
         {
             if (cardButton.Discarded) { return true; }
         }
-        return combatHand.HasLostOrDiscardCard();
+        return false;
     }
 
     public void ShowHand()
@@ -95,15 +95,18 @@ public class OutOfCombatHand : Hand {
         {
             linkedButton.unShowCard();
         }
-        myCard = (OutOfCombatCard)card;
-
-        OutOfCombatCardButton[] cardButtons = GetComponentsInChildren<OutOfCombatCardButton>();
-        foreach (OutOfCombatCardButton cardButton in cardButtons)
+        if (card == myCard) { UnSelectCard(); }
+        else
         {
-            if (cardButton.myCard != myCard ) { cardButton.UnHighlight(); }
-            else { linkedButton = cardButton; }
+            myCard = (OutOfCombatCard)card;
+            OutOfCombatCardButton[] cardButtons = GetComponentsInChildren<OutOfCombatCardButton>();
+            foreach (OutOfCombatCardButton cardButton in cardButtons)
+            {
+                if (cardButton.myCard != myCard) { cardButton.UnHighlight(); }
+                else { linkedButton = cardButton; }
+            }
         }
-        FindObjectOfType<PlayerController>().SelectCard();
+        FindObjectOfType<PlayerController>().SelectCard(card);
     }
 
     public void allowLongRest()
@@ -124,24 +127,13 @@ public class OutOfCombatHand : Hand {
         {
             int randomCardIndex = Random.Range(0, discardedCards.Count);
             OutOfCombatCardButton cardToLose = discardedCards[randomCardIndex];
-            cardToLose.LoseCard();
+            LoseCard(cardToLose.myCard);
+            //cardToLose.LoseCard();
             discardedCards.Remove(cardToLose);
             foreach (OutOfCombatCardButton cardButton in discardedCards)
             {
                 cardButton.putBackInHand();
             }
         }
-        else
-        {
-            List<OutOfCombatCardButton> cardsAvailable = new List<OutOfCombatCardButton>();
-            foreach (OutOfCombatCardButton cardButton in cardButtons)
-            {
-                if (!cardButton.Lost) { cardsAvailable.Add(cardButton); }
-            }
-            int randomCardIndex = Random.Range(0, cardsAvailable.Count);
-            OutOfCombatCardButton cardToLose = cardsAvailable[randomCardIndex];
-            cardToLose.LoseCard();
-        }
-        combatHand.LongRest();
     }
 }

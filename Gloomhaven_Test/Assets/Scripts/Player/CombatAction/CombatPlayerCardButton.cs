@@ -33,7 +33,10 @@ public class CombatPlayerCardButton : CardButton{
             hand.HidePotential();
             hand.ShowPotential(hand.getSelectedCard());
         }
-        unShowCard();
+        if (GetComponentInParent<CombatPlayerHand>().getSelectedCard() != myCard)
+        {
+            unShowCard();
+        }
     }
 
     public void ReturnToNormalColor()

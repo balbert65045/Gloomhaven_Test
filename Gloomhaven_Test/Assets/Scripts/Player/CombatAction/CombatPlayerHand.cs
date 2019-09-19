@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class CombatPlayerHand : Hand {
 
+    public CombatPlayerCardButton BasicAttackButton;
     public OutOfCombatHand outOfCombatHand;
     public CombatPlayerCard SelectedPlayerCard;
     public GameObject Hand;
@@ -26,18 +27,58 @@ public class CombatPlayerHand : Hand {
         return myCardsInHand.Count;
     }
 
+    public void UnSelectCard()
+    {
+        if (SelectedPlayerCard != null)
+        {
+            HidePotential();
+            selectedCardLinkedButton.Unhighlight();
+            selectedCardLinkedButton.unShowCard();
+            SelectedPlayerCard = null;
+            selectedCardLinkedButton = null;
+        }
+    }
+
+    public void UnShowCard()
+    {
+        if (SelectedPlayerCard != null)
+        {
+            FindObjectOfType<MyActionBoard>().ShowPanel();
+            ShowPotential(SelectedPlayerCard);
+            selectedCardLinkedButton.unShowCard();
+        }
+    }
+
+    public void ShowSelectedCard()
+    {
+        if (SelectedPlayerCard != null)
+        {
+            FindObjectOfType<MyActionBoard>().ShowPanel();
+            ShowPotential(SelectedPlayerCard);
+            selectedCardLinkedButton.showCard();
+        }
+    }
+
     public override void SelectCard(Card card)
     {
         if (card == null) { Debug.LogWarning("Null card was chosen make sure button is wired properly"); }
-        SelectedPlayerCard = (CombatPlayerCard)card;
-        CombatPlayerCardButton[] cardButtons = GetComponentsInChildren<CombatPlayerCardButton>();
-        foreach (CombatPlayerCardButton button in cardButtons)
+        if (SelectedPlayerCard == card)
         {
-            if (button.getMyCard() != SelectedPlayerCard) { button.Unhighlight(); }
-            else { selectedCardLinkedButton = button; }
+            UnSelectCard();
         }
-        ShowPotential(SelectedPlayerCard);
-        playerController.SelectCard();
+        else
+        {
+            UnSelectCard();
+            SelectedPlayerCard = (CombatPlayerCard)card;
+            CombatPlayerCardButton[] cardButtons = GetComponentsInChildren<CombatPlayerCardButton>();
+            foreach (CombatPlayerCardButton button in cardButtons)
+            {
+                if (button.getMyCard() != SelectedPlayerCard) { button.Unhighlight(); }
+                else { selectedCardLinkedButton = button; }
+            }
+            ShowPotential(SelectedPlayerCard);
+        }
+        playerController.SelectCard(card);
     }
 
     public void ShowPotential(CombatPlayerCard card)
@@ -57,16 +98,6 @@ public class CombatPlayerHand : Hand {
         Hand.SetActive(false);
         HidePotential();
         FindObjectOfType<MyActionBoard>().HidePanel();
-    }
-
-    public bool HasLostOrDiscardCard()
-    {
-        CombatPlayerCardButton[] outOfCombatCards = GetComponentsInChildren<CombatPlayerCardButton>();
-        foreach (CombatPlayerCardButton cardButton in outOfCombatCards)
-        {
-            if (cardButton.Discarded || cardButton.Lost) { return true; }
-        }
-        return false;
     }
 
     bool ShortRestReady()
@@ -135,27 +166,14 @@ public class CombatPlayerHand : Hand {
 
         int randomCardIndex = Random.Range(0, discardedCards.Count);
         CombatPlayerCardButton cardToLose = discardedCards[randomCardIndex];
-        cardToLose.LoseCard();
+        LoseCard(cardToLose.myCard);
+        //cardToLose.LoseCard();
         discardedCards.Remove(cardToLose);
         foreach (CombatPlayerCardButton cardButton in discardedCards)
         {
             cardButton.putBackInHand();
             myCardsInHand.Add(cardButton);
         }
-        //playerController.SetHandSize(myCardsInHand.Count - 1);
-    }
-
-    public void LongRest()
-    {
-        foreach(CombatPlayerCardButton cardButton in AllCards)
-        {
-            if (cardButton.Lost || cardButton.Discarded)
-            {
-                cardButton.putBackInHand();
-                myCardsInHand.Add(cardButton);
-            }
-        }
-        //playerController.SetHandSize(myCardsInHand.Count - 1);
     }
 
     //Change this to better code for this functunallity
@@ -176,7 +194,7 @@ public class CombatPlayerHand : Hand {
         return true;
     }
 
-    public void showSelectedCard()
+    public void ShowSelectedCardToUse()
     {
         FindObjectOfType<MyActionBoard>().ShowPanel();
         ShowPotential(SelectedPlayerCard);
@@ -206,6 +224,16 @@ public class CombatPlayerHand : Hand {
             SelectedPlayerCard.CardAbility.UnHighlightAbility();
             SelectedPlayerCard.gameObject.SetActive(false);
         }
+    }
+
+    public void DisableBasicAttack()
+    {
+        BasicAttackButton.GetComponent<Button>().interactable = false;
+    }
+
+    public void EnableBasicAttack()
+    {
+        BasicAttackButton.GetComponent<Button>().interactable = true;
     }
 
     // Use this for initialization

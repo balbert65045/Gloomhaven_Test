@@ -25,7 +25,7 @@ public class CombatManager : MonoBehaviour {
         }
         initBoard.OrganizeInits();
 
-        playerController.ChangeCombatState(PlayerController.CombatState.WaitingInCombat);
+        playerController.ChangeCombatState(CombatActionController.CombatState.WaitingInCombat);
         PerformNextInInitiative();
     }
 
@@ -66,13 +66,13 @@ public class CombatManager : MonoBehaviour {
                 if (currentPlayerCharacter == null) { Debug.LogWarning("No character with that card"); }
                 FindObjectOfType<MyCameraController>().LookAt(currentPlayerCharacter.transform);
                 FindObjectOfType<MyCameraController>().UnLockCamera();
-                playerController.ChangeCombatState(PlayerController.CombatState.UsingCombatCards);
+                playerController.ChangeCombatState(CombatActionController.CombatState.UsingCombatCards);
                 playerController.AllowEndTurn();
                 playerController.BeginActions(currentPlayerCharacter);
             }
             else if (card.GetComponent<EnemyActionCard>() != null)
             {
-                playerController.ChangeCombatState(PlayerController.CombatState.WaitingInCombat);
+                playerController.ChangeCombatState(CombatActionController.CombatState.WaitingInCombat);
                 enemyController.BeginActionForGroup(card.GetComponent<EnemyActionCard>());
             }
         }

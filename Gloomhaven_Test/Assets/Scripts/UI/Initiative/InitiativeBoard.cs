@@ -52,12 +52,13 @@ public class InitiativeBoard : MonoBehaviour {
 
     public void takeCharacterOffBoard(string characterName)
     {
-        foreach (InitiativePosition IP in ActiveInitPositions)
+        for (int i = 0; i < ActiveInitPositions.Count; i++)
         {
-            if (IP.CharacterNameLinkedTo == characterName)
+            if (ActiveInitPositions[i].CharacterNameLinkedTo == characterName)
             {
-                IP.unLinkCharacter();
-                ActiveInitPositions.Remove(IP);
+                ActiveInitPositions[i].unLinkCharacter();
+                ActiveInitPositions.Remove(ActiveInitPositions[i]);
+                if (turnIndex > i) {turnIndex--;}
                 break;
             }
         }

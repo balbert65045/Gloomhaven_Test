@@ -209,6 +209,7 @@ GameObject:
   - component: {fileID: 224391409969104440}
   - component: {fileID: 222488925280618060}
   - component: {fileID: 114906946163982738}
+  - component: {fileID: 114788200654156104}
   m_Layer: 5
   m_Name: TopAbility
   m_TagString: Untagged
@@ -579,8 +580,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb1cc097c074c7a48a6f6e967453493b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameText: {fileID: 0}
+  Discarded: 0
+  Lost: 0
+  OGColor: {r: 0, g: 0, b: 0, a: 0}
   myCard: {fileID: 0}
   showArea: {fileID: 0}
+--- !u!114 &114788200654156104
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1984052821347988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be0278259b9f294198e5be9469221b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LostAbility: 0
+  Actions:
+  - thisActionType: 5
+    thisAOE:
+      thisAOEType: 0
+      Targets: 0
+      Damage: 1
+    Range: 0
+    Duration: 3
 --- !u!114 &114906946163982738
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -619,10 +644,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07754c6f8ad101a479a573fe10a0edb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actions:
-  - thisActionType: 2
-    Value: 1
-    Duration: 3
+  myType: 3
+  cardAbility: {fileID: 114788200654156104}
 --- !u!222 &222072793618144562
 CanvasRenderer:
   m_ObjectHideFlags: 1

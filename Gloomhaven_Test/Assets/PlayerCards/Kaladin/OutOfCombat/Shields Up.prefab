@@ -141,6 +141,7 @@ GameObject:
   - component: {fileID: 224935594418532118}
   - component: {fileID: 222128007887648414}
   - component: {fileID: 114187526388647590}
+  - component: {fileID: 114585490704478480}
   m_Layer: 5
   m_Name: TopAbility
   m_TagString: Untagged
@@ -337,6 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb1cc097c074c7a48a6f6e967453493b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameText: {fileID: 0}
   Discarded: 0
   Lost: 0
   OGColor: {r: 1, g: 1, b: 1, a: 1}
@@ -533,11 +535,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07754c6f8ad101a479a573fe10a0edb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actions:
-  - thisActionType: 5
-    Value: 1
-    Duration: 3
+  myType: 2
+  cardAbility: {fileID: 114585490704478480}
+--- !u!114 &114585490704478480
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1554976858612300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be0278259b9f294198e5be9469221b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LostAbility: 0
+  Actions:
+  - thisActionType: 8
+    thisAOE:
+      thisAOEType: 0
+      Targets: 0
+      Damage: 1
     Range: 0
+    Duration: 3
 --- !u!114 &114638152595996322
 MonoBehaviour:
   m_ObjectHideFlags: 1

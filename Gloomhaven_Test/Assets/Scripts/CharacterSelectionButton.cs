@@ -23,6 +23,16 @@ public class CharacterSelectionButton : MonoBehaviour {
         CardIndicatorImage.gameObject.SetActive(false);
     }
 
+    public void Disable()
+    {
+        GetComponent<Button>().interactable = false;
+    }
+
+    public void Enable()
+    {
+        GetComponent<Button>().interactable = true;
+    }
+
     public void SelectCharacter()
     {
         playerController.SelectCharacter(characterLinkedTo);
@@ -57,6 +67,11 @@ public class CharacterSelectionButton : MonoBehaviour {
     public void CardForCharacterSelected()
     {
         CardIndicatorImage.sprite = HasCardSprite;
+    }
+
+    public void CardForCharacterUnselected()
+    {
+        CardIndicatorImage.sprite = NoCardSprite;
     }
 	
 	// Update is called once per frame

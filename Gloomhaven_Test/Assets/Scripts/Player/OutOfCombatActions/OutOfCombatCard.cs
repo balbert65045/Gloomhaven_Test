@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OutOfCombatCard : Card {
 
-    public OutOfCombatAction[] actions;
+    public CardAbility cardAbility;
 
 	// Use this for initialization
 	void Start () {

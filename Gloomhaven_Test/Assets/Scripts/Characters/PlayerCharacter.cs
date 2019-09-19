@@ -2,14 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerCharacterType
+{
+    All = 1,
+    Knight = 2,
+    Barbarian = 3,
+}
+
 public class PlayerCharacter : Character
 {
+    public PlayerCharacterType myType;
+
     public Sprite characterIcon;
     public string CharacterName;
 
     public int CombatHandSize = 5;
     public GameObject[] InitialCombatCards;
     public int OutOfCombatHandSize = 5;
+
+    //TODO change this to be an ID to later be able to lookup
+    public List<string> CardsStored;
+    public void AddCardToBeStored(string cardToBeStored) { CardsStored.Add(cardToBeStored); }
+
     public GameObject[] InitialOutOfCombatCards;
 
     public GameObject DeckPrefab;
@@ -137,7 +151,7 @@ public class PlayerCharacter : Character
         }
         else if (ChestToOpen != null)
         {
-            ChestToOpen.OpenChest();
+            ChestToOpen.OpenChest(this);
             ChestToOpen = null;
         }
     }

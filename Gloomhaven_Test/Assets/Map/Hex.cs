@@ -57,6 +57,13 @@ public class Hex : MonoBehaviour {
     public void CharacterMovingToHex() { MovedTo = true; }
     public void CharacterArrivedAtHex() { MovedTo = false; }
 
+    public void DeactivateHex()
+    {
+        OGMaterial = ShieldRangeHighlightMaterial;
+        previousMaterial = ShieldRangeHighlightMaterial;
+        GetComponent<MeshRenderer>().sharedMaterial = OGMaterial;
+    }
+
     public void ShowHexEditor()
     {
         GetComponent<MeshRenderer>().sharedMaterial = OGMaterial;

@@ -434,6 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f0de6a85ecc3c741831e8490407b1c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nameText: {fileID: 0}
   Discarded: 0
   Lost: 0
   OGColor: {r: 1, g: 1, b: 1, a: 1}
@@ -684,6 +685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dbffcf655ca2974db35b534829c7030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myType: 2
   LostAbilityUsed: 0
   Initiative: 25
   CardAbility: {fileID: 114045993778515250}

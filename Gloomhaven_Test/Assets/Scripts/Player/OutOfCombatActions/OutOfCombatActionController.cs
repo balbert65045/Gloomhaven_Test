@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class OutOfCombatActionController : MonoBehaviour {
 
+    private CharacterSelectionButtonManager CSBM;
     private PlayerController playerController;
     private CameraRaycaster raycaster;
     private HexVisualizer hexVisualizer;
+    private MyCameraController myCamera;
     //private Character myCharacter;
     private Character characterSelected;
 
@@ -16,12 +18,15 @@ public class OutOfCombatActionController : MonoBehaviour {
     public void FinishedMovingIntoCombat() { MovingIntoCombat = false; }
 
     public bool LookingInChest = false;
+    public void StopLookingInChest() { LookingInChest = false; }
 
     // Use this for initialization
     void Start () {
+        CSBM = GetComponent<CharacterSelectionButtonManager>();
         playerController = GetComponent<PlayerController>();
         raycaster = FindObjectOfType<CameraRaycaster>();
         hexVisualizer = FindObjectOfType<HexVisualizer>();
+        myCamera = FindObjectOfType<MyCameraController>();
     }
 
     public void UnHighlightHexes()
@@ -47,6 +52,7 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void CheckToShowCharacterStats()
     {
+        playerController.CheckToSelectCharacter();
         Transform HexHit = raycaster.HexRaycast();
         if (HexHit != null && HexHit.GetComponent<Hex>())
         {
@@ -78,18 +84,52 @@ public class OutOfCombatActionController : MonoBehaviour {
         }
     }
 
+    public void SelectCard(Card card)
+    {
+        if (LookingInChest)
+        {
+            FindObjectOfType<ChestPanel>().CardSelected(card);
+        }
+        else
+        {
+          ShowOutOfCombatAbility((OutOfCombatCard)card);
+        }
+    }
+
+    public void SelectCharacter(PlayerCharacter playerCharacter)
+    {
+        if (MovingIntoCombat || LookingInChest) { return; }
+        if (playerCharacter.GetMoving()) { return; }
+
+        UnHighlightHexes();
+        if (playerController.SelectPlayerCharacter != null) {
+            cardUsing = null;
+            playerController.SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
+            playerController.SelectPlayerCharacter.myDecks.SetActive(false);
+        }
+        playerController.SelectPlayerCharacter = playerCharacter;
+
+        myCamera.SetTarget(playerCharacter.transform);
+
+        hexVisualizer.HighlightSelectionHex(playerCharacter.HexOn);
+        playerCharacter.myDecks.SetActive(true);
+        playerCharacter.GetMyCombatHand().HideHand();
+        playerCharacter.GetMyOutOfCombatHand().ShowHand();
+        CSBM.ShowCharacterButtonSelected(playerCharacter);
+    }
+
     public void CheckToMoveOrInteractOutOfCombat(Character myCharacter)
     {
         if (myCharacter.GetMoving()) { return; }
         Transform InterActionHit = raycaster.InteractableRaycast();
         if (InterActionHit != null)
         {
-            if (InterActionHit.GetComponent<DoorObject>() != null)
+            if (InterActionHit.GetComponent<DoorObject>() != null && !InterActionHit.GetComponent<DoorObject>().door.isOpen)
             {
                 MoveToDoor((PlayerCharacter)myCharacter, InterActionHit.GetComponent<DoorObject>().door);
                 return;
             }
-            else if (InterActionHit.GetComponent<CardChest>() != null)
+            else if (InterActionHit.GetComponent<CardChest>() != null && !InterActionHit.GetComponent<CardChest>().isOpen)
             {
                 CheckToMoveNearChest((PlayerCharacter)myCharacter, InterActionHit.GetComponent<Entity>().HexOn);
                 return;
@@ -118,7 +158,7 @@ public class OutOfCombatActionController : MonoBehaviour {
         Node closestNode = FindObjectOfType<HexMapController>().GetClosestNodeFromNeighbors(chestHex, myCharacter);
         if (closestNode == myCharacter.HexOn.HexNode) {
             LookingInChest = true;
-            chestHex.EntityHolding.GetComponent<CardChest>().OpenChest();
+            chestHex.EntityHolding.GetComponent<CardChest>().OpenChest(myCharacter);
         }
         else if (closestNode != null)
         {
@@ -178,7 +218,8 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void ShowOutOfCombatAbility(OutOfCombatCard card)
     {
-        cardUsing = card;
+        if (cardUsing != card) { cardUsing = card; }
+        else{ cardUsing = null; }
     }
 
     public void UseOutOfCombatAbility(PlayerCharacter character)
@@ -188,60 +229,61 @@ public class OutOfCombatActionController : MonoBehaviour {
         if (HexHit != null && HexHit.GetComponent<Hex>()){ hexSelected = HexHit.GetComponent<Hex>(); }
         if (hexSelected == null) { return; }
 
-        switch (cardUsing.actions[0].thisActionType)
+        Action action = cardUsing.cardAbility.Actions[0];
+        switch (action.thisActionType)
         {
-            case OutOfCombatActionType.Scout:
+            case ActionType.Scout:
                 if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
                 {
-                    Scout(cardUsing.actions[0].Value);
+                    Scout(action.Range);
                     character.GetMyOutOfCombatHand().DiscardSelectedCard();
                     cardUsing = null;
                 }
                 break;
-            case OutOfCombatActionType.Stealth:
+            case ActionType.Stealth:
                 if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
                 {
-                    Stealth(cardUsing.actions[0].Value);
+                    Stealth(action.Duration);
                     character.GetMyOutOfCombatHand().DiscardSelectedCard();
                     cardUsing = null;
                 }
                 break;
-            case OutOfCombatActionType.BuffAttack:
+            case ActionType.BuffAttack:
                 if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
                 {
-                    BuffAttack(cardUsing.actions[0].Value, cardUsing.actions[0].Duration);
+                    BuffAttack(action.thisAOE.Damage, action.Duration);
                     character.GetMyOutOfCombatHand().DiscardSelectedCard();
                     cardUsing = null;
                 }
                 break;
-            case OutOfCombatActionType.BuffMove:
+            case ActionType.BuffMove:
                 if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
                 {
-                    BuffMove(cardUsing.actions[0].Value, cardUsing.actions[0].Duration);
+                    BuffMove(action.thisAOE.Damage, action.Duration);
                     character.GetMyOutOfCombatHand().DiscardSelectedCard();
                     cardUsing = null;
                 }
                 break;
-            case OutOfCombatActionType.BuffRange:
+            case ActionType.BuffRange:
                 if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
                 {
-                    BuffRange(cardUsing.actions[0].Value, cardUsing.actions[0].Duration);
+                    BuffRange(action.thisAOE.Damage, action.Duration);
                     character.GetMyOutOfCombatHand().DiscardSelectedCard();
                     cardUsing = null;
                 }
                 break;
-            case OutOfCombatActionType.BuffArmor:
+            case ActionType.BuffArmor:
                 if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
                 {
-                    BuffArmor(cardUsing.actions[0].Value, cardUsing.actions[0].Duration);
+                    BuffArmor(action.thisAOE.Damage, action.Duration);
                     character.GetMyOutOfCombatHand().DiscardSelectedCard();
                     cardUsing = null;
                 }
                 break;
-            case OutOfCombatActionType.Heal:
+            case ActionType.Heal:
                 if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
                 {
-                    Heal(cardUsing.actions[0].Value);
+                    Heal(action.thisAOE.Damage);
                     character.GetMyOutOfCombatHand().DiscardSelectedCard();
                     cardUsing = null;
                 }

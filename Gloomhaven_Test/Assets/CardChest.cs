@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class CardChest : MonoBehaviour {
 
+    public bool isOpen = false;
 
-    public void OpenChest()
+    public void OpenChest(PlayerCharacter character)
     {
-        FindObjectOfType<ChestPanel>().ActivePanel();
+        isOpen = true;
+        FindObjectOfType<HexVisualizer>().DeactivateHex(GetComponent<Entity>().HexOn);
+        GameObject cardPrefab = FindObjectOfType<PlayerCardDatabase>().SelectRandomCard(character);
+        Card card = FindObjectOfType<ChestPanel>().ActivePanel(character, cardPrefab, this);
+        FindObjectOfType<PlayerController>().ChestOpenedFor(card);
     }
 
 }

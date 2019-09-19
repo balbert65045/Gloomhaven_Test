@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(CombatCardAbility))]
+[CustomEditor(typeof(CardAbility))]
 public class CombatCardAbilityEditor : Editor
 {
     public SerializedProperty
@@ -12,14 +12,14 @@ public class CombatCardAbilityEditor : Editor
         Actions_Property,
         ActionsCount_Property;
 
-    CombatCardAbility cardAbility;
+    CardAbility cardAbility;
 
     private void OnEnable()
     {
         Lost_Property = serializedObject.FindProperty("LostAbility");
         Actions_Property = serializedObject.FindProperty("Actions");
         ActionsCount_Property = serializedObject.FindProperty("Actions.Array.size");
-        cardAbility = (CombatCardAbility)target;
+        cardAbility = (CardAbility)target;
 
     }
 
@@ -77,7 +77,6 @@ public class CombatCardAbilityEditor : Editor
                     EditorGUILayout.PropertyField(ActionHealAmount_Property);
                     break;
                 case ActionType.Shield:
-
                     SerializedProperty ActionShieldAOE_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("thisAOE");
                     SerializedProperty ActionShieldAOEType_Property = ActionShieldAOE_Property.FindPropertyRelative("thisAOEType");
                     EditorGUILayout.PropertyField(ActionShieldAOEType_Property);
@@ -88,6 +87,59 @@ public class CombatCardAbilityEditor : Editor
                     SerializedProperty ActionShieldAmount_Property = ActionShieldAOE_Property.FindPropertyRelative("Damage");
                     EditorGUILayout.PropertyField(ActionShieldAmount_Property);
                     break;
+                case ActionType.BuffAttack:
+                    SerializedProperty ActionBuffAttackAOE_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("thisAOE");
+                    SerializedProperty ActionBuffAttackAOEType_Property = ActionBuffAttackAOE_Property.FindPropertyRelative("thisAOEType");
+                    EditorGUILayout.PropertyField(ActionBuffAttackAOEType_Property);
+
+                    SerializedProperty ActionBuffAttackAOEdAmount_Property = ActionBuffAttackAOE_Property.FindPropertyRelative("Damage");
+                    EditorGUILayout.PropertyField(ActionBuffAttackAOEdAmount_Property);
+
+                    SerializedProperty ActionBuffAttackDuration_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("Duration");
+                    EditorGUILayout.PropertyField(ActionBuffAttackDuration_Property);
+                    break;
+                case ActionType.BuffMove:
+                    SerializedProperty ActionBuffMoveAOE_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("thisAOE");
+                    SerializedProperty ActionBuffMoveAOEType_Property = ActionBuffMoveAOE_Property.FindPropertyRelative("thisAOEType");
+                    EditorGUILayout.PropertyField(ActionBuffMoveAOEType_Property);
+
+                    SerializedProperty ActionBuffMoveAOEdAmount_Property = ActionBuffMoveAOE_Property.FindPropertyRelative("Damage");
+                    EditorGUILayout.PropertyField(ActionBuffMoveAOEdAmount_Property);
+
+                    SerializedProperty ActionBuffMoveDuration_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("Duration");
+                    EditorGUILayout.PropertyField(ActionBuffMoveDuration_Property);
+                    break;
+                case ActionType.BuffRange:
+                    SerializedProperty ActionBuffRangeAOE_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("thisAOE");
+                    SerializedProperty ActionBuffRangeAOEType_Property = ActionBuffRangeAOE_Property.FindPropertyRelative("thisAOEType");
+                    EditorGUILayout.PropertyField(ActionBuffRangeAOEType_Property);
+
+                    SerializedProperty ActionBuffRangeAOEdAmount_Property = ActionBuffRangeAOE_Property.FindPropertyRelative("Damage");
+                    EditorGUILayout.PropertyField(ActionBuffRangeAOEdAmount_Property);
+
+                    SerializedProperty ActionBuffRangeDuration_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("Duration");
+                    EditorGUILayout.PropertyField(ActionBuffRangeDuration_Property);
+                    break;
+                case ActionType.BuffArmor:
+                    SerializedProperty ActionBuffAmorAOE_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("thisAOE");
+                    SerializedProperty ActionBuffAmorAOEType_Property = ActionBuffAmorAOE_Property.FindPropertyRelative("thisAOEType");
+                    EditorGUILayout.PropertyField(ActionBuffAmorAOEType_Property);
+
+                    SerializedProperty ActionBuffAmorAOEdAmount_Property = ActionBuffAmorAOE_Property.FindPropertyRelative("Damage");
+                    EditorGUILayout.PropertyField(ActionBuffAmorAOEdAmount_Property);
+
+                    SerializedProperty ActionBuffAmorDuration_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("Duration");
+                    EditorGUILayout.PropertyField(ActionBuffAmorDuration_Property);
+                    break;
+                case ActionType.Scout:
+                    SerializedProperty ActionScoutRange_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("Range");
+                    EditorGUILayout.PropertyField(ActionScoutRange_Property);
+                    break;
+                case ActionType.Stealth:
+                    SerializedProperty ActionStealthDuration_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("Duration");
+                    EditorGUILayout.PropertyField(ActionStealthDuration_Property);
+                    break;
+
             }
         }
 

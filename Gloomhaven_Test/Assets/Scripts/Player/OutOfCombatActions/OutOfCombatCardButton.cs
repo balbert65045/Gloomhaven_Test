@@ -10,7 +10,7 @@ public class OutOfCombatCardButton : CardButton, IPointerEnterHandler, IPointerE
     {
         if (!Discarded && !Lost)
         {
-            GetComponent<Image>().color = OGColor;
+            GetComponent<Image>().color = Color.white;
         }
     }
 	
