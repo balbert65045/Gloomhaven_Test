@@ -12,6 +12,15 @@ public class HexVisualizer : MonoBehaviour {
     private List<Hex> LastHexesChanged = new List<Hex>();
     private Hex LastHexOver;
 
+    public Material SelectionHighlightMaterial;
+    public Material MovePointHighlightMaterial;
+    public Material MoveRangeHighlightMaterial;
+    public Material AttackAreaHighlightMaterial;
+    public Material AttackRangeHighlightMaterial;
+    public Material HealPointHighlightMaterial;
+    public Material HealRangeHighlightMaterial;
+    public Material ShieldRangeHighlightMaterial;
+
     public void UnhighlightHexes()
     {
         Hex[] hexes = hexMap.AllHexes;
@@ -43,47 +52,51 @@ public class HexVisualizer : MonoBehaviour {
 
     public void DeactivateHex(Hex hex)
     {
-        hex.DeactivateHex();
+        hex.GetComponent<MeshRenderer>().material = ShieldRangeHighlightMaterial;
+        hex.previousMaterial = ShieldRangeHighlightMaterial;
+        hex.OGMaterial = ShieldRangeHighlightMaterial;
     }
 
     public void HighlightMoveRangeHex(Hex hex)
     {
-        hex.HighlightMoveRange();
+        hex.GetComponent<MeshRenderer>().material = MoveRangeHighlightMaterial;
     }
 
     public void HighlightMovePointHex(Hex hex)
     {
-        hex.HighlightMovePoint();
+        hex.GetComponent<MeshRenderer>().material = MovePointHighlightMaterial;
     }
 
     public void HighlightAttackRangeHex(Hex hex)
     {
-        hex.HighlightAttackRange();
+        hex.GetComponent<MeshRenderer>().material = AttackRangeHighlightMaterial;
+        hex.previousMaterial = AttackRangeHighlightMaterial;
     }
 
     public void HighlightAttackAreaHex(Hex hex)
     {
-        hex.HighlightAttackArea();
+        hex.GetComponent<MeshRenderer>().material = AttackAreaHighlightMaterial;
+        hex.previousMaterial = AttackAreaHighlightMaterial;
     }
 
     public void HighlightHealRangeHex(Hex hex)
     {
-        hex.HighlightHealRange();
+        hex.GetComponent<MeshRenderer>().material = HealRangeHighlightMaterial;
     }
 
     public void HighlightHealPointHex(Hex hex)
     {
-        hex.HighlightHealRPoint();
+        hex.GetComponent<MeshRenderer>().material = HealPointHighlightMaterial;
     }
 
     public void HighlightArmorPointHex(Hex hex)
     {
-        hex.HighlightShieldlRange();
+        hex.GetComponent<MeshRenderer>().material = ShieldRangeHighlightMaterial;
     }
 
     public void HighlightSelectionHex(Hex hex)
     {
-        hex.HighlightSelection();
+        hex.GetComponent<MeshRenderer>().material = SelectionHighlightMaterial;
     }
 
     public void ShowChestPath(Hex ChestHex)
@@ -140,7 +153,7 @@ public class HexVisualizer : MonoBehaviour {
         foreach (Node node in NodePath)
         {
             LastHexesChanged.Add(node.NodeHex);
-            node.NodeHex.HighlightMovePoint();
+            HighlightMovePointHex(node.NodeHex);
         }
     }
 
@@ -151,7 +164,7 @@ public class HexVisualizer : MonoBehaviour {
         foreach (Node node in nodesInAOE)
         {
             if (node == null) { break; }
-            node.NodeHex.HighlightAttackArea();
+            HighlightAttackAreaHex(node.NodeHex);
             LastHexesChanged.Add(node.NodeHex);
         }
     } 
@@ -176,7 +189,7 @@ public class HexVisualizer : MonoBehaviour {
             foreach (Hex lastHex in LastHexesChanged)
             {
                 if (lastHex == playerController.SelectPlayerCharacter.HexOn) {
-                    lastHex.HighlightSelection() ;
+                    HighlightSelectionHex(lastHex);
                 }
                 else { lastHex.returnToPreviousColor(); }
             }
@@ -210,7 +223,7 @@ public class HexVisualizer : MonoBehaviour {
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
-                            hex.HighlightHealRPoint();
+                            HighlightHealPointHex(hex);
                             LastHexesChanged.Add(hex);
                         }
                         break;
@@ -218,7 +231,7 @@ public class HexVisualizer : MonoBehaviour {
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
-                            hex.HighlightHealRPoint();
+                            HighlightHealPointHex(hex);
                             LastHexesChanged.Add(hex);
                         }
                         break;
@@ -226,7 +239,7 @@ public class HexVisualizer : MonoBehaviour {
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
-                            hex.HighlightHealRPoint();
+                            HighlightHealPointHex(hex);
                             LastHexesChanged.Add(hex);
                         }
                         break;
@@ -234,7 +247,7 @@ public class HexVisualizer : MonoBehaviour {
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
-                            hex.HighlightHealRPoint();
+                            HighlightHealPointHex(hex);
                             LastHexesChanged.Add(hex);
                         }
                         break;
@@ -242,7 +255,7 @@ public class HexVisualizer : MonoBehaviour {
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
-                            hex.HighlightHealRPoint();
+                            HighlightHealPointHex(hex);
                             LastHexesChanged.Add(hex);
                         }
                         break;
@@ -250,7 +263,7 @@ public class HexVisualizer : MonoBehaviour {
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
-                            hex.HighlightHealRPoint();
+                            HighlightHealPointHex(hex);
                             LastHexesChanged.Add(hex);
                         }
                         break;
@@ -258,7 +271,7 @@ public class HexVisualizer : MonoBehaviour {
                         ClearLastChangedHexSelf();
                         if (hex == myCharacter.HexOn)
                         {
-                            hex.HighlightHealRPoint();
+                            HighlightHealPointHex(hex);
                             LastHexesChanged.Add(hex);
                         }
                         break;
@@ -282,7 +295,7 @@ public class HexVisualizer : MonoBehaviour {
                                     // The hex my character is on keep OG color
                                     if (myCharacter.HexOn == lastHex) { lastHex.UnHighlight(); }
                                     // else go back to color
-                                    else { lastHex.HighlightMoveRange(); }
+                                    else { HighlightMoveRangeHex(lastHex); }
                                 }
                                 else
                                 {
@@ -307,7 +320,7 @@ public class HexVisualizer : MonoBehaviour {
                                 {
                                     if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.GetCurrentAttackRange()))
                                     {
-                                        lastHex.HighlightAttackRange();
+                                        HighlightAttackRangeHex(lastHex);
                                     }
                                     else
                                     {
@@ -326,7 +339,7 @@ public class HexVisualizer : MonoBehaviour {
                                 {
                                     if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.GetCurrentAttackRange()))
                                     {
-                                        lastHex.HighlightAttackRange();
+                                        HighlightAttackRangeHex(lastHex);
                                     }
                                     else
                                     {

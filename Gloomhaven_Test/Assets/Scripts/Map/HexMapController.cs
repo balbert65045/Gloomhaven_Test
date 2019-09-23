@@ -22,15 +22,20 @@ public class HexMapController : MonoBehaviour {
     public Hashtable Map = new Hashtable();
     public Hex[] AllHexes;
 
-
-    void Awake () {
-        hexBuilder = FindObjectOfType<HexMapBuilder>();
-        AllHexes = GetComponentsInChildren<Hex>();
+    public void CreateTable()
+    {
+        Map.Clear();
         Node[] nodes = GetComponentsInChildren<Node>();
         foreach (Node node in nodes)
         {
             AddHex(node);
         }
+    }
+
+    void Awake () {
+        hexBuilder = FindObjectOfType<HexMapBuilder>();
+        AllHexes = GetComponentsInChildren<Hex>();
+        CreateTable();
     }
 
     public void AddHex(Node node) { Map.Add(GetHexHash(node.q, node.r), node); }

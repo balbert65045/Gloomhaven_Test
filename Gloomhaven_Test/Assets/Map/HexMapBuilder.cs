@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class HexMapBuilder : MonoBehaviour {
 
     public Transform HexPrefab;
@@ -12,8 +13,6 @@ public class HexMapBuilder : MonoBehaviour {
     public float gap = 0.0f;
 
     Vector3 startPos;
-
-    
 
     public void BuildMap()
     {
@@ -60,7 +59,7 @@ public class HexMapBuilder : MonoBehaviour {
                 hex.position = CalculateWorldPos(gridPos);
 
                 hex.SetParent(this.transform);
-                hex.name = "Hex " + q + "|" + r;
+                hex.name = "Hex " + r + "|" + q;
 
                 hex.GetComponent<Node>().SetNode(q, r);
             }

@@ -5,6 +5,12 @@ using UnityEngine;
 public class Node : MonoBehaviour
 {
     public List<string> RoomName;
+    public void SetRoomName(string name)
+    {
+        RoomName.Clear();
+        RoomName.Add(name);
+    }
+
     public bool edge = false;
     public bool isAvailable = true;
     public bool Shown = false;
@@ -13,14 +19,14 @@ public class Node : MonoBehaviour
     public int r;
     public int s;
 
-    public bool IsWalkable;
-    public float G;
-    public float H;
+    public bool IsWalkable { get; set; }
+    public float G { get; set; }
+    public float H { get; set; }
     public float F { get { return this.G + this.H; } }
     public NodeState State { get; set; }
     public Node ParentNode { get; set; }
 
-    public Hex NodeHex;
+    public Hex NodeHex { get; set; }
 
     public bool isConnectedToRoom(Node node)
     {

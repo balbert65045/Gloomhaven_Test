@@ -12,6 +12,11 @@ public class DoorEditor : Editor
         DrawDefaultInspector();
 
         Door myDoor = (Door)target;
+        if (GUILayout.Button("Build Room"))
+        {
+            myDoor.BuildRoom();
+        }
+
         if (GUILayout.Button("Show Door Tiles"))
         {
             myDoor.ShowHexes();

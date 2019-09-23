@@ -39,7 +39,9 @@ GameObject:
   - component: {fileID: 33840864293997886}
   - component: {fileID: 23718108479213816}
   - component: {fileID: 95248920768968306}
-  m_Layer: 0
+  - component: {fileID: 65539951107596270}
+  - component: {fileID: 114458795963471864}
+  m_Layer: 12
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,9 +86,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1765430558756820}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 15.03, y: 0.808, z: -6.197}
-  m_LocalScale: {x: 0.024411498, y: 0.024411498, z: 0.024411498}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 5.568, y: 0.854, z: -3.0762}
+  m_LocalScale: {x: 0.030809354, y: 0.029684657, z: 0.029684674}
   m_Children:
   - {fileID: 4509383380667792}
   - {fileID: 4788935970635882}
@@ -147,7 +149,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: c20fe963048074042a2180ac6418a417, type: 2}
+  - {fileID: 2100000, guid: c0481f12e40c45845b0d84c577699af8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -216,7 +218,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: f32fe220cd4226a4ea7c7df139e3e3b7, type: 2}
-  - {fileID: 2100000, guid: c20fe963048074042a2180ac6418a417, type: 2}
+  - {fileID: 2100000, guid: c0481f12e40c45845b0d84c577699af8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -257,6 +259,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1459660467396644}
   m_Mesh: {fileID: 4300000, guid: 34374d455553048439e697c6a2a72153, type: 3}
+--- !u!65 &65539951107596270
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1429016360848244}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.8032062, y: 1.8803333, z: 4.205029}
+  m_Center: {x: 0.000006314366, y: -0.0000070929527, z: 3.1165532e-13}
 --- !u!95 &95248920768968306
 Animator:
   serializedVersion: 3
@@ -274,3 +288,15 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114458795963471864
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1429016360848244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f9111eb28f133419c0809bb3e50a4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  door: {fileID: 0}

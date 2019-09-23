@@ -62,7 +62,7 @@ public class CombatActionController : MonoBehaviour {
             playerController.SelectPlayerCharacter = playerCharacter;
 
             myCamera.SetTarget(playerCharacter.transform);
-            playerCharacter.HexOn.HighlightSelection();
+            hexVisualizer.HighlightSelectionHex(playerCharacter.HexOn);
             playerCharacter.myDecks.SetActive(true);
             playerCharacter.GetMyCombatHand().ShowHand();
             playerCharacter.GetMyCombatHand().ShowSelectedCard();
@@ -78,7 +78,7 @@ public class CombatActionController : MonoBehaviour {
 
             myCamera.SetTarget(playerCharacter.transform);
 
-            playerCharacter.HexOn.HighlightSelection();
+            hexVisualizer.HighlightSelectionHex(playerCharacter.HexOn);
             CSBM.ShowCharacterButtonSelected(playerCharacter);
         }
     }

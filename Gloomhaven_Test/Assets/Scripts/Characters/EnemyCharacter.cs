@@ -152,7 +152,7 @@ public class EnemyCharacter : Character {
 
     public override void FinishedMoving(Hex hex)
     {
-        HexMovingTo.CharacterArrivedAtHex();
+        if (HexMovingTo != null) { HexMovingTo.CharacterArrivedAtHex(); }
         UnShowPath();
         LinktoHex(hex);
         CheckToAttack(ClosestCharacter);
@@ -246,7 +246,7 @@ public class EnemyCharacter : Character {
         CheckToAttackFirst();
     }
 
-    PlayerCharacter FindClosestEnemy()
+    PlayerCharacter FindClosestEnemy(int AdditionalRange)
     {
         PlayerCharacter[] charactersOut = FindObjectsOfType<PlayerCharacter>();
         int PathToClosestPlayerLength = 100;
@@ -254,7 +254,7 @@ public class EnemyCharacter : Character {
         foreach (PlayerCharacter character in charactersOut)
         {
             if (character.GetGoingToDie()) { continue; }
-            List<Node> pathToCharacter = getPathToTarget(character.HexOn, CurrentAttackRange);
+            List<Node> pathToCharacter = getClosestPathToTarget(character.HexOn, CurrentAttackRange + AdditionalRange);
             if (pathToCharacter.Count == 0) {continue;}
             if (pathToCharacter.Count < PathToClosestPlayerLength)
             {
@@ -262,13 +262,18 @@ public class EnemyCharacter : Character {
                 ClosestCharacter = character;
             }
         }
+        if (ClosestCharacter == null)
+        {
+            return FindClosestEnemy(AdditionalRange + 1);
+        }
+  
         //TODO may need to handle when No closest character
         return ClosestCharacter;
     }
 
     public void CheckToAttackFirst()
     {
-        ClosestCharacter = FindClosestEnemy();
+        ClosestCharacter = FindClosestEnemy(0);
         if (ClosestCharacter == null) {
             Debug.Log("No character to attack");
             finishedActions();
@@ -308,7 +313,7 @@ public class EnemyCharacter : Character {
 
     IEnumerator MoveThenAttack()
     {
-        List<Node> nodePath = getPathToTarget(TargetHex, CurrentAttackRange);
+        List<Node> nodePath = getPathToTargettoAttack(TargetHex, CurrentAttackRange);
         if (nodePath.Count == 0) { FinishedMoving(HexOn); }
         else
         {
@@ -370,7 +375,7 @@ public class EnemyCharacter : Character {
 
     IEnumerator ShowAttack()
     {
-        HexOn.HighlightAttackRange();
+        hexVisualizer.HighlightAttackRangeHex(HexOn);
         yield return new WaitForSeconds(.5f);
         List<Character> charactersAttacking = new List<Character>();
         charactersAttacking.Add(TargetHex.EntityHolding.GetComponent<Character>());
@@ -393,8 +398,26 @@ public class EnemyCharacter : Character {
         }
     }
 
+    public List<Node> getClosestPathToTarget(Hex target, int range)
+    {
+        List<Node> possibleNodes = HexMap.GetNodesAtDistanceFromNode(target.HexNode, range);
+        if (possibleNodes.Contains(HexOn.HexNode)) { return new List<Node> { HexOn.HexNode }; }
+        List<Node> OpenNodes = GetOpenNodes(possibleNodes);
+        if (OpenNodes.Count > 0)
+        {
+            Node closestNode = FindClosestNode(OpenNodes);
+            if (closestNode != null)
+            {
+                List<Node> nodePath = GetPath(closestNode);
+                nodePath.Add(HexOn.HexNode);
+                return nodePath;
+            }
+        }
+        return new List<Node>();
+    }
+
     //PATHING
-    public List<Node> getPathToTarget(Hex target, int range)
+    public List<Node> getPathToTargettoAttack(Hex target, int range)
     {
         List<Node> possibleNodes = HexMap.GetNodesAtDistanceFromNode(target.HexNode, range);
         if (possibleNodes.Contains(HexOn.HexNode)){ return new List<Node> { HexOn.HexNode }; }
@@ -402,14 +425,16 @@ public class EnemyCharacter : Character {
         if (OpenNodes.Count > 0)
         {
             Node closestNode = FindClosestNode(OpenNodes);
-            if (closestNode == null) { return new List<Node> { HexOn.HexNode }; }
-            List<Node> nodePath = GetPath(closestNode);
-            return nodePath;
+            if (closestNode != null)
+            {
+                List<Node> nodePath = GetPath(closestNode);
+                return nodePath;
+            }
         }
         // if that doesnt work increase range and try again until the raw distance is larger then the range
         if (FindObjectOfType<AStar>().GetRawPath(HexOn.HexNode, target.HexNode).Count - 1 > range)
         {
-            return getPathToTarget(target, range + 1);
+            return getPathToTargettoAttack(target, range + 1);
         }
         else
         {

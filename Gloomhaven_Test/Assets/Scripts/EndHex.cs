@@ -9,23 +9,37 @@ public class EndHex : MonoBehaviour {
 
     public void ShowObjectsHiding()
     {
-        foreach (Wall wall in WallsNearAndHiding())
+        foreach (GameObject obj in ObjectsNearAndHiding())
         {
-            wall.ShowWall();
+            if (obj.GetComponentInParent<Wall>())
+            {
+                obj.GetComponentInParent<Wall>().ShowWall();
+            }
+            else if (obj.GetComponent<DoorWall>())
+            {
+                obj.GetComponent<DoorWall>().ShowDoor();
+            }
         }
     }
 
     public void HideObjectsHiding()
     {
-        foreach (Wall wall in WallsNearAndHiding())
+        foreach (GameObject obj in ObjectsNearAndHiding())
         {
-            wall.setInvisible();
+            if (obj.GetComponentInParent<Wall>())
+            {
+                obj.GetComponentInParent<Wall>().setInvisible();
+            }
+            else if (obj.GetComponent<DoorWall>())
+            {
+                obj.GetComponent<DoorWall>().HideDoor();
+            }
         }
     }
 
-    public List<Wall> WallsNearAndHiding()
+    public List<GameObject> ObjectsNearAndHiding()
     {
-        List<Wall> wallsHiding = new List<Wall>();
+        List<GameObject> objectsHiding = new List<GameObject>();
         Vector3 North = new Vector3(2, 2, 0).normalized;
         Ray ray = new Ray(transform.position, North);
         RaycastHit[] Hits = (Physics.RaycastAll(ray, 3, WallLayer));
@@ -33,7 +47,11 @@ public class EndHex : MonoBehaviour {
         {
             if (Hit.transform.GetComponentInParent<Wall>())
             {
-                wallsHiding.Add(Hit.transform.GetComponentInParent<Wall>());
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
             }
         }
 
@@ -44,7 +62,11 @@ public class EndHex : MonoBehaviour {
         {
             if (Hit.transform.GetComponentInParent<Wall>())
             {
-                wallsHiding.Add(Hit.transform.GetComponentInParent<Wall>());
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
             }
         }
 
@@ -55,7 +77,11 @@ public class EndHex : MonoBehaviour {
         {
             if (Hit.transform.GetComponentInParent<Wall>())
             {
-                wallsHiding.Add(Hit.transform.GetComponentInParent<Wall>());
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
             }
         }
 
@@ -66,7 +92,11 @@ public class EndHex : MonoBehaviour {
         {
             if (Hit.transform.GetComponentInParent<Wall>())
             {
-                wallsHiding.Add(Hit.transform.GetComponentInParent<Wall>());
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
             }
         }
 
@@ -77,7 +107,11 @@ public class EndHex : MonoBehaviour {
         {
             if (Hit.transform.GetComponentInParent<Wall>())
             {
-                wallsHiding.Add(Hit.transform.GetComponentInParent<Wall>());
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
             }
         }
 
@@ -88,11 +122,15 @@ public class EndHex : MonoBehaviour {
         {
             if (Hit.transform.GetComponentInParent<Wall>())
             {
-                wallsHiding.Add(Hit.transform.GetComponentInParent<Wall>());
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
             }
         }
 
-        return wallsHiding;
+        return objectsHiding;
     }
 
 	// Use this for initialization

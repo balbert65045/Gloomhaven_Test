@@ -7,24 +7,16 @@ public class Hex : MonoBehaviour {
     public Entity EntityToSpawn;
     public float EntityOffset = 0.1f;
     public Entity EntityHolding;
-    public bool Hidden = true;
+
     public bool MovedTo = false;
     public bool InEnemySeight = false;
 
-    public Material SelectionHighlightMaterial;
-    public Material MovePointHighlightMaterial;
-    public Material MoveRangeHighlightMaterial;
-    public Material AttackAreaHighlightMaterial;
-    public Material AttackRangeHighlightMaterial;
-    public Material HealPointHighlightMaterial;
-    public Material HealRangeHighlightMaterial;
-    public Material ShieldRangeHighlightMaterial;
     public Material InvisibleMaterial;
     public Material SlightlyVisibleMaterial;
     public Material OGMaterial;
-    public Material previousMaterial;
 
-    public Node HexNode;
+    public Material previousMaterial { get; set; }
+    public Node HexNode { get; set; }
 
     private void Start()
     {
@@ -57,12 +49,6 @@ public class Hex : MonoBehaviour {
     public void CharacterMovingToHex() { MovedTo = true; }
     public void CharacterArrivedAtHex() { MovedTo = false; }
 
-    public void DeactivateHex()
-    {
-        OGMaterial = ShieldRangeHighlightMaterial;
-        previousMaterial = ShieldRangeHighlightMaterial;
-        GetComponent<MeshRenderer>().sharedMaterial = OGMaterial;
-    }
 
     public void ShowHexEditor()
     {
@@ -148,48 +134,6 @@ public class Hex : MonoBehaviour {
     public void RemoveEntityFromHex()
     {
         EntityHolding = null;
-    }
-
-    public void HighlightSelection()
-    {
-        GetComponent<MeshRenderer>().material = SelectionHighlightMaterial;
-    }
-
-    public void HighlightShieldlRange()
-    {
-        GetComponent<MeshRenderer>().material = ShieldRangeHighlightMaterial;
-    }
-
-    public void HighlightHealRPoint()
-    {
-        GetComponent<MeshRenderer>().material = HealPointHighlightMaterial;
-    }
-
-    public void HighlightHealRange()
-    {
-        GetComponent<MeshRenderer>().material = HealRangeHighlightMaterial;
-    }
-
-    public void HighlightMovePoint()
-    {
-        GetComponent<MeshRenderer>().material = MovePointHighlightMaterial;
-    }
-
-    public void HighlightMoveRange()
-    {
-        GetComponent<MeshRenderer>().material = MoveRangeHighlightMaterial;
-    }
-
-    public void HighlightAttackRange()
-    {
-        GetComponent<MeshRenderer>().material = AttackRangeHighlightMaterial;
-        previousMaterial = GetComponent<MeshRenderer>().material;
-    }
-
-    public void HighlightAttackArea()
-    {
-        GetComponent<MeshRenderer>().material = AttackAreaHighlightMaterial;
-        previousMaterial = GetComponent<MeshRenderer>().material;
     }
 
     public void returnToPreviousColor()

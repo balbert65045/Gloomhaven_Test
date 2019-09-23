@@ -2241,7 +2241,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1213946937077070}
   m_LocalRotation: {x: -0.000000029802322, y: -0.7071068, z: -0.000000029802322, w: 0.7071068}
-  m_LocalPosition: {x: 89.37379, y: 0.15000013, z: -0.037111215}
+  m_LocalPosition: {x: 1.0257918, y: 0.23998868, z: -1.6271124}
   m_LocalScale: {x: 0.50779766, y: 0.5077971, z: 0.5077975}
   m_Children:
   - {fileID: 4779715903904906}
@@ -2899,7 +2899,7 @@ MonoBehaviour:
   Buff4Sprite: {fileID: 212450557145997056}
   CurrentArmorPieces: []
   CurrentHealthPieces: []
-  SavingThrowCoin: {fileID: 0}
+  SavingThrowCoin: {fileID: 1950491480957880}
 --- !u!114 &114206659552712676
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2992,12 +2992,21 @@ MonoBehaviour:
   myCT: 0
   health: 10
   ViewDistance: 6
-  baseStrength: 1
+  baseStrength: 2
   baseAgility: 1
   baseDexterity: 0
   baseArmor: 0
+  myType: 2
   characterIcon: {fileID: 21300000, guid: 63aec19504d64eb408af12d0ec2c1356, type: 3}
   CharacterName: Kaladin
+  CombatHandSize: 5
+  InitialCombatCards:
+  - {fileID: 1076496323236114, guid: 1cc2c8c8a05a52a4fbb6cd8a532a7ccf, type: 2}
+  OutOfCombatHandSize: 5
+  CardsStored: []
+  InitialOutOfCombatCards:
+  - {fileID: 1694035831566774, guid: c1656eb23e1febe449d3e802dc36a01e, type: 2}
+  DeckPrefab: {fileID: 1338797504036460, guid: e5d157b0ece46694ab726369e358083a, type: 2}
   myDecks: {fileID: 0}
   myCurrentCombatCard: {fileID: 0}
 --- !u!114 &114839742403538484

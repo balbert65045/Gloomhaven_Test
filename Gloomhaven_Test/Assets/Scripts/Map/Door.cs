@@ -8,6 +8,17 @@ public class Door : MonoBehaviour {
     public List<Hex> hexesToOpenTo;
     public GameObject door;
 
+    public RoomType RoomToBuild;
+    public string RoomNameToBuild;
+
+    public void BuildRoom()
+    {
+        HexRoomBuilder builder = FindObjectOfType<HexRoomBuilder>();
+        hexesToOpenTo = builder.BuildRoom(RoomToBuild, GetComponent<Node>(), RoomNameToBuild);
+        if (hexesToOpenTo != null) { ShowHexes(); }
+    }
+
+
     public void OpenHexes()
     {
         door.layer = 0;
@@ -15,6 +26,10 @@ public class Door : MonoBehaviour {
         door.GetComponent<Animator>().SetTrigger("Open");
         foreach (Hex hex in hexesToOpenTo)
         {
+            if (hex.GetComponent<Door>() != null && hex.GetComponent<doorConnectionHex>() == null)
+            {
+                continue;
+            }
             hex.GetComponent<Node>().isAvailable = true;
         }
         foreach (Hex hex in hexesToOpenTo)
