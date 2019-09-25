@@ -60,33 +60,36 @@ public class CameraRaycaster : MonoBehaviour {
         if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat){ ActionHit = InteractableRaycast(); }
         if (ActionHit != null)
         {
-            if (InteractableObjectOver != ActionHit.gameObject)
+            //if (InteractableObjectOver != ActionHit.gameObject)
+            //{
+            if (ActionHit.GetComponent<DoorObject>() != null && !ActionHit.GetComponent<DoorObject>().door.isOpen)
             {
-                if (ActionHit.GetComponent<DoorObject>() != null && !ActionHit.GetComponent<DoorObject>().door.isOpen)
+                if (InteractableObjectOver != ActionHit.gameObject)
                 {
                     cursorImage.sprite = DoorSprite;
                     hexVisualizer.ShowDoorPath(ActionHit.GetComponent<DoorObject>().door);
                     InteractableObjectOver = ActionHit.gameObject;
-                    return;
                 }
-                else if (ActionHit.GetComponent<CardChest>() && !ActionHit.GetComponent<CardChest>().isOpen)
+                return;
+            }
+            else if (ActionHit.GetComponent<CardChest>() && !ActionHit.GetComponent<CardChest>().isOpen)
+            {
+                if (InteractableObjectOver != ActionHit.gameObject)
                 {
                     cursorImage.sprite = ChestSprite;
                     hexVisualizer.ShowChestPath(ActionHit.GetComponent<Entity>().HexOn);
                     InteractableObjectOver = ActionHit.gameObject;
                 }
-            }
-        }
-        else
-        {
-            InteractableObjectOver = null;
-            cursorImage.sprite = Pointer;
-            Transform HexHit = HexRaycast();
-            if (HexHit != null && HexHit.GetComponent<Hex>())
-            {
-                notifyCursorOverHexObservers(HexHit.GetComponent<Hex>());
                 return;
             }
+        }
+        InteractableObjectOver = null;
+        cursorImage.sprite = Pointer;
+        Transform HexHit = HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
+        {
+            notifyCursorOverHexObservers(HexHit.GetComponent<Hex>());
+            return;
         }
     }
 }

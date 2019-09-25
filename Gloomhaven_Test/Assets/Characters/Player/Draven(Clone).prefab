@@ -2775,17 +2775,18 @@ MonoBehaviour:
   baseAgility: 0
   baseDexterity: 0
   baseArmor: 0
+  SelectionPrefab: {fileID: 1619903764100662, guid: ae73d9958ce1f7a49b786642f0e4aeb2,
+    type: 2}
   myType: 3
   characterIcon: {fileID: 21300000, guid: 779e6a039cd50154cb17dcf5ce709518, type: 3}
   CharacterName: Draven
   CombatHandSize: 5
   InitialCombatCards: []
   OutOfCombatHandSize: 5
-  CardsStored: []
   InitialOutOfCombatCards: []
+  CardsStored: []
   DeckPrefab: {fileID: 1338797504036460, guid: e5d157b0ece46694ab726369e358083a, type: 2}
-  myDecks: {fileID: 0}
-  myCurrentCombatCard: {fileID: 0}
+  doorToOpen: {fileID: 0}
 --- !u!114 &114223433206796980
 MonoBehaviour:
   m_ObjectHideFlags: 1

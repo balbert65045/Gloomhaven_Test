@@ -39,18 +39,12 @@ public class CharacterSelectionButtonManager : MonoBehaviour {
 
     public void ShowCardSelected(PlayerCharacter character)
     {
-        foreach (CharacterSelectionButton button in characterButtons)
-        {
-            if (button.characterLinkedTo == character) { button.CardForCharacterSelected(); }
-        }
+        character.myCharacterSelectionButton.CardForCharacterSelected();
     }
 
     public void ShowCardUnselected(PlayerCharacter character)
     {
-        foreach (CharacterSelectionButton button in characterButtons)
-        {
-            if (button.characterLinkedTo == character) { button.CardForCharacterUnselected(); }
-        }
+        character.myCharacterSelectionButton.CardForCharacterUnselected();
     }
 
     public void ShowCardIndicators()
@@ -74,23 +68,13 @@ public class CharacterSelectionButtonManager : MonoBehaviour {
 
     public void RemoveCharacterButton(PlayerCharacter character)
     {
-        foreach (CharacterSelectionButton button in characterButtons)
-        {
-            if (button.characterLinkedTo == character)
-            {
-                button.SetCharacterDeadValue(true);
-                button.gameObject.SetActive(false);
-                break;
-            }
-        }
+        character.myCharacterSelectionButton.SetCharacterDeadValue(true);
+        character.myCharacterSelectionButton.gameObject.SetActive(false);
     }
 
     public void FilterCharacter(PlayerCharacter character)
     {
-        foreach (CharacterSelectionButton CSB in characterButtons)
-        {
-            if (CSB.characterLinkedTo != character) { CSB.Disable(); }
-        }
+        character.myCharacterSelectionButton.Disable();
     }
 
     public void ReturnButtonsToNormal()

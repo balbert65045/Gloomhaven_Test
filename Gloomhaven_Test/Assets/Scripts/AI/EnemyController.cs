@@ -79,8 +79,7 @@ public class EnemyController : MonoBehaviour {
         {
             if (group.CharacterNameLinkedTo == character.CharacterName)
             {
-                FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
-                FindObjectOfType<CharacterViewer>().ShowActionCard(group.currentAction.gameObject);
+                group.ShowCharacter(character);
                 return;
             }
         }

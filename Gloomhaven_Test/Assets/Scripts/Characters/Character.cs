@@ -419,6 +419,7 @@ public class Character : Entity {
         foreach (Node node in nodesInDistance)
         {
             if (node.NodeHex.EntityHolding != null || !node.Shown || node.edge) { continue; }
+            if (!aStar.PathAvailable(HexOn.HexNode, node, myCT)){ continue; }
             if (aStar.FindPath(HexOn.HexNode, node, myCT).Count <= CurrentMoveRange)
             {
                 NodesInWalkingDistance.Add(node);

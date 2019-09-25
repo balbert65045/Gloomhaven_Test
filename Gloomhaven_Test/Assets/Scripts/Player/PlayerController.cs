@@ -28,6 +28,12 @@ public class PlayerController : MonoBehaviour {
     private CameraRaycaster raycaster;
     private HexVisualizer hexVisualizer;
 
+    private void Awake()
+    {
+        myCharacters.Clear();
+        myCharacters.AddRange(FindObjectsOfType<PlayerCharacter>());
+    }
+
     private void Start()
     {
         hexVisualizer = FindObjectOfType<HexVisualizer>();
@@ -146,10 +152,11 @@ public class PlayerController : MonoBehaviour {
             {
                 character.SwitchCombatState(true);
             }
-            //UI
-            SelectPlayerCharacter.GetMyOutOfCombatHand().HideHand();
-            SelectPlayerCharacter.GetMyCombatHand().ShowHand();
+
             CSBM.ShowCardIndicators();
+            combatController.SelectCharacterNotMoving();
+
+            //UI
             endTurnButton.gameObject.SetActive(true);
             initBoard.gameObject.SetActive(true);
 
@@ -178,10 +185,11 @@ public class PlayerController : MonoBehaviour {
                 character.SetMyCurrentCombatCard(null);
             }
         }
+
+        CSBM.ShowCharacterSelection();
         SelectCharacter(myCharacters[0]);
 
         //UI
-        CSBM.ShowCharacterSelection();
         SelectPlayerCharacter.GetMyOutOfCombatHand().ShowHand();
         SelectPlayerCharacter.GetMyCombatHand().HideHand();
         endTurnButton.gameObject.SetActive(false);

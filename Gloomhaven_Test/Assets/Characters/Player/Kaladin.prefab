@@ -2996,6 +2996,8 @@ MonoBehaviour:
   baseAgility: 1
   baseDexterity: 0
   baseArmor: 0
+  SelectionPrefab: {fileID: 1799842077639934, guid: 726f0ca67607f0a47b43e0d44dae5086,
+    type: 2}
   myType: 2
   characterIcon: {fileID: 21300000, guid: 63aec19504d64eb408af12d0ec2c1356, type: 3}
   CharacterName: Kaladin
@@ -3003,12 +3005,11 @@ MonoBehaviour:
   InitialCombatCards:
   - {fileID: 1076496323236114, guid: 1cc2c8c8a05a52a4fbb6cd8a532a7ccf, type: 2}
   OutOfCombatHandSize: 5
-  CardsStored: []
   InitialOutOfCombatCards:
   - {fileID: 1694035831566774, guid: c1656eb23e1febe449d3e802dc36a01e, type: 2}
+  CardsStored: []
   DeckPrefab: {fileID: 1338797504036460, guid: e5d157b0ece46694ab726369e358083a, type: 2}
-  myDecks: {fileID: 0}
-  myCurrentCombatCard: {fileID: 0}
+  doorToOpen: {fileID: 0}
 --- !u!114 &114839742403538484
 MonoBehaviour:
   m_ObjectHideFlags: 1

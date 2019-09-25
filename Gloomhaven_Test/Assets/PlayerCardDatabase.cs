@@ -4,17 +4,33 @@ using UnityEngine;
 
 public class PlayerCardDatabase : MonoBehaviour {
 
-    public GameObject[] KightCards;
-    public GameObject[] BarbarianCards;
+    public GameObject[] KightCombatCards;
+    public GameObject[] KightOutOfCombatCards;
+    public GameObject[] BarbarianCombatCards;
+    public GameObject[] BarbarianOutOfCombatCards;
 
-    public GameObject SelectRandomCard(PlayerCharacter character)
+    public GameObject SelectRandomCard(PlayerCharacter character, CardType CT)
     {
         switch (character.myType)
         {
             case PlayerCharacterType.Knight:
-                return KightCards[0];
+                switch (CT)
+                {
+                    case CardType.Combat:
+                        return KightCombatCards[0];
+                    case CardType.OutOfCombat:
+                        return KightOutOfCombatCards[0];
+                }
+                break;
             case PlayerCharacterType.Barbarian:
-                return BarbarianCards[0];
+                switch (CT)
+                {
+                    case CardType.Combat:
+                        return BarbarianCombatCards[0];
+                    case CardType.OutOfCombat:
+                        return BarbarianOutOfCombatCards[0];
+                }
+                break;
         }
         return null;
     }
@@ -24,15 +40,35 @@ public class PlayerCardDatabase : MonoBehaviour {
         switch (character.myType)
         {
             case PlayerCharacterType.Knight:
-                foreach (GameObject cardPrefab in KightCards)
+                if (card.GetComponent<CombatPlayerCard>() != null)
                 {
-                    if (cardPrefab.GetComponent<Card>() == card) { return cardPrefab; }
+                    foreach (GameObject cardPrefab in KightCombatCards)
+                    {
+                        if (cardPrefab.GetComponent<Card>() == card) { return cardPrefab; }
+                    }
+                }
+                else if (card.GetComponent<OutOfCombatCard>() != null)
+                {
+                    foreach (GameObject cardPrefab in KightOutOfCombatCards)
+                    {
+                        if (cardPrefab.GetComponent<Card>() == card) { return cardPrefab; }
+                    }
                 }
                 break;
             case PlayerCharacterType.Barbarian:
-                foreach (GameObject cardPrefab in BarbarianCards)
+                if (card.GetComponent<CombatPlayerCard>() != null)
                 {
-                    if (cardPrefab.GetComponent<Card>() == card) { return cardPrefab; }
+                    foreach (GameObject cardPrefab in BarbarianCombatCards)
+                    {
+                        if (cardPrefab.GetComponent<Card>() == card) { return cardPrefab; }
+                    }
+                }
+                else if (card.GetComponent<OutOfCombatCard>() != null)
+                {
+                    foreach (GameObject cardPrefab in BarbarianOutOfCombatCards)
+                    {
+                        if (cardPrefab.GetComponent<Card>() == card) { return cardPrefab; }
+                    }
                 }
                 break;
         }

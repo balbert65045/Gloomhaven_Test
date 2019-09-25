@@ -101,6 +101,7 @@ public class HexVisualizer : MonoBehaviour {
 
     public void ShowChestPath(Hex ChestHex)
     {
+        LastHexOver = null;
         if (outOfCombatcontroller.LookingInChest || outOfCombatcontroller.cardUsing != null) { return; }
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCharacter.GetMoving()) { return; }
@@ -114,6 +115,7 @@ public class HexVisualizer : MonoBehaviour {
 
     public void ShowDoorPath(Door doorHex)
     {
+        LastHexOver = null;
         if (outOfCombatcontroller.LookingInChest || outOfCombatcontroller.cardUsing != null) { return; }
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCharacter == null || myCharacter.GetMoving()) { return; }
@@ -122,17 +124,16 @@ public class HexVisualizer : MonoBehaviour {
             ClearLastChangedHexes();
             return;
         }
-        if (doorHex.GetComponent<Node>().isAvailable)
+        ClearLastChangedHexes();
+        if (doorHex.GetComponent<doorConnectionHex>() != null)
         {
-            ClearLastChangedHexes();
-            HighlightMovePath(doorHex.GetComponent<Hex>());
+            if (doorHex.GetComponent<Hex>().EntityHolding == null && !doorHex.GetComponent<Hex>().MovedTo) { HighlightMovePath(doorHex.GetComponent<Hex>()); }
         }
         else
         {
             Node ClosestNode = GetClosestPathToAdjacentHexes(myCharacter, doorHex.GetComponent<Hex>());
             if (ClosestNode != null)
             {
-                ClearLastChangedHexes();
                 HighlightMovePath(ClosestNode.NodeHex);
             }
         }
@@ -147,6 +148,7 @@ public class HexVisualizer : MonoBehaviour {
 
     public void HighlightMovePath(Hex hex)
     {
+        if (hex.GetComponent<Door>() != null && !hex.GetComponent<Door>().CanMoveOnDoor()) { return; }
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         List<Node> NodePath = myCharacter.GetPath(hex.HexNode);
         if (NodePath == null) { return; }
@@ -196,6 +198,8 @@ public class HexVisualizer : MonoBehaviour {
             LastHexesChanged.Clear();
         }
     }
+
+    public void ResetLastHex() { LastHexOver = null; }
 
     public void OnHexChanged(Hex hex)
     {

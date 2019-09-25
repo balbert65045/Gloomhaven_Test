@@ -46,7 +46,6 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void FinishedMoving()
     {
-        UnHighlightHexes();
         playerController.SelectPlayerCharacter.Selected();
     }
 
@@ -112,10 +111,12 @@ public class OutOfCombatActionController : MonoBehaviour {
         myCamera.SetTarget(playerCharacter.transform);
 
         hexVisualizer.HighlightSelectionHex(playerCharacter.HexOn);
+        hexVisualizer.ResetLastHex();
+
         playerCharacter.myDecks.SetActive(true);
         playerCharacter.GetMyCombatHand().HideHand();
         playerCharacter.GetMyOutOfCombatHand().ShowHand();
-        CSBM.ShowCharacterButtonSelected(playerCharacter);
+        playerCharacter.myCharacterSelectionButton.CharacterSelected();
     }
 
     public void CheckToMoveOrInteractOutOfCombat(Character myCharacter)
@@ -127,30 +128,31 @@ public class OutOfCombatActionController : MonoBehaviour {
             if (InterActionHit.GetComponent<DoorObject>() != null && !InterActionHit.GetComponent<DoorObject>().door.isOpen)
             {
                 MoveToDoor((PlayerCharacter)myCharacter, InterActionHit.GetComponent<DoorObject>().door);
+                UnHighlightHexes();
                 return;
             }
             else if (InterActionHit.GetComponent<CardChest>() != null && !InterActionHit.GetComponent<CardChest>().isOpen)
             {
                 CheckToMoveNearChest((PlayerCharacter)myCharacter, InterActionHit.GetComponent<Entity>().HexOn);
+                UnHighlightHexes();
                 return;
             }
         }
-        else
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
         {
-            Transform HexHit = raycaster.HexRaycast();
-            if (HexHit != null && HexHit.GetComponent<Hex>())
+            Hex hexSelected = HexHit.GetComponent<Hex>();
+            if (hexSelected == null || !hexSelected.HexNode.Shown) { return; }
+            if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().CanMoveOnDoor()) { return; }
+            if (!hexSelected.EntityHolding && !hexSelected.MovedTo)
             {
-                Hex hexSelected = HexHit.GetComponent<Hex>();
-                if (hexSelected == null || !hexSelected.HexNode.Shown) { return; }
-                if (!hexSelected.EntityHolding && !hexSelected.MovedTo)
-                {
-                    if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
-                    myCharacter.MoveOnPath(hexSelected);
-                    UnHighlightHexes();
-                    return;
-                }
+                if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
+                myCharacter.MoveOnPath(hexSelected);
+                UnHighlightHexes();
+                return;
             }
         }
+        
     }
 
     public void CheckToMoveNearChest(PlayerCharacter myCharacter, Hex chestHex)
@@ -171,7 +173,7 @@ public class OutOfCombatActionController : MonoBehaviour {
     public void MoveToDoor(PlayerCharacter myCharacter, Door doorHex)
     {
         if (myCharacter.GetMoving()) { return; }
-        if (doorHex.GetComponent<Node>().isAvailable)
+        if (doorHex.GetComponent<doorConnectionHex>() != null)
         {
             CheckToMoveToDoor(myCharacter, doorHex);
         }
@@ -188,8 +190,11 @@ public class OutOfCombatActionController : MonoBehaviour {
             myCharacter.OpenDoor();
             return;
         }
-        myCharacter.SetDoorToOpen(doorHex);
-        myCharacter.MoveOnPath(doorHex.GetComponent<Hex>());
+        if (doorHex.GetComponent<Hex>().EntityHolding == null && !doorHex.GetComponent<Hex>().MovedTo)
+        {
+            myCharacter.SetDoorToOpen(doorHex);
+            myCharacter.MoveOnPath(doorHex.GetComponent<Hex>());
+        }
     }
 
     public void CheckToMoveNearDoor(PlayerCharacter myCharacter, Door doorHex)

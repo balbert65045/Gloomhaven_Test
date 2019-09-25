@@ -104,7 +104,15 @@ public class Hex : MonoBehaviour {
         {
             Vector3 StartPos = new Vector3(transform.position.x, transform.position.y + EntityOffset, transform.position.z);
             Vector3 startingRot = new Vector3(0, -90, 0);
-            EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot)).GetComponent<Entity>();
+            if (EntityToSpawn.GetComponent<CardChest>() != null)
+            {
+                Transform interactionParent = FindObjectOfType<InteractionObjects>().gameObject.transform;
+                EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot), interactionParent).GetComponent<Entity>();
+            }
+            else
+            {
+                EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot)).GetComponent<Entity>();
+            }
             EntityHolding.StartOnHex(this);
         }
         return EntityHolding.gameObject;

@@ -12,19 +12,31 @@ public class DoorEditor : Editor
         DrawDefaultInspector();
 
         Door myDoor = (Door)target;
+        //if (GUILayout.Button("Get Hexes In Room"))
+        //{
+        //    myDoor.GetHexesInRoom();
+        //}
+
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Build Door"))
+        {
+            myDoor.BuildDoor();
+        }
         if (GUILayout.Button("Build Room"))
         {
             myDoor.BuildRoom();
         }
+        GUILayout.EndHorizontal();
 
+        GUILayout.BeginHorizontal();
         if (GUILayout.Button("Show Door Tiles"))
         {
             myDoor.ShowHexes();
         }
-
         if (GUILayout.Button("Hide Door Tiles"))
         {
             myDoor.HideHexes();
         }
+        GUILayout.EndHorizontal();
     }
 }

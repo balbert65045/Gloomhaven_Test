@@ -38,6 +38,34 @@ public class HexMapController : MonoBehaviour {
         CreateTable();
     }
 
+    public List<Hex> GetAllHexesInThisRoom(string Room, Node StartNode)
+    {
+        CreateTable();
+        List<Hex> hexesInRoom = new List<Hex>();
+        List<Node> NodesChecked = new List<Node>();
+        List<Node> NodesToCheck = new List<Node>();
+        NodesToCheck.Add(StartNode);
+        while (NodesToCheck.Count > 0)
+        {
+            List<Node> Neighbors = GetRealNeighbors(NodesToCheck[0]);
+            foreach(Node node in Neighbors)
+            {
+                if (NodesChecked.Contains(node)) { continue; }
+                if (node == null) { continue; }
+                if (node.isAvailable && node.RoomName[0] == Room)
+                {
+                    NodesToCheck.Add(node);
+                    hexesInRoom.Add(node.GetComponent<Hex>());
+                }
+                NodesChecked.Add(node);
+            }
+            NodesToCheck.Remove(NodesToCheck[0]);
+        }
+
+        hexesInRoom.Add(StartNode.GetComponent<Hex>());
+        return hexesInRoom;
+    }
+
     public void AddHex(Node node) { Map.Add(GetHexHash(node.q, node.r), node); }
     public string GetHexHash(int x, int y) { return x.ToString() + "," + y.ToString(); }
     public Node GetNode(int x, int y) { return (Node)Map[GetHexHash(x, y)]; }
@@ -77,6 +105,7 @@ public class HexMapController : MonoBehaviour {
         {
             if (node == null) { continue; }
             if (!node.isAvailable || node.edge) { continue; }
+            if (node.NodeHex.EntityHolding != null || node.NodeHex.MovedTo) { continue; }
             int pathDistance = character.GetPath(node).Count;
             if (pathDistance < closestPathDistance)
             {

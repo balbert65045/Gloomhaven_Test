@@ -1,11 +1,14 @@
 fileFormatVersion: 2
 guid: 018384512c5b0d244861c2f336cad84a
-timeCreated: 1560724833
+timeCreated: 1569328031
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - DoorPrefab: {fileID: 1765430558756820, guid: afda1f1818c624647826254f0d91127b,
+      type: 2}
+  - door: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

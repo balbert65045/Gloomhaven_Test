@@ -120,11 +120,16 @@ public class EnemyGroup : MonoBehaviour {
     {
         EnemyCharacter character = linkedCharacters[currentCharacterIndex];
         myCamera.SetTarget(character.transform);
-        characterViewer.ShowCharacterStats(character.CharacterName, character.enemySprite, character);
-        characterViewer.ShowActionCard(currentAction.gameObject);
-        currentAction.setUpCard(character.GetStrength(), character.GetAgility(), character.GetDexterity());
+        ShowCharacter(character);
         yield return new WaitForSeconds(.5f);
         currentCharacterIndex++;
         character.PerformAction(currentAction.Movement, currentAction.Damage, currentAction.Range, currentAction.MovementAvailable, currentAction.AttackAvailable, currentAction.HealAmount, currentAction.ShieldAmount);
+    }
+
+    public void ShowCharacter(EnemyCharacter character)
+    {
+        characterViewer.ShowCharacterStats(character.CharacterName, character.enemySprite, character);
+        characterViewer.ShowActionCard(currentAction.gameObject);
+        currentAction.setUpCard(character.GetStrength(), character.GetAgility(), character.GetDexterity());
     }
 }

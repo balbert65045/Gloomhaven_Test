@@ -48,8 +48,21 @@ public class CombatActionController : MonoBehaviour {
         CSBM = GetComponent<CharacterSelectionButtonManager>();
     }
 
+    public void SelectCharacterNotMoving()
+    {
+        foreach (PlayerCharacter character in playerController.myCharacters)
+        {
+            if (!character.GetMoving())
+            {
+                SelectCharacter(character);
+                return;
+            }
+        }
+    }
+
     public void SelectCharacter(PlayerCharacter playerCharacter)
     {
+        if (playerCharacter.GetMoving()) { return; }
         PlayerCharacter SelectPlayerCharacter = playerController.SelectPlayerCharacter;
         if (myCombatState == CombatState.SelectingCombatCards)
         {

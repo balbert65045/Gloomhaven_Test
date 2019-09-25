@@ -11,6 +11,9 @@ public enum PlayerCharacterType
 
 public class PlayerCharacter : Character
 {
+    public GameObject SelectionPrefab;
+    public CharacterSelectionButton myCharacterSelectionButton { get; set; }
+
     public PlayerCharacterType myType;
 
     public Sprite characterIcon;
@@ -19,27 +22,26 @@ public class PlayerCharacter : Character
     public int CombatHandSize = 5;
     public GameObject[] InitialCombatCards;
     public int OutOfCombatHandSize = 5;
+    public GameObject[] InitialOutOfCombatCards;
 
     //TODO change this to be an ID to later be able to lookup
     public List<string> CardsStored;
     public void AddCardToBeStored(string cardToBeStored) { CardsStored.Add(cardToBeStored); }
 
-    public GameObject[] InitialOutOfCombatCards;
-
     public GameObject DeckPrefab;
 
-    public GameObject myDecks;
+    public GameObject myDecks { get; set; }
     public CombatPlayerHand GetMyCombatHand(){ return myDecks.GetComponentInChildren<CombatPlayerHand>(); }
     public OutOfCombatHand GetMyOutOfCombatHand() { return myDecks.GetComponentInChildren<OutOfCombatHand>(); }
 
-    public CombatPlayerCard myCurrentCombatCard;
+    public CombatPlayerCard myCurrentCombatCard { get; set; }
     public CombatPlayerCard GetMyCurrentCombatCard() { return myCurrentCombatCard; }
     public void SetMyCurrentCombatCard(CombatPlayerCard card) { myCurrentCombatCard = card; }
 
     private PlayerController playerController;
     private bool SavingThrowUsed = false;
 
-    private Door doorToOpen;
+    public Door doorToOpen;
     public void SetDoorToOpen(Door door) { doorToOpen = door; }
 
     private CardChest ChestToOpen;
@@ -55,6 +57,15 @@ public class PlayerCharacter : Character
         }
         maxHealth = health;
         BuildDecks();
+        BuildCharacterSelectionIcon();
+    }
+
+    public void BuildCharacterSelectionIcon()
+    {
+        CharacterSelectionButtons CSBS = FindObjectOfType<CharacterSelectionButtons>();
+        GameObject CSB = Instantiate(SelectionPrefab, CSBS.transform);
+        myCharacterSelectionButton = CSB.GetComponent<CharacterSelectionButton>();
+        myCharacterSelectionButton.characterLinkedTo = this;
     }
 
     public void BuildDecks()
@@ -176,7 +187,7 @@ public class PlayerCharacter : Character
     {
         if (HexOn.GetComponent<doorConnectionHex>() != null)
         {
-            HexOn.GetComponent<doorConnectionHex>().door.OpenHexes();
+            HexOn.GetComponent<doorConnectionHex>().door.OpenHexes(HexOn.HexNode.RoomName[0]);
             ShowViewArea(HexOn, ViewDistance);
             CheckToFight();
         }

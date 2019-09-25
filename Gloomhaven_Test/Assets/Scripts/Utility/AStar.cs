@@ -21,7 +21,7 @@ public class AStar : MonoBehaviour
         nodes = GetComponentsInChildren<Node>();
     }
 
-    public bool PathAvailable(Node Begin, Node End)
+    public bool PathAvailable(Node Begin, Node End, Character.CharacterType CT)
     {
         startNode = Begin;
         endNode = End;
@@ -32,7 +32,7 @@ public class AStar : MonoBehaviour
             node.State = NodeState.Untested;
             node.ParentNode = null;
 
-            if (node.GetComponent<Hex>().EntityHolding == null || node == endNode)
+            if (node.GetComponent<Hex>().EntityHolding == null || node.GetComponent<Hex>().HasSameType(CT))
             {
                 node.IsWalkable = true;
             }
