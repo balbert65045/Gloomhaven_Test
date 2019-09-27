@@ -13,6 +13,10 @@ public class ActionLine : MonoBehaviour {
     public Image AbilityImage;
     public Text AbilityAmount;
 
+    public Text RangeAbilityType;
+    public Image RangeAbilityImage;
+    public Text RangeAbilityAmount;
+
     public int ActionLineBaseAmount;
 
 	// Use this for initialization

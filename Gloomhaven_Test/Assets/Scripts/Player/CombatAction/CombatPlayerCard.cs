@@ -6,6 +6,10 @@ using UnityEngine.EventSystems;
 
 public class CombatPlayerCard : Card
 {
+    public Text InitiativeText;
+    public Text NameText;
+    public GameObject[] AbilityLinePositions;
+
     public bool LostAbilityUsed = false;
 
     public int Initiative;

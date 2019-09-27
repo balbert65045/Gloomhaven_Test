@@ -364,6 +364,7 @@ public class Character : Entity {
         foreach (Node node in nodes)
         {
             if (!node.Shown) { continue; }
+            if (node.edge) { continue; }
             NodesInAttackRange.Add(node);
             hexVisualizer.HighlightAttackRangeHex(node.NodeHex);
         }

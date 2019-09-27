@@ -19,6 +19,10 @@ public class EndHex : MonoBehaviour {
             {
                 obj.GetComponent<DoorWall>().ShowDoor();
             }
+            else if (obj.transform.GetComponent<Exit>())
+            {
+                obj.GetComponent<Exit>().ShowStairsAndDoor();
+            }
         }
     }
 
@@ -33,6 +37,10 @@ public class EndHex : MonoBehaviour {
             else if (obj.GetComponent<DoorWall>())
             {
                 obj.GetComponent<DoorWall>().HideDoor();
+            }
+            else if (obj.transform.GetComponent<Exit>())
+            {
+                obj.GetComponent<Exit>().HideStairsAndDoor() ;
             }
         }
     }
@@ -53,6 +61,10 @@ public class EndHex : MonoBehaviour {
             {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
+            else if (Hit.transform.GetComponent<Exit>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
         }
 
         Vector3 NorthEast = new Vector3(1, 2, 2).normalized;
@@ -65,6 +77,10 @@ public class EndHex : MonoBehaviour {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
             else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<Exit>())
             {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
@@ -83,6 +99,10 @@ public class EndHex : MonoBehaviour {
             {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
+            else if (Hit.transform.GetComponent<Exit>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
         }
 
         Vector3 South = new Vector3(-2, 2, 0).normalized;
@@ -95,6 +115,10 @@ public class EndHex : MonoBehaviour {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
             else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<Exit>())
             {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
@@ -113,6 +137,10 @@ public class EndHex : MonoBehaviour {
             {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
+            else if (Hit.transform.GetComponent<Exit>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
         }
 
         Vector3 SouthWest = new Vector3(-1, 2, -2).normalized;
@@ -125,6 +153,10 @@ public class EndHex : MonoBehaviour {
                 objectsHiding.Add(Hit.transform.gameObject);
             }
             else if (Hit.transform.GetComponent<DoorWall>())
+            {
+                objectsHiding.Add(Hit.transform.gameObject);
+            }
+            else if (Hit.transform.GetComponent<Exit>())
             {
                 objectsHiding.Add(Hit.transform.gameObject);
             }

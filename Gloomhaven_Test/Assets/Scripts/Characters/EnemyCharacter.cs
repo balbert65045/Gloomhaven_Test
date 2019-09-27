@@ -63,7 +63,7 @@ public class EnemyCharacter : Character {
         {
             foreach (Node node in nodesInView)
             {
-                if (node.Shown) { hexVisualizer.HighlightAttackAreaHex(node.NodeHex); }
+                if (node.Shown && !node.edge) { hexVisualizer.HighlightAttackAreaHex(node.NodeHex); }
             }
         }
     }

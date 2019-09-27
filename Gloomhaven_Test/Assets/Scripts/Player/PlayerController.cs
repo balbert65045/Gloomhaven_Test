@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour {
     IEnumerator StartGame()
     {
         yield return new WaitForSeconds(.5f);
+        CSBM.SetUpCharacterSelectionButtons();
         GoOutOfCombat();
     }
 
