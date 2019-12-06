@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class CharacterSelectionButton : MonoBehaviour {
+public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler {
 
     public PlayerCharacter characterLinkedTo;
     private PlayerController playerController;
@@ -16,11 +17,96 @@ public class CharacterSelectionButton : MonoBehaviour {
     public bool CharacterDead = false;
     public void SetCharacterDeadValue(bool value) { CharacterDead = value;  }
 
-	// Use this for initialization
-	void Start () {
+    bool Dragging = false;
+    public bool Linked = false;
+    Vector3 StartPosition;
+
+    CharacterSelectionButtons CSBS;
+    GraphicRaycaster m_raycaster;
+
+    // Use this for initialization
+    void Start () {
         playerController = FindObjectOfType<PlayerController>();
         OGcolor = GetComponent<Image>().color;
         CardIndicatorImage.gameObject.SetActive(false);
+        StartPosition = transform.position;
+        CSBS = FindObjectOfType<CharacterSelectionButtons>();
+        m_raycaster = FindObjectOfType<Canvas>().GetComponent<GraphicRaycaster>();
+    }
+
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Dragging = true;
+        transform.parent.SetAsLastSibling();
+        transform.GetComponentInParent<FollowRow>().transform.SetAsLastSibling();
+        CSBS.SetDraggingCharacterSelectionButton(this);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (Dragging)
+        {
+            List<RaycastResult> results = new List<RaycastResult>();
+            m_raycaster.Raycast(eventData, results);
+            
+            Dragging = false;
+            CSBS.SetDraggingCharacterSelectionButton(null);
+            CharacterSelectionButton FollowingButton = GetButtonFromResults(results);
+            if (FollowingButton != null)
+            {
+                CSBS.SetFollowing(this, FollowingButton);
+                Linked = true;
+                SetPosition();
+            }
+            else
+            {
+                if (!Linked) { CSBS.AddCharacterWithNoFollow(gameObject); }
+                SetPosition();
+            }
+        }
+    }
+
+    public void SetLinked(bool value)
+    {
+        Linked = value;
+    }
+
+    void SetPosition()
+    {
+        transform.localPosition = Vector3.zero;
+        StartPosition = transform.position;
+    }
+
+    CharacterSelectionButton GetButtonFromResults(List<RaycastResult> results)
+    {
+        foreach(RaycastResult result in results)
+        {
+            if (result.gameObject.GetComponent<CharacterSelectionButton>() != null)
+            {
+                if (result.gameObject.GetComponent<CharacterSelectionButton>() != this)
+                {
+                    return result.gameObject.GetComponent<CharacterSelectionButton>();
+                }
+            }
+        }
+        return null;
+    }
+
+    private void Update()
+    {
+        if (Dragging)
+        {
+            transform.position = Input.mousePosition;
+            if (Linked)
+            {
+                if ((transform.position - StartPosition).magnitude > 30f)
+                {
+                    Linked = false;
+                    CSBS.BreakLink(this);
+                }
+            }
+        }
     }
 
     public void Disable()
@@ -35,7 +121,15 @@ public class CharacterSelectionButton : MonoBehaviour {
 
     public void SelectCharacter()
     {
-        playerController.SelectCharacter(characterLinkedTo);
+        if (GetComponentInParent<FollowRow>().IsLeading(this))
+        {
+            playerController.SelectCharacter(characterLinkedTo);
+        }
+        else
+        {
+
+            GetComponentInParent<FollowRow>().GetLeader().SelectCharacter();
+        }
     }
 
     public void CharacterSelected()
@@ -74,8 +168,4 @@ public class CharacterSelectionButton : MonoBehaviour {
         CardIndicatorImage.sprite = NoCardSprite;
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

@@ -122,31 +122,48 @@ public class OutOfCombatActionController : MonoBehaviour {
     public void CheckToMoveOrInteractOutOfCombat(Character myCharacter)
     {
         if (myCharacter.GetMoving()) { return; }
-        Transform InterActionHit = raycaster.InteractableRaycast();
-        if (InterActionHit != null)
+        Transform WallHit = raycaster.WallRaycast();
+        if (WallHit != null)
         {
-            if (InterActionHit.GetComponent<DoorObject>() != null && !InterActionHit.GetComponent<DoorObject>().door.isOpen)
+            if (WallHit.GetComponent<DoorObject>() != null && !WallHit.GetComponent<DoorObject>().door.isOpen)
             {
-                MoveToDoor((PlayerCharacter)myCharacter, InterActionHit.GetComponent<DoorObject>().door);
+                MoveToDoor((PlayerCharacter)myCharacter, WallHit.GetComponent<DoorObject>().door);
                 UnHighlightHexes();
                 return;
             }
-            else if (InterActionHit.GetComponent<CardChest>() != null && !InterActionHit.GetComponent<CardChest>().isOpen)
+        }
+
+        Transform InterActionHit = raycaster.InteractableRaycast();
+        if (InterActionHit != null)
+        {
+            if (InterActionHit.GetComponent<CardChest>() != null && !InterActionHit.GetComponent<CardChest>().isOpen)
             {
                 CheckToMoveNearChest((PlayerCharacter)myCharacter, InterActionHit.GetComponent<Entity>().HexOn);
                 UnHighlightHexes();
                 return;
             }
         }
+
         Transform HexHit = raycaster.HexRaycast();
         if (HexHit != null && HexHit.GetComponent<Hex>())
         {
             Hex hexSelected = HexHit.GetComponent<Hex>();
             if (hexSelected == null || !hexSelected.HexNode.Shown) { return; }
-            if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().CanMoveOnDoor()) { return; }
+            if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().isOpen) {
+                if (((PlayerCharacter)myCharacter).CharacterLeading != null)
+                {
+                    FindObjectOfType<CharacterSelectionButtons>().MoveCharacterOutOfFollow(((PlayerCharacter)myCharacter).myCharacterSelectionButton);
+                }
+                MoveToDoor((PlayerCharacter)myCharacter, hexSelected.GetComponent<Door>());
+                return;
+            }
             if (!hexSelected.EntityHolding && !hexSelected.MovedTo)
             {
                 if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
+                if (((PlayerCharacter)myCharacter).CharacterLeading != null)
+                {
+                    FindObjectOfType<CharacterSelectionButtons>().MoveCharacterOutOfFollow(((PlayerCharacter)myCharacter).myCharacterSelectionButton);
+                }
                 myCharacter.MoveOnPath(hexSelected);
                 UnHighlightHexes();
                 return;
@@ -223,102 +240,165 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void ShowOutOfCombatAbility(OutOfCombatCard card)
     {
-        if (cardUsing != card) { cardUsing = card; }
-        else{ cardUsing = null; }
+        if (cardUsing != card) {
+            cardUsing = card;
+            PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
+            myCharacter.ShowAction(cardUsing.cardAbility.Actions[0].Range, cardUsing.cardAbility.Actions[0].thisActionType);
+        }
+        else {
+            cardUsing = null;
+            UnHighlightHexes();
+        }
     }
 
     public void UseOutOfCombatAbility(PlayerCharacter character)
     {
         Transform HexHit = raycaster.HexRaycast();
         Hex hexSelected = null;
-        if (HexHit != null && HexHit.GetComponent<Hex>()){ hexSelected = HexHit.GetComponent<Hex>(); }
+        if (HexHit != null && HexHit.GetComponent<Hex>()) { hexSelected = HexHit.GetComponent<Hex>(); }
         if (hexSelected == null) { return; }
 
         Action action = cardUsing.cardAbility.Actions[0];
+        bool success = false;
+        if (action.thisActionType == ActionType.Scout)
+        {
+            if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
+            {
+                success = true;
+                Scout(action.Range);
+            }
+        }
+        else if (action.thisActionType == ActionType.Stealth)
+        {
+            if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
+            {
+                success = true;
+                Stealth(action.Duration);
+            }
+        }
+        else if (action.thisActionType == ActionType.Attack)
+        {
+            List<Character> charactersActingOn = CheckForNegativeAction(action, character, hexSelected);
+            if (charactersActingOn.Count != 0)
+            {
+                success = true;
+                PerformAction(action, charactersActingOn);
+            }
+        }
+        else
+        {
+            List<Character> charactersActingOn = CheckForPositiveAction(action, character, hexSelected);
+            if (charactersActingOn.Count != 0)
+            {
+                success = true;
+                PerformAction(action, charactersActingOn);
+            }
+        }
+
+        if (success)
+        {
+            character.GetMyOutOfCombatHand().DiscardSelectedCard();
+            cardUsing = null;
+        }
+    }
+
+    void PerformAction(Action action, List<Character> characters)
+    {
         switch (action.thisActionType)
         {
-            case ActionType.Scout:
-                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
-                {
-                    Scout(action.Range);
-                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
-                    cardUsing = null;
-                }
-                break;
-            case ActionType.Stealth:
-                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
-                {
-                    Stealth(action.Duration);
-                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
-                    cardUsing = null;
-                }
-                break;
-            case ActionType.BuffAttack:
-                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
-                {
-                    BuffAttack(action.thisAOE.Damage, action.Duration);
-                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
-                    cardUsing = null;
-                }
-                break;
-            case ActionType.BuffMove:
-                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
-                {
-                    BuffMove(action.thisAOE.Damage, action.Duration);
-                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
-                    cardUsing = null;
-                }
-                break;
-            case ActionType.BuffRange:
-                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
-                {
-                    BuffRange(action.thisAOE.Damage, action.Duration);
-                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
-                    cardUsing = null;
-                }
-                break;
-            case ActionType.BuffArmor:
-                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
-                {
-                    BuffArmor(action.thisAOE.Damage, action.Duration);
-                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
-                    cardUsing = null;
-                }
+            case ActionType.Attack:
+                Attack(action.thisAOE.Damage, characters);
                 break;
             case ActionType.Heal:
-                if (hexSelected.EntityHolding != null && hexSelected.EntityHolding == character)
-                {
-                    Heal(action.thisAOE.Damage);
-                    character.GetMyOutOfCombatHand().DiscardSelectedCard();
-                    cardUsing = null;
-                }
+                Heal(action.thisAOE.Damage, characters);
+                break;
+            case ActionType.BuffArmor:
+                BuffArmor(action.thisAOE.Damage, action.Duration, characters);
+                break;
+            case ActionType.BuffAttack:
+                BuffAttack(action.thisAOE.Damage, action.Duration, characters);
+                break;
+            case ActionType.BuffMove:
+                BuffMove(action.thisAOE.Damage, action.Duration, characters);
+                break;
+            case ActionType.BuffRange:
+                BuffRange(action.thisAOE.Damage, action.Duration, characters);
                 break;
         }
     }
 
-    void Heal(int value)
+    List<Character> CheckForNegativeAction(Action action, Character character, Hex hexSelected)
     {
-        playerController.SelectPlayerCharacter.Heal(value);
+        List<Node> nodes = FindObjectOfType<HexMapController>().GetAOE(action.thisAOE.thisAOEType, character.HexOn.HexNode, hexSelected.HexNode);
+        List<Character> characterActingUpon = new List<Character>();
+
+        if (!character.HexInActionRange(hexSelected)) { return null; }
+        foreach (Node node in nodes)
+        {
+            if (node == null) { break; }
+            if (character.HexNegativeActionable(node.NodeHex))
+            {
+                UnHighlightHexes();
+                foreach (Node node_highlight in nodes)
+                {
+                    hexVisualizer.HighlightActionPointHex(node_highlight.NodeHex, action.thisActionType);
+                }
+                characterActingUpon.Add(node.NodeHex.EntityHolding.GetComponent<Character>());
+            }
+        }
+        return characterActingUpon;
     }
 
-    void BuffRange(int value, int duration)
+    List<Character> CheckForPositiveAction(Action action, Character character, Hex hexSelected)
     {
-        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Dexterity);
+        List<Node> nodes = FindObjectOfType<HexMapController>().GetAOE(action.thisAOE.thisAOEType, character.HexOn.HexNode, hexSelected.HexNode);
+        List<Character> characterActingUpon = new List<Character>();
+
+        if (!character.HexInActionRange(hexSelected)) { return null; }
+        foreach (Node node in nodes)
+        {
+            if (node == null) { break; }
+            if (character.HexPositiveActionable(node.NodeHex))
+            {
+                UnHighlightHexes();
+                foreach (Node node_highlight in nodes)
+                {
+                    hexVisualizer.HighlightActionPointHex(node_highlight.NodeHex, action.thisActionType);
+                }
+                characterActingUpon.Add(node.NodeHex.EntityHolding.GetComponent<Character>());
+            }
+        }
+        return characterActingUpon;
     }
 
-    void BuffMove(int value, int duration)
+    void Attack(int value, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Agility);
+        playerController.SelectPlayerCharacter.Attack(value, characters);
     }
 
-    void BuffAttack(int value, int duration)
+    void Heal(int value, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Strength);
+        playerController.SelectPlayerCharacter.PerformHeal(value, characters);
     }
 
-    void BuffArmor(int value, int duration)
+    void BuffRange(int value, int duration, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.ApplyBuff(value, duration, BuffType.Armor);
+        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Dexterity, characters);
+    }
+
+    void BuffMove(int value, int duration, List<Character> characters)
+    {
+        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Agility, characters);
+    }
+
+    void BuffAttack(int value, int duration, List<Character> characters)
+    {
+        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Strength, characters);
+    }
+
+    void BuffArmor(int value, int duration, List<Character> characters)
+    {
+        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Armor, characters);
     }
 
     void Scout(int value)

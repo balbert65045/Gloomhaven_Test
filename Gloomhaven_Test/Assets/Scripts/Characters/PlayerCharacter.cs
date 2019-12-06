@@ -47,6 +47,34 @@ public class PlayerCharacter : Character
     private CardChest ChestToOpen;
     public void SetChestToOpen(CardChest chest) { ChestToOpen = chest; }
 
+    public PlayerCharacter CharacterLeading = null;
+    public PlayerCharacter CharacterFollowing = null;
+    public void SetFollow(PlayerCharacter character)
+    {
+        if (CharacterFollowing != null) { CharacterFollowing.CharacterLeading = null; }
+        CharacterFollowing = character;
+        if (character != null) { CharacterFollowing.CharacterLeading = this; }
+    }
+
+    public void LeaderMoved(Hex hexMovedFrom)
+    {
+        Follow(hexMovedFrom);
+    }
+
+    public override void MoveOnPath(Hex hex)
+    {
+        Hex HexMovingFrom = HexOn;
+        base.MoveOnPath(hex);
+        if (CharacterFollowing != null) { CharacterFollowing.LeaderMoved(HexMovingFrom); }
+    }
+
+    public override void MovingOnPath()
+    {
+        Hex HexMovingFrom = HexOn;
+        base.MovingOnPath();
+        if (CharacterFollowing != null && HexMovingFrom != null) { CharacterFollowing.LeaderMoved(HexMovingFrom); }
+    }
+
     void Start()
     {
         playerController = FindObjectOfType<PlayerController>();
@@ -64,6 +92,7 @@ public class PlayerCharacter : Character
     {
         CharacterSelectionButtons CSBS = FindObjectOfType<CharacterSelectionButtons>();
         GameObject CSB = Instantiate(SelectionPrefab, CSBS.transform);
+        CSBS.AddCharacterWithNoFollow(CSB);
         myCharacterSelectionButton = CSB.GetComponent<CharacterSelectionButton>();
         myCharacterSelectionButton.characterLinkedTo = this;
     }
@@ -127,19 +156,33 @@ public class PlayerCharacter : Character
         List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance);
         foreach (Node node in nodesAlmostSeen)
         {
-            if (!node.Shown && nodesSeen.Contains(node))
+            if (nodesSeen.Contains(node))
             {
-                node.GetComponent<Hex>().ShowHexEnd();
-                hexVisualizer.UnHighlightHex(node.NodeHex);
-                node.Shown = true;
-                if (node.NodeHex.EntityToSpawn != null)
+                node.GetComponent<HexWallAdjuster>().ShowWall();
+                if (!node.GetComponent<HexAdjuster>().FullyShown()) { node.GetComponent<HexAdjuster>().RevealRoomEdge(); }
+                if (!node.Shown)
                 {
-                    node.NodeHex.CreateCharacter();
+                    node.GetComponent<Hex>().ShowHex();
+                    node.GetComponent<HexAdjuster>().RevealRoomEdge();
+                    node.GetComponent<HexWallAdjuster>().ShowWall();
+                    node.GetComponent<Hex>().ShowHexEnd();
+                    if (node.GetComponent<Door>() != null)
+                    {
+                        node.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true);
+                    }
+                    node.Shown = true;
+                    if (node.NodeHex.EntityToSpawn != null)
+                    {
+                        node.NodeHex.CreateCharacter();
+                    }
                 }
             }
-            else if (!node.Shown)
+            else
             {
-                node.GetComponent<Hex>().slightlyShowHex();
+                if (!node.Shown) {
+                    node.GetComponent<HexAdjuster>().RevealRoomEdge();
+                    node.GetComponent<Hex>().slightlyShowHex();
+                }
             }
         }
 
@@ -172,12 +215,12 @@ public class PlayerCharacter : Character
         FindObjectOfType<PlayerController>().FinishedAttacking();
     }
 
-    public override void FinishedHealing()
+    public override void FinishedPerformingHealing()
     {
         FindObjectOfType<PlayerController>().FinishedHealing();
     }
 
-    public override void FinishedShielding()
+    public override void FinishedPerformingShielding()
     {
         FindObjectOfType<PlayerController>().FinishedHealing();
     }

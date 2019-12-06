@@ -49,6 +49,13 @@ public class Hex : MonoBehaviour {
     public void CharacterMovingToHex() { MovedTo = true; }
     public void CharacterArrivedAtHex() { MovedTo = false; }
 
+    public void ShowHex()
+    {
+        if (!HexNode.Shown)
+        {
+            GetComponent<MeshRenderer>().material = OGMaterial;
+        }
+    }
 
     public void ShowHexEditor()
     {

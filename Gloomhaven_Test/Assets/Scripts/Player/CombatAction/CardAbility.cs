@@ -33,15 +33,6 @@ public class CardAbility : MonoBehaviour {
                             break;
                         }
                     }
-                    for (int j = 0; j < actionLines.Count; j++)
-                    {
-                        if (actionLines[j].MyActionType == BuffType.Dexterity)
-                        {
-                            actionLines[j].SetUpAmount(Dexterity);
-                            actionLines.Remove(actionLines[j]);
-                            break;
-                        }
-                    }
                     break;
                 case ActionType.Movement:
                     for (int j = 0; j < actionLines.Count; j++)

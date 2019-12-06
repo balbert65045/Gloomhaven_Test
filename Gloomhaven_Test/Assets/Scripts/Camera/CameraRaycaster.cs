@@ -12,6 +12,8 @@ public class CameraRaycaster : MonoBehaviour {
     public delegate void OnCursorOverHex(Hex hex); // declare new delegate type
     public event OnCursorOverHex notifyCursorOverHexObservers; // instantiate an observer set
 
+    public LayerMask WallMask;
+
     public LayerMask InterActionMask;
     public GameObject InteractableObjectOver;
 
@@ -50,6 +52,14 @@ public class CameraRaycaster : MonoBehaviour {
         return null;
     }
 
+    public Transform WallRaycast()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit Hit;
+        if (Physics.Raycast(ray, out Hit, 100f, WallMask)) { return Hit.transform; }
+        return null;
+    }
+
     // Update is called once per frame
     void Update () {
 
@@ -57,11 +67,9 @@ public class CameraRaycaster : MonoBehaviour {
         transform.position = cursorPoint;
 
         Transform ActionHit = null;
-        if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat){ ActionHit = InteractableRaycast(); }
+        if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat) { ActionHit = WallRaycast(); }
         if (ActionHit != null)
         {
-            //if (InteractableObjectOver != ActionHit.gameObject)
-            //{
             if (ActionHit.GetComponent<DoorObject>() != null && !ActionHit.GetComponent<DoorObject>().door.isOpen)
             {
                 if (InteractableObjectOver != ActionHit.gameObject)
@@ -72,7 +80,12 @@ public class CameraRaycaster : MonoBehaviour {
                 }
                 return;
             }
-            else if (ActionHit.GetComponent<CardChest>() && !ActionHit.GetComponent<CardChest>().isOpen)
+        }
+
+        if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat){ ActionHit = InteractableRaycast(); }
+        if (ActionHit != null)
+        {
+            if (ActionHit.GetComponent<CardChest>() && !ActionHit.GetComponent<CardChest>().isOpen)
             {
                 if (InteractableObjectOver != ActionHit.gameObject)
                 {
@@ -84,12 +97,14 @@ public class CameraRaycaster : MonoBehaviour {
             }
         }
         InteractableObjectOver = null;
-        cursorImage.sprite = Pointer;
         Transform HexHit = HexRaycast();
         if (HexHit != null && HexHit.GetComponent<Hex>())
         {
+            if (HexHit.GetComponent<Door>() != null && !HexHit.GetComponent<Door>().isOpen) { cursorImage.sprite = DoorSprite; }
+            else { cursorImage.sprite = Pointer; }
             notifyCursorOverHexObservers(HexHit.GetComponent<Hex>());
             return;
         }
+        cursorImage.sprite = Pointer;
     }
 }

@@ -43,6 +43,11 @@ public class InitiativeBoard : MonoBehaviour {
         }
     }
 
+    public void AddCharacterToBoard(EnemyGroup enemy)
+    {
+        PlaceCharacterOnBoard(0, enemy.CharacterIcon, enemy.CharacterNameLinkedTo);
+    }
+
     void PlaceCharacterOnBoard(int position, Sprite charIcon, string characterName)
     {
         InitiativePositions[position].LinkCharacter(charIcon, characterName);

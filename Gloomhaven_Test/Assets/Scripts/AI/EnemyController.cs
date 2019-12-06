@@ -15,7 +15,7 @@ public class EnemyController : MonoBehaviour {
     {
         foreach (EnemyGroup group in enemyGroups)
         {
-            if (group.hasCharactersOut()) { return false; }
+            if (group.hasCharactersOut() && group.hasCharacterInCombat()) { return false; }
         }
         return true;
     }
@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour {
         List<EnemyActionCard> enemiesCurrentActions = new List<EnemyActionCard>();
         foreach (EnemyGroup EG in enemyGroups)
         {
-            if (EG.hasCharactersOut()) { enemiesCurrentActions.Add(EG.getNewActionCard()); }
+            if (EG.hasCharactersOut() && EG.hasCharacterInCombat()) { enemiesCurrentActions.Add(EG.getNewActionCard()); }
         }
         return enemiesCurrentActions.ToArray();
     }
@@ -87,8 +87,7 @@ public class EnemyController : MonoBehaviour {
 
     public void ShowCharactersView()
     {
-        EnemyCharacter[] enemiesOut = FindObjectsOfType<EnemyCharacter>();
-        foreach (EnemyCharacter character in enemiesOut)
+        foreach (EnemyCharacter character in enemiesOut())
         {
             character.ShowViewAreaInShownHexes();
         }
@@ -96,8 +95,7 @@ public class EnemyController : MonoBehaviour {
 
     public bool ShowEnemyViewAreaAndCheckToFight()
     {
-        EnemyCharacter[] enemiesOut = FindObjectsOfType<EnemyCharacter>();
-        foreach (EnemyCharacter character in enemiesOut)
+        foreach (EnemyCharacter character in enemiesOut())
         {
             character.ShowViewAreaInShownHexes();
             if (character.PlayerInView())
@@ -111,12 +109,30 @@ public class EnemyController : MonoBehaviour {
         return false;
     }
 
+    public void CheckToFight()
+    {
+        foreach (EnemyGroup EG in enemyGroups)
+        {
+            EG.CheckToPutCharacterInCombat();
+        }
+    }
+
     public void takeAwayBuffs()
     {
         foreach (EnemyGroup group in enemyGroups)
         {
             group.takeAwayBuffs();
         }
+    }
+
+    public EnemyCharacter[] enemiesOut()
+    {
+        List<EnemyCharacter> charactersOut = new List<EnemyCharacter>();
+        foreach (EnemyGroup group in enemyGroups)
+        {
+            charactersOut.AddRange(group.linkedCharacters);
+        }
+        return charactersOut.ToArray();
     }
 
 }

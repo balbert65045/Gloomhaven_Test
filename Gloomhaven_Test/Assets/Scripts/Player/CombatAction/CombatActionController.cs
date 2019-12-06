@@ -122,6 +122,7 @@ public class CombatActionController : MonoBehaviour {
                 FindObjectOfType<EndTurnButton>().DisableEndTurn();
                 SelectPlayerCharacter.GetMyCombatHand().HideSelectedCard();
                 FindObjectOfType<myCharacterCard>().HideCharacterStats();
+                SelectPlayerCharacter.myCurrentCombatCard.UnHighlightAllActions();
                 FindObjectOfType<CombatManager>().PerformNextInInitiative();
                 break;
         }
@@ -269,12 +270,12 @@ public class CombatActionController : MonoBehaviour {
 
     public void SetCurrentActionAs(int index)
     {
-        FindObjectOfType<MyActionBoard>().UnHighlightAction(ActionIndex);
+        if (!ActionsUsed[ActionIndex]) { playerController.SelectPlayerCharacter.myCurrentCombatCard.UnHighlightCurrentAction(ActionIndex); }
         ActionIndex = index;
         myCurrentAction = SelectedCardActions[ActionIndex];
         UnHighlightHexes();
         ShowAbility(SelectedCardActions[ActionIndex]);
-        FindObjectOfType<MyActionBoard>().HighlightAction(ActionIndex);
+        playerController.SelectPlayerCharacter.myCurrentCombatCard.HighlightCurrentAction(ActionIndex);
         return;
     }
 
@@ -305,76 +306,71 @@ public class CombatActionController : MonoBehaviour {
             {
                 return CheckForMove(action, hexSelected);
             }
-            else if (myCurrentAction.thisActionType == ActionType.Attack)
+            else
             {
-                return CheckForAttack(action, hexSelected);
-            }
-            else if (myCurrentAction.thisActionType == ActionType.Heal)
-            {
-                return CheckForHeal(action, hexSelected);
-            }
-            else if (myCurrentAction.thisActionType == ActionType.Shield)
-            {
-                return CheckForShield(action, hexSelected);
+                return CheckForAction(action, hexSelected, myCurrentAction.thisActionType != ActionType.Attack);
             }
         }
         return false;
     }
 
-    bool CheckForShield(Action action, Hex hexSelected)
+    bool CheckForAction(Action action, Hex hexSelected, bool PositiveAction)
     {
-        if (action.Range == 0 && action.thisAOE.thisAOEType == AOEType.SingleTarget)
-        {
-            PerformingAction = true;
-            playerController.SelectPlayerCharacter.Shield(action.thisAOE.Damage);
-            return true;
-        }
-        return false;
-    }
-
-    bool CheckForHeal(Action action, Hex hexSelected)
-    {
-        //Heal self
-        if (action.Range == 0 && action.thisAOE.thisAOEType == AOEType.SingleTarget)
-        {
-            PerformingAction = true;
-            playerController.SelectPlayerCharacter.Heal(action.thisAOE.Damage);
-            return true;
-        }
-        return false;
-    }
-
-    bool CheckForAttack(Action action, Hex hexSelected)
-    {
-
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         List<Node> nodes = FindObjectOfType<HexMapController>().GetAOE(action.thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hexSelected.HexNode);
         bool success = false;
 
-        List<Character> charactersAttacking = new List<Character>();
-        bool meleeAtack = action.Range == 1;
-        int range = meleeAtack ? action.Range : action.Range + myCharacter.GetDexterity();
-        if (!myCharacter.HexAttackable(hexSelected, range)) { return false; }
+        List<Character> charactersActingUpon = new List<Character>();
+        if (!myCharacter.HexInActionRange(hexSelected)) { return false; }
         foreach (Node node in nodes)
         {
             if (node == null) { break; }
-            if (myCharacter.HexDamageable(node.NodeHex))
+            bool nodeActionable = PositiveAction ? myCharacter.HexPositiveActionable(node.NodeHex) : myCharacter.HexNegativeActionable(node.NodeHex);
+            if (nodeActionable)
             {
                 UnHighlightHexes();
                 foreach (Node node_highlight in nodes)
                 {
-                    hexVisualizer.HighlightAttackAreaHex(node_highlight.NodeHex);
+                    hexVisualizer.HighlightArmorPointHex(node_highlight.NodeHex);
                 }
-                Attacking = true;
-                charactersAttacking.Add(node.NodeHex.EntityHolding.GetComponent<Character>());
+                charactersActingUpon.Add(node.NodeHex.EntityHolding.GetComponent<Character>());
                 success = true;
             }
         }
-        if ( charactersAttacking.Count == 0) { return false; }
+        if (charactersActingUpon.Count == 0) { return false; }
         playerController.DisableEndTurn();
-        myCharacter.Attack(action.thisAOE.Damage + myCharacter.GetStrength(), charactersAttacking);
+        if (action.thisActionType == ActionType.Attack) { Attacking = true; }
+        PerformAction(action, myCharacter, charactersActingUpon);
         PerformingAction = true;
         return success;
+    }
+
+    void PerformAction(Action action, Character myCharacter, List<Character> charactersActingUpon)
+    {
+        switch (action.thisActionType)
+        {
+            case ActionType.Attack:
+                myCharacter.Attack(action.thisAOE.Damage, charactersActingUpon);
+                break;
+            case ActionType.Heal:
+                myCharacter.PerformHeal(action.thisAOE.Damage, charactersActingUpon);
+                break;
+            case ActionType.Shield:
+                myCharacter.PerformShield(action.thisAOE.Damage, charactersActingUpon);
+                break;
+            case ActionType.BuffAttack:
+                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Strength, charactersActingUpon);
+                break;
+            case ActionType.BuffMove:
+                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Agility, charactersActingUpon);
+                break;
+            case ActionType.BuffArmor:
+                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Armor, charactersActingUpon);
+                break;
+            case ActionType.BuffRange:
+                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Dexterity, charactersActingUpon);
+                break;
+        }
     }
 
     bool CheckForMove(Action action, Hex hexSelected)
@@ -419,12 +415,14 @@ public class CombatActionController : MonoBehaviour {
     public void FinishedHealing()
     {
         PerformingAction = false;
+        playerController.AllowEndTurn();
         MoveToNextAbility();
     }
 
     public void FinishedShielding()
     {
         PerformingAction = false;
+        playerController.AllowEndTurn();
         MoveToNextAbility();
     }
 
@@ -436,19 +434,13 @@ public class CombatActionController : MonoBehaviour {
         FindObjectOfType<CharacterViewer>().HideCharacterStats();
         FindObjectOfType<CharacterViewer>().HideActionCard();
         ActionsUsed[ActionIndex] = true;
-        FindObjectOfType<MyActionBoard>().DisableAction(ActionIndex);
+        playerController.SelectPlayerCharacter.myCurrentCombatCard.DisableCurrentAction(ActionIndex);
         if (ActionsAllUsed()) { myCurrentAction = NoAction(); }
         else { SwitchAction(); }
     }
 
     public void ShowActions(PlayerCharacter character)
     {
-        FindObjectOfType<MyActionBoard>().hideActions();
-        CombatPlayerCard card = character.GetMyCombatHand().getSelectedCard();
-        if (card != null)
-        {
-            FindObjectOfType<MyActionBoard>().showActions(card.CardAbility.Actions, character);
-        }
     }
 
     bool ActionsAllUsed()
@@ -466,7 +458,6 @@ public class CombatActionController : MonoBehaviour {
         CardAbilityUsing = cardAbility;
         SelectedCardActions.Clear();
         ActionsUsed.Clear();
-        FindObjectOfType<MyActionBoard>().showActions(CardAbilityUsing.Actions, myCharacter);
         List<Action> Actions = new List<Action>(cardAbility.Actions);
         foreach (Action action in Actions) {
             SelectedCardActions.Add(action);
@@ -475,7 +466,7 @@ public class CombatActionController : MonoBehaviour {
         ActionIndex = 0;
         myCurrentAction = cardAbility.Actions[ActionIndex];
         ShowAbility(SelectedCardActions[ActionIndex]);
-        FindObjectOfType<MyActionBoard>().HighlightAction(ActionIndex);
+        playerController.SelectPlayerCharacter.myCurrentCombatCard.HighlightCurrentAction(ActionIndex);
     }
 
     void ShowAbility(Action action)
@@ -495,29 +486,42 @@ public class CombatActionController : MonoBehaviour {
         {
             ShowHeal(action.Range);
         }
-        if (myCurrentAction.thisActionType == ActionType.Shield)
+        else if (myCurrentAction.thisActionType == ActionType.Shield)
         {
             ShowShield(action.Range);
+        }
+        else if (myCurrentAction.thisActionType == ActionType.BuffAttack ||
+                 myCurrentAction.thisActionType == ActionType.BuffMove ||
+                 myCurrentAction.thisActionType == ActionType.BuffArmor ||
+                 myCurrentAction.thisActionType == ActionType.BuffRange)
+        {
+            ShowBuff(action.Range, action.thisActionType);
         }
     }
 
     void ShowShield(int Range)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        myCharacter.ShowShield(Range);
+        myCharacter.ShowAction(Range, ActionType.Shield);
     }
 
     void ShowHeal(int Range)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        myCharacter.ShowHeal(Range);
+        myCharacter.ShowAction(Range, ActionType.Heal);
     }
 
     void ShowAttack(int Range)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        myCharacter.ShowAttack(Range);
+        myCharacter.ShowAction(Range, ActionType.Attack);
         HighlightHexForAttack(Range);
+    }
+
+    void ShowBuff(int Range, ActionType BuffType)
+    {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
+        myCharacter.ShowAction(Range, BuffType);
     }
 
     void HighlightHexForAttack(int Distance)
@@ -527,9 +531,9 @@ public class CombatActionController : MonoBehaviour {
         if (HexHit != null && HexHit.GetComponent<Hex>())
         {
             Hex hexSelected = HexHit.GetComponent<Hex>();
-            if (myCharacter.CheckIfinAttackRange(hexSelected, myCharacter.GetCurrentAttackRange()) && !Attacking)
+            if (myCharacter.HexInActionRange(hexSelected) && !Attacking)
             {
-                hexVisualizer.HighlightAttackArea(hexSelected);
+                hexVisualizer.HighlightActionArea(hexSelected, ActionType.Attack);
             }
             return;   
         }

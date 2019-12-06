@@ -311,7 +311,7 @@ public class HealthBar : MonoBehaviour {
         ModifierValue.text = modifier;
         if (modifier[0] == "+"[0]) { ModifierValue.color = Color.green; }
         else if (modifier[0] == "-"[0]) { ModifierValue.color = Color.red; }
-        else if (modifier == "x0") { ModifierValue.color = Color.black; }
+        else if (modifier == "x0") { ModifierValue.color = new Color(.627f, .125f, .941f); }
         else if (modifier == "x2") { ModifierValue.color = Color.yellow; }
         yield return new WaitForSeconds(.5f);
         float hitModifierPoint = ModifierValue.gameObject.transform.localPosition.x;

@@ -10,6 +10,10 @@ public class Node : MonoBehaviour
         RoomName.Clear();
         RoomName.Add(name);
     }
+    public void AddRoomName(string name)
+    {
+        if (!RoomName.Contains(name)) { RoomName.Add(name); }
+    }
 
     public bool edge = false;
     public bool isAvailable = true;
@@ -56,15 +60,15 @@ public class Node : MonoBehaviour
         NodeHex = GetComponent<Hex>();
     }
 
-    public static float GetTraversalCost(Point startLocation, Point endLocation)
+    public static float GetTraversalCost(Node startLocation, Node endLocation)
     {
-        return 1;
+        return (startLocation.transform.position - endLocation.transform.position).magnitude;
     }
 
-    public void CalculateG(Node StartPoint)
-    {
-        G = (StartPoint.transform.position - transform.position).magnitude;
-    }
+    //public void CalculateG(Node StartPoint)
+    //{
+    //    G = (StartPoint.transform.position - transform.position).magnitude;
+    //}
     
 
     public void CalculateH(Node EndPoint)

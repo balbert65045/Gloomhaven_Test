@@ -28,6 +28,17 @@ public class HexAdjusterEditor : Editor {
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Double Across"))
+        {
+            hexAdjuster.SetHexToDoubleAcross();
+        }
+        if (GUILayout.Button("Double Side"))
+        {
+            hexAdjuster.SetHexToDoubleSide();
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
         if (GUILayout.Button("+ 60"))
         {
             hexAdjuster.Rotate60Forward();

@@ -25,9 +25,9 @@ public class AStar : MonoBehaviour
     {
         startNode = Begin;
         endNode = End;
+        startNode.G = 0;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode);
             node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
@@ -55,9 +55,9 @@ public class AStar : MonoBehaviour
         // Initialize values and nodes
         startNode = Begin;
         endNode = End;
+        startNode.G = 0;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode);
             node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
@@ -92,9 +92,9 @@ public class AStar : MonoBehaviour
         // Initialize values and nodes
         startNode = Begin;
         endNode = End;
+        startNode.G = 0;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode);
             node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
@@ -107,7 +107,6 @@ public class AStar : MonoBehaviour
             {
                 node.IsWalkable = false;
             }
-
         }
         OpenNodes = new List<Node>();
         ClosedNodes = new List<Node>();
@@ -142,9 +141,9 @@ public class AStar : MonoBehaviour
 
         startNode = Begin;
         endNode = End;
+        startNode.G = 0;
         foreach (Node node in nodes)
         {
-            node.CalculateG(startNode);
             node.CalculateH(endNode);
             node.State = NodeState.Untested;
             node.ParentNode = null;
@@ -192,6 +191,7 @@ public class AStar : MonoBehaviour
         // Add the viable nodes that are adjacent to the current one to the Open list
         OpenNodes.AddRange(GetAdjacentWalkableNodes(currentNode));
 
+        if (OpenNodes.Contains(endNode)) { return true; }
         // Check if any open nodes available, if not then no path possible 
         if (OpenNodes.Count > 0)
         {
@@ -205,18 +205,9 @@ public class AStar : MonoBehaviour
                 }
             }
 
-            // If its the end then your done 
-            if (minFNode == this.endNode)
-            {
-                return true;
-            }
-
             // If not repeat the process
-            else
-            {
-                if (Search(minFNode)) // Note: Recurses back into Search(Node)
-                    return true;
-            }
+            if (Search(minFNode)) // Note: Recurses back into Search(Node)
+                return true;
         }
         return false;
     }
@@ -254,6 +245,7 @@ public class AStar : MonoBehaviour
                 float gTemp = fromNode.G + traversalCost;
                 if (gTemp <= node.G)
                 {
+                    node.G = gTemp;
                     node.ParentNode = fromNode;
                     walkableNodes.Add(node);
                 }
@@ -261,6 +253,9 @@ public class AStar : MonoBehaviour
             else
             {
                 // If it's untested, set the parent and flag it as 'Open' for consideration
+                float traversalCost = 1;
+                float gTemp = fromNode.G + traversalCost;
+                node.G = gTemp;
                 node.ParentNode = fromNode;
                 node.State = NodeState.Open;
                 walkableNodes.Add(node);

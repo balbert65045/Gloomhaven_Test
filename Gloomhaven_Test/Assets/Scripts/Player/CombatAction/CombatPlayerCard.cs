@@ -7,8 +7,6 @@ using UnityEngine.EventSystems;
 public class CombatPlayerCard : Card
 {
     public Text InitiativeText;
-    public Text NameText;
-    public GameObject[] AbilityLinePositions;
 
     public bool LostAbilityUsed = false;
 
@@ -22,6 +20,56 @@ public class CombatPlayerCard : Card
     int OldSiblingIndex;
 
     bool CardIncreased = false;
+
+    public void HighlightCurrentAction(int ActionIndex)
+    {
+        List<ActionLine> lines = new List<ActionLine>();
+        for (int i = 0; i < AbilityLinePositions.Length; i++)
+        {
+            if (AbilityLinePositions[i].GetComponentInChildren<ActionLine>() != null)
+            {
+                lines.Add(AbilityLinePositions[i].GetComponentInChildren<ActionLine>());
+            }
+        }
+        lines[ActionIndex].HighlightAction();
+    }
+
+    public void UnHighlightCurrentAction(int ActionIndex)
+    {
+        List<ActionLine> lines = new List<ActionLine>();
+        for (int i = 0; i < AbilityLinePositions.Length; i++)
+        {
+            if (AbilityLinePositions[i].GetComponentInChildren<ActionLine>() != null)
+            {
+                lines.Add(AbilityLinePositions[i].GetComponentInChildren<ActionLine>());
+            }
+        }
+        lines[ActionIndex].ActionBackToNormal();
+    }
+
+    public void UnHighlightAllActions()
+    {
+        for (int i = 0; i < AbilityLinePositions.Length; i++)
+        {
+            if (AbilityLinePositions[i].GetComponentInChildren<ActionLine>() != null)
+            {
+                AbilityLinePositions[i].GetComponentInChildren<ActionLine>().ActionBackToNormal();
+            }
+        }
+    }
+
+    public void DisableCurrentAction(int ActionIndex)
+    {
+        List<ActionLine> lines = new List<ActionLine>();
+        for (int i = 0; i < AbilityLinePositions.Length; i++)
+        {
+            if (AbilityLinePositions[i].GetComponentInChildren<ActionLine>() != null)
+            {
+                lines.Add(AbilityLinePositions[i].GetComponentInChildren<ActionLine>());
+            }
+        }
+        lines[ActionIndex].ActionUsed();
+    }
 
     public void SetUpCardActions()
     {      

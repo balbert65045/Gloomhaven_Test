@@ -17,9 +17,11 @@ public class HexVisualizer : MonoBehaviour {
     public Material MoveRangeHighlightMaterial;
     public Material AttackAreaHighlightMaterial;
     public Material AttackRangeHighlightMaterial;
+    public Material AttackViewHighlightMaterial;
     public Material HealPointHighlightMaterial;
     public Material HealRangeHighlightMaterial;
     public Material ShieldRangeHighlightMaterial;
+    public Material ShieldPointHighlightMaterial;
 
     public void UnhighlightHexes()
     {
@@ -57,6 +59,62 @@ public class HexVisualizer : MonoBehaviour {
         hex.OGMaterial = ShieldRangeHighlightMaterial;
     }
 
+    public void HighlightActionRangeHex(Hex hex, ActionType action)
+    {
+        switch (action)
+        {
+            case ActionType.Attack:
+                HighlightAttackRangeHex(hex);
+                break;
+            case ActionType.Heal:
+                HighlightHealRangeHex(hex);
+                break;
+            case ActionType.Shield:
+                HighlightArmorRangeHex(hex);
+                break;
+            case ActionType.BuffArmor:
+                HighlightBuffRangeHex(hex);
+                break;
+            case ActionType.BuffAttack:
+                HighlightBuffRangeHex(hex);
+                break;
+            case ActionType.BuffMove:
+                HighlightBuffRangeHex(hex);
+                break;
+            case ActionType.BuffRange:
+                HighlightBuffRangeHex(hex);
+                break;
+        }
+    }
+
+    public void HighlightActionPointHex(Hex hex, ActionType action)
+    {
+        switch (action)
+        {
+            case ActionType.Attack:
+                HighlightAttackAreaHex(hex);
+                break;
+            case ActionType.Heal:
+                HighlightHealPointHex(hex);
+                break;
+            case ActionType.Shield:
+                HighlightArmorPointHex(hex);
+                break;
+            case ActionType.BuffArmor:
+                HighlightBuffPointHex(hex);
+                break;
+            case ActionType.BuffAttack:
+                HighlightBuffPointHex(hex);
+                break;
+            case ActionType.BuffMove:
+                HighlightBuffPointHex(hex);
+                break;
+            case ActionType.BuffRange:
+                HighlightBuffPointHex(hex);
+                break;
+        }
+    }
+
     public void HighlightMoveRangeHex(Hex hex)
     {
         hex.GetComponent<MeshRenderer>().material = MoveRangeHighlightMaterial;
@@ -70,13 +128,17 @@ public class HexVisualizer : MonoBehaviour {
     public void HighlightAttackRangeHex(Hex hex)
     {
         hex.GetComponent<MeshRenderer>().material = AttackRangeHighlightMaterial;
-        hex.previousMaterial = AttackRangeHighlightMaterial;
     }
 
     public void HighlightAttackAreaHex(Hex hex)
     {
         hex.GetComponent<MeshRenderer>().material = AttackAreaHighlightMaterial;
-        hex.previousMaterial = AttackAreaHighlightMaterial;
+    }
+
+    public void HighlightAttackViewArea(Hex hex)
+    {
+        hex.GetComponent<MeshRenderer>().material = AttackViewHighlightMaterial;
+        hex.previousMaterial = AttackViewHighlightMaterial;
     }
 
     public void HighlightHealRangeHex(Hex hex)
@@ -91,8 +153,24 @@ public class HexVisualizer : MonoBehaviour {
 
     public void HighlightArmorPointHex(Hex hex)
     {
+        hex.GetComponent<MeshRenderer>().material = ShieldPointHighlightMaterial;
+    }
+
+    public void HighlightArmorRangeHex(Hex hex)
+    {
         hex.GetComponent<MeshRenderer>().material = ShieldRangeHighlightMaterial;
     }
+
+    public void HighlightBuffRangeHex(Hex hex)
+    {
+        hex.GetComponent<MeshRenderer>().material = HealRangeHighlightMaterial;
+    }
+
+    public void HighlightBuffPointHex(Hex hex)
+    {
+        hex.GetComponent<MeshRenderer>().material = HealPointHighlightMaterial;
+    }
+
 
     public void HighlightSelectionHex(Hex hex)
     {
@@ -159,18 +237,6 @@ public class HexVisualizer : MonoBehaviour {
         }
     }
 
-    public void HighlightAttackArea(Hex hex)
-    {
-        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(combatcontroller.GetMyCurrectAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
-        foreach (Node node in nodesInAOE)
-        {
-            if (node == null) { break; }
-            HighlightAttackAreaHex(node.NodeHex);
-            LastHexesChanged.Add(node.NodeHex);
-        }
-    } 
-
     public void ClearLastChangedHexes()
     {
         if (LastHexesChanged.Count != 0)
@@ -196,6 +262,59 @@ public class HexVisualizer : MonoBehaviour {
                 else { lastHex.returnToPreviousColor(); }
             }
             LastHexesChanged.Clear();
+        }
+    }
+
+    void ShowActionArea(Character myCharacter, Hex hex, ActionType type)
+    {
+        if (myCharacter.HexInActionRange(hex))
+        {
+            if (LastHexesChanged.Count != 0)
+            {
+                foreach (Hex lastHex in LastHexesChanged)
+                {
+                    if (myCharacter.HexInActionRange(lastHex))
+                    {
+                        HighlightActionRangeHex(lastHex, type);
+                    }
+                    else
+                    {
+                        lastHex.UnHighlight();
+                    }
+                }
+                LastHexesChanged.Clear();
+            }
+            HighlightActionArea(hex, type);
+        }
+        else
+        {
+            if (LastHexesChanged.Count != 0)
+            {
+                foreach (Hex lastHex in LastHexesChanged)
+                {
+                    if (myCharacter.HexInActionRange(lastHex))
+                    {
+                        HighlightActionRangeHex(lastHex, type);
+                    }
+                    else
+                    {
+                        lastHex.UnHighlight();
+                    }
+                }
+                LastHexesChanged.Clear();
+            }
+        }
+    }
+
+    public void HighlightActionArea(Hex hex, ActionType type)
+    {
+        PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
+        List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(combatcontroller.GetMyCurrectAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
+        foreach (Node node in nodesInAOE)
+        {
+            if (node == null) { break; }
+            HighlightActionPointHex(node.NodeHex, type);
+            LastHexesChanged.Add(node.NodeHex);
         }
     }
 
@@ -240,44 +359,22 @@ public class HexVisualizer : MonoBehaviour {
                         }
                         break;
                     case ActionType.BuffAttack:
-                        ClearLastChangedHexSelf();
-                        if (hex == myCharacter.HexOn)
-                        {
-                            HighlightHealPointHex(hex);
-                            LastHexesChanged.Add(hex);
-                        }
+                        ShowActionArea(myCharacter, hex, ActionType.BuffAttack);
                         break;
                     case ActionType.BuffMove:
-                        ClearLastChangedHexSelf();
-                        if (hex == myCharacter.HexOn)
-                        {
-                            HighlightHealPointHex(hex);
-                            LastHexesChanged.Add(hex);
-                        }
+                        ShowActionArea(myCharacter, hex, ActionType.BuffMove);
                         break;
                     case ActionType.BuffRange:
-                        ClearLastChangedHexSelf();
-                        if (hex == myCharacter.HexOn)
-                        {
-                            HighlightHealPointHex(hex);
-                            LastHexesChanged.Add(hex);
-                        }
+                        ShowActionArea(myCharacter, hex, ActionType.BuffRange);
                         break;
                     case ActionType.BuffArmor:
-                        ClearLastChangedHexSelf();
-                        if (hex == myCharacter.HexOn)
-                        {
-                            HighlightHealPointHex(hex);
-                            LastHexesChanged.Add(hex);
-                        }
+                        ShowActionArea(myCharacter, hex, ActionType.BuffArmor);
                         break;
                     case ActionType.Heal:
-                        ClearLastChangedHexSelf();
-                        if (hex == myCharacter.HexOn)
-                        {
-                            HighlightHealPointHex(hex);
-                            LastHexesChanged.Add(hex);
-                        }
+                        ShowActionArea(myCharacter, hex, ActionType.Heal);
+                        break;
+                    case ActionType.Attack:
+                        ShowActionArea(myCharacter, hex, ActionType.Attack);
                         break;
                 }
             }
@@ -316,53 +413,38 @@ public class HexVisualizer : MonoBehaviour {
                 }
                 case ActionType.Attack:
                 {
-                        if (combatcontroller.Attacking) { return; }
-                        if (myCharacter.CheckIfinAttackRange(hex, myCharacter.GetCurrentAttackRange()))
-                        {
-                            if (LastHexesChanged.Count != 0) {
-                                foreach (Hex lastHex in LastHexesChanged)
-                                {
-                                    if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.GetCurrentAttackRange()))
-                                    {
-                                        HighlightAttackRangeHex(lastHex);
-                                    }
-                                    else
-                                    {
-                                        lastHex.UnHighlight();
-                                    }
-                                }
-                                LastHexesChanged.Clear();
-                            }
-                            HighlightAttackArea(hex);
-                        }
-                        else
-                        {
-                            if (LastHexesChanged.Count != 0)
-                            {
-                                foreach (Hex lastHex in LastHexesChanged)
-                                {
-                                    if (myCharacter.CheckIfinAttackRange(lastHex, myCharacter.GetCurrentAttackRange()))
-                                    {
-                                        HighlightAttackRangeHex(lastHex);
-                                    }
-                                    else
-                                    {
-                                        lastHex.UnHighlight();
-                                    }
-                                }
-                                LastHexesChanged.Clear();
-                            }
-                        }
-                        break;
+                    if (combatcontroller.Attacking) { return; }
+                    ShowActionArea(myCharacter, hex, ActionType.Attack);
+                    break;
                 }
                 case ActionType.Heal:
                 {
-
+                    ShowActionArea(myCharacter, hex, ActionType.Heal);
                     break;
                 }
                 case ActionType.Shield:
                 {
-
+                    ShowActionArea(myCharacter, hex, ActionType.Shield);
+                    break;
+                }
+                case ActionType.BuffAttack:
+                {
+                    ShowActionArea(myCharacter, hex, ActionType.BuffAttack);
+                    break;
+                }
+                case ActionType.BuffArmor:
+                {
+                    ShowActionArea(myCharacter, hex, ActionType.BuffArmor);
+                    break;
+                }
+                case ActionType.BuffMove:
+                {
+                    ShowActionArea(myCharacter, hex, ActionType.BuffMove);
+                    break;
+                }
+                case ActionType.BuffRange:
+                {
+                    ShowActionArea(myCharacter, hex, ActionType.BuffRange);
                     break;
                 }
             }

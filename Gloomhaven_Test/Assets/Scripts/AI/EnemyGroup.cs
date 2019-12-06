@@ -40,9 +40,38 @@ public class EnemyGroup : MonoBehaviour {
         }
     }
 
+    public void CheckToPutCharacterInCombat()
+    {
+        foreach (EnemyCharacter character in linkedCharacters)
+        {
+            if (!character.InCombat)
+            {
+                //character.ShowViewAreaInShownHexes();
+                if (character.PlayerInView())
+                {
+                    if (!hasCharacterInCombat())
+                    {
+                        FindObjectOfType<CombatManager>().AddGroupToCombat(this);
+                    }
+                    character.InCombat = true;
+                    character.ShowHexesViewingAndAlertOthersToCombat();
+                }
+            }
+        }
+    }
+
     public bool hasCharactersOut()
     {
         return linkedCharacters.Count != 0;
+    }
+
+    public bool hasCharacterInCombat()
+    {
+        foreach (EnemyCharacter character in linkedCharacters)
+        {
+            if (character.InCombat) { return true; }
+        }
+        return false;
     }
 
     public void LinkCharacterToGroup(EnemyCharacter character)
@@ -80,7 +109,7 @@ public class EnemyGroup : MonoBehaviour {
         else if (currentCharacterIndex < linkedCharacters.Count)
         {
             EnemyCharacter character = linkedCharacters[currentCharacterIndex];
-            if (character.GetSummonSickness())
+            if (character.GetSummonSickness() || !character.InCombat)
             {
                 currentCharacterIndex++;
                 performNextCharacterAction();

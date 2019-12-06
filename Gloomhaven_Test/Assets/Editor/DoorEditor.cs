@@ -22,10 +22,6 @@ public class DoorEditor : Editor
         {
             myDoor.BuildDoor();
         }
-        if (GUILayout.Button("Build Room"))
-        {
-            myDoor.BuildRoom();
-        }
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
@@ -38,5 +34,9 @@ public class DoorEditor : Editor
             myDoor.HideHexes();
         }
         GUILayout.EndHorizontal();
+        if (GUILayout.Button("Build Door By Dimensions"))
+        {
+            myDoor.BuildRoomBySize();
+        }
     }
 }

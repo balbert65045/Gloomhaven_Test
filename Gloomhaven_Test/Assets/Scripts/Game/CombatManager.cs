@@ -29,12 +29,26 @@ public class CombatManager : MonoBehaviour {
         PerformNextInInitiative();
     }
 
+    public void AddGroupToCombat(EnemyGroup EG)
+    {
+        initBoard.AddCharacterToBoard(EG);
+        EnemyActionCard action = EG.getNewActionCard();
+        initBoard.AddInitiative(action.characterName, action.Initiative, action.gameObject);
+        initBoard.OrganizeInits();
+    }
+
     public void ShowPeopleInCombat()
     {
+        StartCoroutine("ShowingCharactersInCombet");
+    }
+
+    IEnumerator ShowingCharactersInCombet()
+    {
+        yield return new WaitForSeconds(.2f);
         List<EnemyGroup> GroupsInCombat = new List<EnemyGroup>();
         foreach (EnemyGroup EG in enemyController.enemyGroups)
         {
-            if (EG.hasCharactersOut())
+            if (EG.hasCharactersOut() && EG.hasCharacterInCombat())
             {
                 GroupsInCombat.Add(EG);
             }

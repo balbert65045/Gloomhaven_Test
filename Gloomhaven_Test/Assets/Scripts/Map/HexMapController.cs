@@ -18,6 +18,7 @@ public class HexMapController : MonoBehaviour {
     // Use this for initialization
     HexMapBuilder hexBuilder;
     public LayerMask HexLayer;
+    public LayerMask WallLayer;
 
     public Hashtable Map = new Hashtable();
     public Hex[] AllHexes;
@@ -52,7 +53,7 @@ public class HexMapController : MonoBehaviour {
             {
                 if (NodesChecked.Contains(node)) { continue; }
                 if (node == null) { continue; }
-                if (node.isAvailable && node.RoomName[0] == Room)
+                if (node.isAvailable && node.RoomName.Contains(Room))
                 {
                     NodesToCheck.Add(node);
                     hexesInRoom.Add(node.GetComponent<Hex>());
@@ -88,7 +89,8 @@ public class HexMapController : MonoBehaviour {
         Node[] nodes = GetNeighbors(node);
         foreach (Node n in nodes)
         {
-            if (node != null) {
+            if (node.GetComponent<Door>() != null && !node.GetComponent<Door>().isOpen) { continue; }
+            if (n != null && n.isConnectedToRoom(node)) {
                 RealNodes.Add(n);
             }
         }
@@ -157,7 +159,7 @@ public class HexMapController : MonoBehaviour {
             {
                 for (int z = -MoveDistance; z <= MoveDistance; z++)
                 {
-                    if (x + y + z == 0) { nodes.Add(GetNode(StartNode.q + x, StartNode.r + y)); }
+                    if (x + y + z == 0) {nodes.Add(GetNode(StartNode.q + x, StartNode.r + y));}
                 }
             }
         }
@@ -239,9 +241,27 @@ public class HexMapController : MonoBehaviour {
 
                 break;
         }
-
-
         return NodesinAOE;
+    }
+
+    public List<Node> GetNodesInLOS(Node StartNode, int distance)
+    {
+        List<Node> nodes = GetNodesAtDistanceFromNode(StartNode, distance);
+        List<Node> NodesInLOS = new List<Node>();
+        foreach (Node node in nodes)
+        {
+            float rayDistance = (StartNode.transform.position - node.transform.position).magnitude;
+            Vector3 direction = (node.transform.position - StartNode.transform.position).normalized;
+            if (!Physics.Raycast(StartNode.transform.position, direction, rayDistance, WallLayer))
+            {
+                NodesInLOS.Add(node);
+            }
+            else
+            {
+          //     Debug.Log("Hit Wall");
+            }
+        }
+        return NodesInLOS;
     }
 
     public Vector2 FindDirection(Node StartNode, Node EndNode)

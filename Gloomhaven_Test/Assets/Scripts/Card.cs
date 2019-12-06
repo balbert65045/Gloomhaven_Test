@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Card : MonoBehaviour {
 
     public PlayerCharacterType myType;
+    public Text NameText;
 
-	// Use this for initialization
-	void Start () {
+    public GameObject[] AbilityLinePositions;
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	

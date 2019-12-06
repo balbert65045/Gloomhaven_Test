@@ -314,6 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   door: {fileID: 0}
+  DoorWall: {fileID: 1765430558756820}
 --- !u!114 &114473755433612306
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 64156572816623936}
   - component: {fileID: 114466069040254478}
   - component: {fileID: 114969317374145686}
+  - component: {fileID: 114418109393139540}
   m_Layer: 8
   m_Name: HexPrefab
   m_TagString: Untagged
@@ -100,6 +101,23 @@ MeshCollider:
   m_InflateMesh: 0
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 491209ff846037946b6033eff052d942, type: 3}
+--- !u!114 &114418109393139540
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539112753753054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08e9b3bac8d292542b4a3070b10d38fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WallObjHalf: {fileID: 1163811749856708, guid: 615010a5d60441a4eaa6775488379961,
+    type: 2}
+  WallObjCorner: {fileID: 1351253663977598, guid: a8e6cd7bf72241e4ea8a51f31b8ddb8f,
+    type: 2}
+  WallObjectSide: {fileID: 1061526617532320, guid: f71cbd1bf5b382d4f8509c1e40f2a636,
+    type: 2}
 --- !u!114 &114466069040254478
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -119,10 +137,6 @@ MonoBehaviour:
   q: 0
   r: 0
   s: 0
-  IsWalkable: 0
-  G: 0
-  H: 0
-  NodeHex: {fileID: 0}
 --- !u!114 &114831510539766018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -137,31 +151,12 @@ MonoBehaviour:
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
-  Hidden: 1
   MovedTo: 0
   InEnemySeight: 0
-  SelectionHighlightMaterial: {fileID: 2100000, guid: 3a53c79cf1c4cec4a8d2a56198903aea,
-    type: 2}
-  MovePointHighlightMaterial: {fileID: 2100000, guid: 74fead4eaef962140ad42ba9bc770dd0,
-    type: 2}
-  MoveRangeHighlightMaterial: {fileID: 2100000, guid: 568dd4358118b2c43b44789a8bce2440,
-    type: 2}
-  AttackAreaHighlightMaterial: {fileID: 2100000, guid: d846a1755089e954aadacb68cf1a81cd,
-    type: 2}
-  AttackRangeHighlightMaterial: {fileID: 2100000, guid: 76510b4853cdf7e43b0b6cc8971cf894,
-    type: 2}
-  HealPointHighlightMaterial: {fileID: 2100000, guid: 2363b1ecb00073e4fb26abebc677abab,
-    type: 2}
-  HealRangeHighlightMaterial: {fileID: 2100000, guid: 5af26d5dfa657884f84a6d6eb6d04344,
-    type: 2}
-  ShieldRangeHighlightMaterial: {fileID: 2100000, guid: bc67ecf77fd9b72458ef7340f3ad4e5e,
-    type: 2}
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
   OGMaterial: {fileID: 2100000, guid: c9440004964558b448555bcda7fbe1d1, type: 2}
-  previousMaterial: {fileID: 0}
-  HexNode: {fileID: 0}
 --- !u!114 &114969317374145686
 MonoBehaviour:
   m_ObjectHideFlags: 1

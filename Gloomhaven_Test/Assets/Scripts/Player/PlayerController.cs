@@ -154,6 +154,8 @@ public class PlayerController : MonoBehaviour {
                 character.SwitchCombatState(true);
             }
 
+            FindObjectOfType<CharacterSelectionButtons>().BreakAllLinks();
+
             CSBM.ShowCardIndicators();
             combatController.SelectCharacterNotMoving();
 
@@ -227,6 +229,7 @@ public class PlayerController : MonoBehaviour {
     public void FinishedAttacking()
     {
         if (myState == PlayerState.InCombat){ GetComponent<CombatActionController>().FinishedAttacking(); }
+        else if (myState == PlayerState.OutofCombat){ GoIntoCombat(); }
     }
 
     public void FinishedHealing()
@@ -319,6 +322,10 @@ public class PlayerController : MonoBehaviour {
         if (myState == PlayerState.OutofCombat)
         {
             return FindObjectOfType<EnemyController>().ShowEnemyViewAreaAndCheckToFight();
+        }
+        else if (myState == PlayerState.InCombat)
+        {
+            FindObjectOfType<EnemyController>().CheckToFight();
         }
         return false;
     }

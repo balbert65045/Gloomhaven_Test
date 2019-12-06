@@ -43,7 +43,6 @@ public class CombatPlayerHand : Hand {
     {
         if (SelectedPlayerCard != null)
         {
-            FindObjectOfType<MyActionBoard>().ShowPanel();
             ShowPotential(SelectedPlayerCard);
             selectedCardLinkedButton.unShowCard();
         }
@@ -53,7 +52,6 @@ public class CombatPlayerHand : Hand {
     {
         if (SelectedPlayerCard != null)
         {
-            FindObjectOfType<MyActionBoard>().ShowPanel();
             ShowPotential(SelectedPlayerCard);
             selectedCardLinkedButton.showCard();
         }
@@ -85,19 +83,16 @@ public class CombatPlayerHand : Hand {
     {
         Character myCharacter = playerController.SelectPlayerCharacter;
         Action[] actions = card.CardAbility.Actions;
-        FindObjectOfType<MyActionBoard>().showActions(actions, myCharacter);
     }
 
     public void HidePotential()
     {
-        FindObjectOfType<MyActionBoard>().hideActions();
     }
 
     public void HideHand()
     {
         Hand.SetActive(false);
         HidePotential();
-        FindObjectOfType<MyActionBoard>().HidePanel();
     }
 
     bool ShortRestReady()
@@ -113,7 +108,6 @@ public class CombatPlayerHand : Hand {
     public void ShowHand()
     {
         Hand.SetActive(true);
-        FindObjectOfType<MyActionBoard>().ShowPanel();
         CombatPlayerCardButton[] outOfCombatCards = GetComponentsInChildren<CombatPlayerCardButton>();
         foreach (CombatPlayerCardButton cardButton in outOfCombatCards)
         {
@@ -196,7 +190,6 @@ public class CombatPlayerHand : Hand {
 
     public void ShowSelectedCardToUse()
     {
-        FindObjectOfType<MyActionBoard>().ShowPanel();
         ShowPotential(SelectedPlayerCard);
         Vector3 currentScale = SelectedPlayerCard.transform.localScale;
         PlayArea showArea = FindObjectOfType<PlayArea>();
@@ -220,7 +213,6 @@ public class CombatPlayerHand : Hand {
         if (SelectedPlayerCard != null)
         {
             HidePotential();
-            FindObjectOfType<MyActionBoard>().HidePanel();
             SelectedPlayerCard.CardAbility.UnHighlightAbility();
             SelectedPlayerCard.gameObject.SetActive(false);
         }

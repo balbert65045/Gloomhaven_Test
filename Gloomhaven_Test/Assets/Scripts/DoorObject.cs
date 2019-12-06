@@ -5,4 +5,5 @@ using UnityEngine;
 public class DoorObject : MonoBehaviour {
 
     public Door door;
+    public GameObject DoorWall;
 }

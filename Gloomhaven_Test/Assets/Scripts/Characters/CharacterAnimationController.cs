@@ -104,7 +104,7 @@ public class CharacterAnimationController : MonoBehaviour {
         }
         else
         {
-            myCharacter.RemoveLinkFromHex();
+            myCharacter.MovingOnPath();
             Node NextHex = nodesMovingOn[0];
             nodesMovingOn.Remove(NextHex);
             MoveTowards(NextHex.NodeHex, nodesMovingOn);
