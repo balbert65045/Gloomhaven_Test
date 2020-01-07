@@ -340,8 +340,8 @@ public class CombatActionController : MonoBehaviour {
         if (charactersActingUpon.Count == 0) { return false; }
         playerController.DisableEndTurn();
         if (action.thisActionType == ActionType.Attack) { Attacking = true; }
-        PerformAction(action, myCharacter, charactersActingUpon);
         PerformingAction = true;
+        PerformAction(action, myCharacter, charactersActingUpon);
         return success;
     }
 
@@ -410,6 +410,13 @@ public class CombatActionController : MonoBehaviour {
             Attacking = false;
             MoveToNextAbility();
         }
+    }
+
+    public void FinishedBuffing()
+    {
+        PerformingAction = false;
+        playerController.AllowEndTurn();
+        MoveToNextAbility();
     }
 
     public void FinishedHealing()

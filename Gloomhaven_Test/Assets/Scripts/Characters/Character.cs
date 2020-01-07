@@ -125,6 +125,7 @@ public class Character : Entity {
         {
             character.ApplyBuff(value, duration, buffType);
         }
+        FinishedPerformingBuff();
     }
 
     public void ApplyBuff(int value, int duration, BuffType buffType)
@@ -235,6 +236,8 @@ public class Character : Entity {
     public void FinishedShielding() { characterShieldingMe.FinishedPerformingShielding(); }
 
     public virtual void FinishedPerformingShielding() { }
+
+    public virtual void FinishedPerformingBuff() { }
 
     public virtual void GetHit()
     {
@@ -468,6 +471,7 @@ public class Character : Entity {
         RemoveLinkFromHex();
         if (hex == HexOn) { FinishedMoving(hex); }
         List<Node> nodes = GetPath(hex.HexNode);
+        if (nodes[0] == null) { return; }
         Node HexToMoveTo = nodes[0];
         nodes.Remove(HexToMoveTo);
         GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, nodes);

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class HexMapBuilder : MonoBehaviour {
 
+    public Material InvisibleMaterial;
     public Transform HexPrefab;
     public int map_radius = 11;
 
@@ -33,6 +34,13 @@ public class HexMapBuilder : MonoBehaviour {
         {
             DestroyImmediate(hex.gameObject);
         }
+
+        GameObject interactionsObjects = FindObjectOfType<InteractionObjects>().gameObject;
+        int count = interactionsObjects.transform.childCount;
+        for (int i = 0; i < count; i ++)
+        {
+            DestroyImmediate(interactionsObjects.transform.GetChild(0).gameObject);
+        }
     }
 	
 	void AddGap()
@@ -60,6 +68,8 @@ public class HexMapBuilder : MonoBehaviour {
 
                 hex.SetParent(this.transform);
                 hex.name = "Hex " + r + "|" + q;
+                hex.GetComponent<Node>().isAvailable = false;
+                hex.GetComponent<MeshRenderer>().material = InvisibleMaterial;
 
                 hex.GetComponent<Node>().SetNode(q, r);
             }

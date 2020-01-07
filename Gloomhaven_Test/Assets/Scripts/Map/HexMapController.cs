@@ -48,7 +48,7 @@ public class HexMapController : MonoBehaviour {
         NodesToCheck.Add(StartNode);
         while (NodesToCheck.Count > 0)
         {
-            List<Node> Neighbors = GetRealNeighbors(NodesToCheck[0]);
+            List<Node> Neighbors = GetRealNeighborsNoDoor(NodesToCheck[0]);
             foreach(Node node in Neighbors)
             {
                 if (NodesChecked.Contains(node)) { continue; }
@@ -81,6 +81,20 @@ public class HexMapController : MonoBehaviour {
             GetNode(node.q - 1, node.r + 1),
             GetNode(node.q, node.r + 1),
         };
+    }
+
+    public List<Node> GetRealNeighborsNoDoor(Node node)
+    {
+        List<Node> RealNodes = new List<Node>();
+        Node[] nodes = GetNeighbors(node);
+        foreach (Node n in nodes)
+        {
+            if (n != null && n.isConnectedToRoom(node))
+            {
+                RealNodes.Add(n);
+            }
+        }
+        return RealNodes;
     }
 
     public List<Node> GetRealNeighbors(Node node)
@@ -224,6 +238,15 @@ public class HexMapController : MonoBehaviour {
                 NodesinAOE.Add(StartNode);
                 NodesinAOE.Add(nodeInCleave);
                 break;
+            case AOEType.GreatCleave:
+                Vector2 CleaveDirection = FindDirection(OriginNode, StartNode);
+                Node node1InCleave = GetNextCounterClockwizeNode(OriginNode, StartNode, CleaveDirection);
+                Vector2 Cleave2Direction = FindDirection(OriginNode, node1InCleave);
+                Node node2InCleave = GetNextCounterClockwizeNode(OriginNode, node1InCleave, Cleave2Direction);
+                NodesinAOE.Add(StartNode);
+                NodesinAOE.Add(node1InCleave);
+                NodesinAOE.Add(node2InCleave);
+                break;
             case AOEType.Line:
                 Vector2 lineDirection = FindDirection(OriginNode, StartNode);
                 Node node = GetNextNodeInDirection(StartNode, lineDirection);
@@ -237,6 +260,8 @@ public class HexMapController : MonoBehaviour {
                 List<Node> nodes = GetNodesSurrounding(OriginNode);
                 foreach(Node myNode in nodes) { NodesinAOE.Add(myNode); }
                 break;
+            case AOEType.Circle:
+
             case AOEType.Triangle:
 
                 break;
@@ -269,6 +294,19 @@ public class HexMapController : MonoBehaviour {
         int Xdifference = EndNode.q - StartNode.q;
         int Ydifference = EndNode.r - StartNode.r;
         return (new Vector2(Xdifference, Ydifference));
+    }
+
+    List<Node> GetNodesInCircle(Node StartNode)
+    {
+        List<Node> nodes = new List<Node>();
+        nodes.Add(StartNode);
+        nodes.Add(GetNodeInDirection(GetDirections()[0], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[1], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[2], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[3], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[4], StartNode));
+        nodes.Add(GetNodeInDirection(GetDirections()[5], StartNode));
+        return nodes;
     }
 
     public List<Node> GetNodesSurrounding(Node StartNode)

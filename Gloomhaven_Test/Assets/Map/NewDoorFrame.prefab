@@ -314,6 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   door: {fileID: 0}
+  DoorWall: {fileID: 0}
 --- !u!114 &114688809236410938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -327,4 +328,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Door: {fileID: 1379975505567858}
   DoorFrame: {fileID: 1586050557575238}
-  onStart: 1
+  onStart: 0

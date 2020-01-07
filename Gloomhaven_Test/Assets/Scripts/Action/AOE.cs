@@ -8,7 +8,9 @@ public enum AOEType
     Line = 1,
     Cleave = 2,
     Triangle = 3,
-    Surounding = 4
+    Surounding = 4, 
+    Circle = 5,
+    GreatCleave = 6
 }
 
 [System.Serializable]

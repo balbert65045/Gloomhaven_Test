@@ -100,24 +100,29 @@ public class CardBuilder : MonoBehaviour {
             actionLine.AbilityImage.sprite = AttackSprite;
             actionLine.AbilityAmount.text = Actions[index].thisAOE.Damage.ToString();
             SetRange(actionLine, Actions[index].Range, 1);
+            SetDuration(actionLine, Actions[index].Duration);
             break;
         case ActionType.Movement:
             actionLine.MyActionType = BuffType.Agility;
             actionLine.AbilityType.text = "Move";
             actionLine.AbilityImage.sprite = MoveSprite;
             actionLine.AbilityAmount.text = Actions[index].Range.ToString();
+            SetRange(actionLine, 0, 1);
+            SetDuration(actionLine, Actions[index].Duration);
             break;
         case ActionType.Shield:
             actionLine.AbilityType.text = "Shield";
             actionLine.AbilityImage.sprite = ArmorSprite;
             actionLine.AbilityAmount.text = Actions[index].thisAOE.Damage.ToString();
             SetRange(actionLine, Actions[index].Range, 1);
+            SetDuration(actionLine, Actions[index].Duration);
             break;
         case ActionType.Heal:
             actionLine.AbilityType.text = "Heal";
             actionLine.AbilityImage.sprite = HealSprite;
             actionLine.AbilityAmount.text = Actions[index].thisAOE.Damage.ToString();
             SetRange(actionLine, Actions[index].Range, 1);
+            SetDuration(actionLine, Actions[index].Duration);
             break;
         case ActionType.BuffArmor:
             actionLine.AbilityType.text = "Buff";
@@ -151,20 +156,30 @@ public class CardBuilder : MonoBehaviour {
             actionLine.AbilityType.text = "Stealth";
             actionLine.AbilityImage.sprite = SneakSprite;
             actionLine.AbilityAmount.text = Actions[index].Duration.ToString();
+            SetDuration(actionLine, Actions[index].Duration);
             break;
         case ActionType.Scout:
             actionLine.AbilityType.text = "Scout";
             actionLine.AbilityImage.sprite = ScoutSprite;
             actionLine.AbilityAmount.text = Actions[index].Range.ToString();
+            SetDuration(actionLine, Actions[index].Duration);
             break;
         }
     }
 
     void SetDuration (ActionLine line, int Duration)
     {
-        line.DurationAbilityAmount.gameObject.SetActive(true);
-        line.DurationAbilityImage.gameObject.SetActive(true);
-        line.DurationAbilityAmount.text = Duration.ToString();
+        if (Duration > 0)
+        {
+            line.DurationAbilityAmount.gameObject.SetActive(true);
+            line.DurationAbilityImage.gameObject.SetActive(true);
+            line.DurationAbilityAmount.text = Duration.ToString();
+        }
+        else
+        {
+            line.DurationAbilityAmount.gameObject.SetActive(false);
+            line.DurationAbilityImage.gameObject.SetActive(false);
+        }
     }
 
     void SetRange(ActionLine line, int Range, int threshhold)
@@ -175,6 +190,12 @@ public class CardBuilder : MonoBehaviour {
             line.RangeAbilityImage.gameObject.SetActive(true);
             line.RangeAbilityAmount.gameObject.SetActive(true);
             line.RangeAbilityAmount.text = Range.ToString();
+        }
+        else
+        {
+            line.RangeAbilityType.gameObject.SetActive(false);
+            line.RangeAbilityAmount.gameObject.SetActive(false);
+            line.RangeAbilityImage.gameObject.SetActive(false);
         }
     }
 

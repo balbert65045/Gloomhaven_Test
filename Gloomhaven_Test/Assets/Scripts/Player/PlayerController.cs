@@ -232,6 +232,11 @@ public class PlayerController : MonoBehaviour {
         else if (myState == PlayerState.OutofCombat){ GoIntoCombat(); }
     }
 
+    public void FinishedBuffing()
+    {
+        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedBuffing(); }
+    }
+
     public void FinishedHealing()
     {
         if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedHealing(); }

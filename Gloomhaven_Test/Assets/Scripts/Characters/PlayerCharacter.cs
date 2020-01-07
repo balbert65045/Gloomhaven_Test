@@ -210,6 +210,11 @@ public class PlayerCharacter : Character
         }
     }
 
+    public override void FinishedPerformingBuff()
+    {
+        FindObjectOfType<PlayerController>().FinishedBuffing();
+    }
+
     public override void FinishedAttacking()
     {
         FindObjectOfType<PlayerController>().FinishedAttacking();

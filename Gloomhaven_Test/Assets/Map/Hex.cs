@@ -116,6 +116,17 @@ public class Hex : MonoBehaviour {
                 Transform interactionParent = FindObjectOfType<InteractionObjects>().gameObject.transform;
                 EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot), interactionParent).GetComponent<Entity>();
             }
+            else if (EntityToSpawn.GetComponent<Obstacle>() != null)
+            {
+                Vector3 offset = EntityToSpawn.GetComponent<Obstacle>().Offset;
+                EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos + offset, Quaternion.Euler(EntityToSpawn.GetComponent<Obstacle>().Rotation)).GetComponent<Entity>();
+                HexMapController hexMap = FindObjectOfType<HexMapController>();
+                hexMap.CreateTable();
+                foreach (Vector2 delta in EntityHolding.GetComponent<Obstacle>().OtherHexesOnTopOf)
+                {
+                    LinkAdditionalHexesToEntity(delta);
+                }
+            }
             else
             {
                 EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot)).GetComponent<Entity>();
@@ -123,6 +134,14 @@ public class Hex : MonoBehaviour {
             EntityHolding.StartOnHex(this);
         }
         return EntityHolding.gameObject;
+    }
+
+    void LinkAdditionalHexesToEntity(Vector2 delta)
+    {
+        HexMapController hexMap = FindObjectOfType<HexMapController>();
+        Node myNode = GetComponent<Node>();
+        Node node = hexMap.GetNode(myNode.q + (int)delta.x, myNode.r + (int)delta.y);
+        node.GetComponent<Hex>().EntityHolding = EntityHolding;
     }
 
     public void ShowHexEnd()

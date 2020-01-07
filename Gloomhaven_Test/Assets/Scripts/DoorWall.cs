@@ -11,16 +11,16 @@ public class DoorWall : MonoBehaviour {
 
     public void HideDoor()
     {
-        if (!onStart)
-        {
-            Door.SetActive(false);
-            DoorFrame.SetActive(false);
-        }
+        //if (!onStart)
+        //{
+        //    Door.SetActive(false);
+        //    DoorFrame.SetActive(false);
+        //}
     }
 
     public void ShowDoor()
     {
-        Door.SetActive(true);
-        DoorFrame.SetActive(true);
+        //Door.SetActive(true);
+        //DoorFrame.SetActive(true);
     }
 }

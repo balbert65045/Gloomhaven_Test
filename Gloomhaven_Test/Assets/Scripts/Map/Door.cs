@@ -79,13 +79,13 @@ public class Door : MonoBehaviour {
         HexMapController controller = FindObjectOfType<HexMapController>();
         if (RoomOpening)
         {
-            hexesToOpenTo.Clear();
+            if (hexesToOpenTo != null) { hexesToOpenTo.Clear(); };
             //Get if Any hex has that room and edges
             hexesToOpenTo = controller.GetAllHexesInThisRoom(room, GetComponent<Node>());
         }
         else
         {
-            HexesInRoom.Clear();
+            if (HexesInRoom != null) { HexesInRoom.Clear(); }
             HexesInRoom = controller.GetAllHexesInThisRoom(room, GetComponent<Node>());
         }
     }
@@ -167,9 +167,12 @@ public class Door : MonoBehaviour {
             hex.GetComponent<HexAdjuster>().RemoveRoom(Room);
             hex.GetComponent<HexAdjuster>().HideRoomEdge();
             hex.GetComponent<HexWallAdjuster>().HideWall();
-            if (hex.GetComponent<Door>() != null)
+            if (hex.GetComponent<Door>() != null && hex.GetComponent<Door>().door != null)
             {
-                hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(false);
+                if (hex.GetComponent<Door>().door.transform.parent.GetComponentInParent<DoorWall>() == null || !hex.GetComponent<Door>().door.transform.parent.GetComponentInParent<DoorWall>().onStart)
+                {
+                    hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(false);
+                }
             }
             if (hex.GetComponent<HexAdjuster>().StillShowingRoom()) { continue; }
             else
@@ -192,7 +195,7 @@ public class Door : MonoBehaviour {
             hex.GetComponent<HexAdjuster>().AddRoomShown(Room);
             hex.GetComponent<HexAdjuster>().RevealRoomEdge();
             hex.GetComponent<HexWallAdjuster>().ShowWall();
-            if (hex.GetComponent<Door>() != null)
+            if (hex.GetComponent<Door>() != null && hex.GetComponent<Door>().door != null)
             {
                 hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true);
             }

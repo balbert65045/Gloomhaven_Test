@@ -85,8 +85,6 @@ public class HexRoomBuilder : MonoBehaviour {
         foreach(Vector4 delta in roomDeltas)
         {
             if (CheckNodeIfTakenOrNull(Q + (int)delta.x, R + (int)delta.y)) {
-                Debug.Log(delta.x);
-                Debug.Log(delta.y);
                 return false;
             }
         }
@@ -97,8 +95,8 @@ public class HexRoomBuilder : MonoBehaviour {
     {
         Node node = HexController.GetNode(q, r);
         if (node == null || (node.isAvailable && !node.edge)) {
-            Debug.Log(node == null);
-            Debug.Log(q + "," + r);
+            //Debug.Log(node == null);
+            //Debug.Log(q + "," + r);
             return true;
         }
         return false;
