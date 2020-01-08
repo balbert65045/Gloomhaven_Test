@@ -111,7 +111,7 @@ public class ProceduralMapCreator : MonoBehaviour {
             if (NewHexes != null && NewHexes.Count > 0)
             {
                 string NewRoomName = ((char)((int)('A') + RoomIndex)).ToString();
-                ShowHexSet(NewHexes, NewRoomName, node);
+                SetNexHexes(NewHexes);
                 RoomIndex++;
                 CollectAndSortEdges(NewHexes, edge.Edges);
                 BuildDoor(hex, NewHexes, roomToBuildTowards, NewRoomName);
@@ -124,6 +124,15 @@ public class ProceduralMapCreator : MonoBehaviour {
             RemoveSharedEdges(edge);
         }
         CreateNextRoom();
+    }
+
+    void SetNexHexes(List<Hex> hexes)
+    {
+        foreach(Hex hex in hexes)
+        {
+            hex.GetComponent<Node>().Used = true;
+            hex.GetComponent<HexWallAdjuster>().HideWall();
+        }
     }
 
     void RemoveSharedEdges(EdgeHexes edge)
@@ -183,6 +192,7 @@ public class ProceduralMapCreator : MonoBehaviour {
             else { door.myDoorLocation = Door.DoorLocation.Middle; }
             hex.GetComponent<Node>().AddRoomName(RoomName);
             door.BuildDoor();
+            if (!hex.GetComponent<Node>().isAvailable) { door.door.transform.parent.gameObject.SetActive(false); }
             hex.GetComponent<HexAdjuster>().SetHexToFull();
         }
     }
@@ -236,6 +246,7 @@ public class ProceduralMapCreator : MonoBehaviour {
     {
         foreach (Hex hex in hexes)
         {
+            hex.GetComponent<Node>().Used = true;
             hex.GetComponent<HexAdjuster>().AddRoomShown(Room);
             hex.GetComponent<HexAdjuster>().RevealRoomEdge();
             hex.GetComponent<HexWallAdjuster>().ShowWall();

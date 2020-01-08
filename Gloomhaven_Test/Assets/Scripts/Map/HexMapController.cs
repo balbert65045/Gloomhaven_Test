@@ -53,7 +53,7 @@ public class HexMapController : MonoBehaviour {
             {
                 if (NodesChecked.Contains(node)) { continue; }
                 if (node == null) { continue; }
-                if (node.isAvailable && node.RoomName.Contains(Room))
+                if ((node.isAvailable || node.Used) && node.RoomName.Contains(Room))
                 {
                     NodesToCheck.Add(node);
                     hexesInRoom.Add(node.GetComponent<Hex>());
@@ -283,7 +283,7 @@ public class HexMapController : MonoBehaviour {
             }
             else
             {
-          //     Debug.Log("Hit Wall");
+               Debug.Log("Hit Wall");
             }
         }
         return NodesInLOS;

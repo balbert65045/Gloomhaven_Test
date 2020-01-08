@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: ce17781955d25c647922801319f24e9e
+guid: 5fac9dbee268d654384963a814b056b8
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: B_Head
     100002: B_L_Calf
@@ -120,10 +120,12 @@ ModelImporter:
     9500000: //RootNode
     13700000: RPG-Character-Mesh
     2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -150,12 +152,14 @@ ModelImporter:
       error 0.1 deg and maximum orientation error 0.6 deg at time 0: 6 (25.0%) Frame
       6\n"
     animationDoRetargetingWarnings: 1
+    importAnimatedCustomProperties: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: Unarmed-Attack-R1
@@ -308,7 +312,10 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -324,6 +331,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

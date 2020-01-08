@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: 79e31c86fd172bc439fb920de8bae7c5
+guid: e2ad7700285b56c47b15d4bb4ab251b2
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: B_L_Hand
     100002: B_L_Forearm
@@ -237,10 +237,12 @@ ModelImporter:
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
     2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -251,9 +253,8 @@ ModelImporter:
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\n\t'B_Spine1' has translation animation that
-      will be discarded.\n\t'B_Spine2' is inbetween humanoid transforms and has rotation
-      animation that will be discarded.\n"
+      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tLeftUpperArm
       average position error 26.3 mm and maximum position error 62.4 mm at time 0:
       5 (35.7%) Frame 5\n\tLeftLowerArm average position error 22.4 mm and maximum
@@ -266,12 +267,14 @@ ModelImporter:
       5 (35.7%) Frame 5\n\tHead average position error 75.5 mm and maximum position
       error 178.9 mm at time 0: 5 (35.7%) Frame 5\n"
     animationDoRetargetingWarnings: 1
+    importAnimatedCustomProperties: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: Unarmed-Jump-Flip
@@ -417,7 +420,10 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -433,6 +439,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

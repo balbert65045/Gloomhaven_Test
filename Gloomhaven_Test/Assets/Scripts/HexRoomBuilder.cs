@@ -94,7 +94,7 @@ public class HexRoomBuilder : MonoBehaviour {
     bool CheckNodeIfTakenOrNull(int q, int r)
     {
         Node node = HexController.GetNode(q, r);
-        if (node == null || (node.isAvailable && !node.edge)) {
+        if (node == null || ((node.isAvailable || node.Used) && !node.edge)) {
             //Debug.Log(node == null);
             //Debug.Log(q + "," + r);
             return true;

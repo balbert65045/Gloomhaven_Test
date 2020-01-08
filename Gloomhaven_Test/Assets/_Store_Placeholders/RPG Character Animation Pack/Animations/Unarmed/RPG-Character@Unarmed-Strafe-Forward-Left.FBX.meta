@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: 443693849a2f4e741afac059a470e10e
+guid: 66620ce56dfb6d24f9fe11d80425b7a3
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: B_L_Hand
     100002: B_L_Forearm
@@ -240,10 +240,12 @@ ModelImporter:
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
     2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -264,16 +266,18 @@ ModelImporter:
       9\n\tRightUpperArm average position error 15.2 mm and maximum position error
       16.4 mm at time 0:12 (50.0%) Frame 12\n\tRightLowerArm average position error
       6.1 mm and maximum position error 7.4 mm at time 0: 6 (25.0%) Frame 6\n\tRightHand
-      average position error 10.1 mm and maximum position error 11.4 mm at time 0:24
-      (100.0%) Frame 24\n\tHead average position error 42.5 mm and maximum position
+      average position error 10.1 mm and maximum position error 11.4 mm at time 0:
+      0 (0.0%) Frame 0\n\tHead average position error 42.5 mm and maximum position
       error 45.8 mm at time 0:12 (50.0%) Frame 12\n"
     animationDoRetargetingWarnings: 1
+    importAnimatedCustomProperties: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: Unarmed-Strafe-Forward-Left
@@ -433,7 +437,10 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -449,6 +456,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

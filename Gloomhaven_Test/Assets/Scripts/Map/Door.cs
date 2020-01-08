@@ -68,8 +68,9 @@ public class Door : MonoBehaviour {
                 doorMade.transform.rotation = Quaternion.Euler(Vector3.zero);
                 break;
         }
-        door = doorMade.GetComponent<DoorWall>().Door;
+        door = doorMade.GetComponentInChildren<DoorObject>().gameObject;
         door.GetComponent<DoorObject>().door = this;
+        door.GetComponent<DoorObject>().DoorWall = doorMade;
         GetHexesInRoom(GetComponent<Node>().RoomName[0], false);
         GetHexesInRoom(RoomNameToBuild, true);
     }

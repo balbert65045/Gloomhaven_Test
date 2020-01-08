@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: 6f9d9b5dde069034282820e10db8b748
+guid: b53177784c4106c4fa3c6bdd0c56d126
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: B_L_Hand
     100002: B_L_Forearm
@@ -237,10 +237,12 @@ ModelImporter:
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
     2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -251,28 +253,28 @@ ModelImporter:
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
-      improve retargeting quality.\n\t'B_Spine' has translation animation that will
-      be discarded.\n\t'B_Spine2' is inbetween humanoid transforms and has rotation
-      animation that will be discarded.\n"
+      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tLeftUpperArm
-      average position error 19.1 mm and maximum position error 36.0 mm at time 0:15
-      (57.7%) Frame 15\n\tLeftLowerArm average position error 18.5 mm and maximum
-      position error 32.6 mm at time 0:14 (53.8%) Frame 14\n\tLeftHand average position
-      error 17.7 mm and maximum position error 31.2 mm at time 0:15 (57.7%) Frame
-      15\n\tRightUpperArm average position error 18.5 mm and maximum position error
-      35.2 mm at time 0:16 (61.5%) Frame 16\n\tRightLowerArm average position error
-      15.3 mm and maximum position error 36.6 mm at time 0:16 (61.5%) Frame 16\n\tRightHand
-      average position error 15.7 mm and maximum position error 30.3 mm at time 0:15
-      (57.7%) Frame 15\n\tHead average position error 30.5 mm and maximum position
-      error 45.5 mm at time 0:22 (84.6%) Frame 22\n"
+      average position error 10.5 mm and maximum position error 16.7 mm at time 0:22
+      (84.6%) Frame 22\n\tLeftLowerArm average position error 10.1 mm and maximum
+      position error 17.4 mm at time 0:23 (88.5%) Frame 23\n\tLeftHand average position
+      error 9.1 mm and maximum position error 16.6 mm at time 0:22 (84.6%) Frame 22\n\tRightUpperArm
+      average position error 10.2 mm and maximum position error 15.4 mm at time 0:22
+      (84.6%) Frame 22\n\tRightLowerArm average position error 4.8 mm and maximum
+      position error 6.4 mm at time 0: 7 (26.9%) Frame 7\n\tRightHand average position
+      error 7.4 mm and maximum position error 11.6 mm at time 0:22 (84.6%) Frame 22\n\tHead
+      average position error 27.9 mm and maximum position error 43.1 mm at time 0:22
+      (84.6%) Frame 22\n"
     animationDoRetargetingWarnings: 1
+    importAnimatedCustomProperties: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: Unarmed-Roll-Forward
@@ -418,7 +420,10 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -434,6 +439,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

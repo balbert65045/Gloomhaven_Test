@@ -15,6 +15,7 @@ public class Node : MonoBehaviour
         if (!RoomName.Contains(name)) { RoomName.Add(name); }
     }
 
+    public bool Used = false;
     public bool edge = false;
     public bool isAvailable = true;
     public bool Shown = false;
@@ -34,7 +35,7 @@ public class Node : MonoBehaviour
 
     public bool isConnectedToRoom(Node node)
     {
-        if (node.isAvailable)
+        if (node.isAvailable || node.Used)
         {
             if (node.RoomName.Count == this.RoomName.Count && node.RoomName[0] == this.RoomName[0])
             {
