@@ -2471,7 +2471,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f57ebbbb58cd7499164f2dd5cb9f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Moving: 0
 --- !u!114 &114253472715744464
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2485,23 +2484,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
   myCT: 0
+  health: 10
   ViewDistance: 4
   baseStrength: 0
   baseAgility: 0
-  baseAttackRange: 1
-  baseShield: 0
-  Agility: 0
-  Strength: 0
-  Range: 0
-  Armor: 0
-  CurrentArmor: 0
-  CurrentAttackRange: 3
-  CurrentMoveRange: 4
-  health: 10
-  summonSickness: 0
-  maxHealth: 0
-  myHealthBar: {fileID: 114561813178749784}
-  Buffs: []
+  baseDexterity: 0
+  baseArmor: 0
 --- !u!114 &114561813178749784
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2548,6 +2536,7 @@ MonoBehaviour:
   Buff4Sprite: {fileID: 0}
   CurrentArmorPieces: []
   CurrentHealthPieces: []
+  SavingThrowCoin: {fileID: 0}
 --- !u!137 &137321909617366012
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

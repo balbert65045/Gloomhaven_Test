@@ -15,5 +15,9 @@ public class ProceduralMapCreatorEditor : Editor {
         {
             proceduralMapCreator.BuildMap();
         }
+        if (GUILayout.Button("Build New Map"))
+        {
+            proceduralMapCreator.BuildNewMap();
+        }
     }
 }

@@ -1647,18 +1647,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
   myCT: 0
-  ViewDistance: 4
-  Agility: 0
-  Strength: 0
-  baseAttackRange: 0
-  baseShield: 0
-  CurrentAttackRange: 3
-  CurrentMoveRange: 4
   health: 10
-  shield: 0
-  summonSickness: 0
-  maxHealth: 0
-  myHealthBar: {fileID: 0}
+  ViewDistance: 4
+  baseStrength: 0
+  baseAgility: 0
+  baseDexterity: 0
+  baseArmor: 0
 --- !u!137 &137580399092144980
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

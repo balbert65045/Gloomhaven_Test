@@ -142,6 +142,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
-  Offset: {x: 0, y: 0, z: 0}
+  Offset: {x: -1.531, y: 1.454, z: 0.928}
   OtherHexesOnTopOf: []
   Rotation: {x: 0, y: 0, z: 0}

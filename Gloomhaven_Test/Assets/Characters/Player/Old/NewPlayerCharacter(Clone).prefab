@@ -2422,17 +2422,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
   myCT: 0
-  Agility: 0
-  Strength: 0
-  baseAttackRange: 1
-  baseShield: 0
-  CurrentAttackRange: 3
-  CurrentMoveRange: 4
   health: 10
-  shield: 0
-  summonSickness: 0
-  maxHealth: 0
-  myHealthBar: {fileID: 0}
+  ViewDistance: 4
+  baseStrength: 0
+  baseAgility: 0
+  baseDexterity: 0
+  baseArmor: 0
 --- !u!114 &114414457059288828
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2466,7 +2461,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f57ebbbb58cd7499164f2dd5cb9f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Moving: 0
 --- !u!114 &114634917873346024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2478,6 +2472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9770b10ef3166c4e82ff0b2401f1484, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backGround: {fileID: 0}
   HealthEncapsulation: {fileID: 1227095327761014}
   HealthChunk: {fileID: 1699503997114878, guid: 192c6f9611e01614fb493d11c1a777af,
     type: 2}
@@ -2498,8 +2493,21 @@ MonoBehaviour:
   ArmorChunk: {fileID: 1568165000496888, guid: 1af9dd54636643540a4cdf793feb57a2, type: 2}
   HandAmountEncapsulator: {fileID: 1051770048436596}
   HandAmount: {fileID: 102191021170218852}
+  StrengthSprite: {fileID: 0}
+  AgilitySprite: {fileID: 0}
+  RangeSprite: {fileID: 0}
+  ArmorSprite: {fileID: 0}
+  Buff1: {fileID: 0}
+  Buff1Sprite: {fileID: 0}
+  Buff2: {fileID: 0}
+  Buff2Sprite: {fileID: 0}
+  Buff3: {fileID: 0}
+  Buff3Sprite: {fileID: 0}
+  Buff4: {fileID: 0}
+  Buff4Sprite: {fileID: 0}
   CurrentArmorPieces: []
   CurrentHealthPieces: []
+  SavingThrowCoin: {fileID: 0}
 --- !u!137 &137642834586162734
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

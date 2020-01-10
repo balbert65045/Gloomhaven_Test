@@ -83,6 +83,21 @@ public class HexMapController : MonoBehaviour {
         };
     }
 
+    public List<Node> GetNeighborsNoRoom(Node node)
+    {
+        List<Node> RealNodes = new List<Node>();
+        Node[] nodes = GetNeighbors(node);
+        foreach (Node n in nodes)
+        {
+            if (n != null)
+            {
+                RealNodes.Add(n);
+            }
+        }
+        return RealNodes;
+    }
+    
+
     public List<Node> GetRealNeighborsNoDoor(Node node)
     {
         List<Node> RealNodes = new List<Node>();

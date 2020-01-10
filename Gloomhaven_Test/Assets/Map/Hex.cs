@@ -118,8 +118,12 @@ public class Hex : MonoBehaviour {
             }
             else if (EntityToSpawn.GetComponent<Obstacle>() != null)
             {
+                StartPos = transform.position;
                 Vector3 offset = EntityToSpawn.GetComponent<Obstacle>().Offset;
-                EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos + offset, Quaternion.Euler(EntityToSpawn.GetComponent<Obstacle>().Rotation)).GetComponent<Entity>();
+                EntityHolding = Instantiate(EntityToSpawn.gameObject, this.transform).GetComponent<Entity>();
+                EntityHolding.transform.localPosition = offset;
+                EntityHolding.transform.rotation = Quaternion.Euler(EntityToSpawn.GetComponent<Obstacle>().Rotation);
+
                 HexMapController hexMap = FindObjectOfType<HexMapController>();
                 hexMap.CreateTable();
                 foreach (Vector2 delta in EntityHolding.GetComponent<Obstacle>().OtherHexesOnTopOf)

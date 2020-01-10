@@ -867,9 +867,9 @@ GameObject:
   - component: {fileID: 4882598410684686}
   - component: {fileID: 95824686053397626}
   - component: {fileID: 54172750683569990}
-  - component: {fileID: 114234047630866946}
   - component: {fileID: 114300947522846588}
   - component: {fileID: 114048650939074188}
+  - component: {fileID: 114093780077827920}
   m_Layer: 0
   m_Name: PlayerKnight(Clone)
   m_TagString: Untagged
@@ -2723,7 +2723,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f57ebbbb58cd7499164f2dd5cb9f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Moving: 0
+--- !u!114 &114093780077827920
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1759436568821980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22ed728879133a74fbaa602ce4abcb73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HexOn: {fileID: 0}
+  myCT: 0
+  health: 10
+  ViewDistance: 6
+  baseStrength: 1
+  baseAgility: 0
+  baseDexterity: 0
+  baseArmor: 0
+  SelectionPrefab: {fileID: 0}
+  myType: 0
+  characterIcon: {fileID: 0}
+  CharacterName: 
+  CombatHandSize: 5
+  InitialCombatCards: []
+  OutOfCombatHandSize: 5
+  InitialOutOfCombatCards: []
+  CardsStored: []
+  DeckPrefab: {fileID: 0}
+  doorToOpen: {fileID: 0}
+  CharacterLeading: {fileID: 0}
+  CharacterFollowing: {fileID: 0}
 --- !u!114 &114129415536073196
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2770,35 +2801,7 @@ MonoBehaviour:
   Buff4Sprite: {fileID: 212671941666070038}
   CurrentArmorPieces: []
   CurrentHealthPieces: []
---- !u!114 &114234047630866946
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1759436568821980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 051ebf8c95aad8b45917c69fff6ab801, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HexOn: {fileID: 0}
-  myCT: 0
-  ViewDistance: 4
-  baseStrength: 0
-  baseAgility: 0
-  baseAttackRange: 1
-  baseShield: 0
-  Agility: 0
-  Strength: 0
-  Range: 0
-  Armor: 0
-  CurrentAttackRange: 3
-  CurrentMoveRange: 4
-  health: 10
-  summonSickness: 0
-  maxHealth: 0
-  myHealthBar: {fileID: 0}
-  Buffs: []
+  SavingThrowCoin: {fileID: 0}
 --- !u!114 &114300947522846588
 MonoBehaviour:
   m_ObjectHideFlags: 1
