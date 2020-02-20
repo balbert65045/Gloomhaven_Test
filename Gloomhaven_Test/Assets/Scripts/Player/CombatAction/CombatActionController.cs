@@ -62,6 +62,7 @@ public class CombatActionController : MonoBehaviour {
 
     public void SelectCharacter(PlayerCharacter playerCharacter)
     {
+
         if (playerCharacter.GetMoving()) { return; }
         PlayerCharacter SelectPlayerCharacter = playerController.SelectPlayerCharacter;
         if (myCombatState == CombatState.SelectingCombatCards)
@@ -119,6 +120,7 @@ public class CombatActionController : MonoBehaviour {
                 FindObjectOfType<CombatManager>().PlayerDonePickingCombatCards();
                 break;
             case CombatState.UsingCombatCards:
+                playerController.RemoveArea();
                 FindObjectOfType<EndTurnButton>().DisableEndTurn();
                 SelectPlayerCharacter.GetMyCombatHand().HideSelectedCard();
                 FindObjectOfType<myCharacterCard>().HideCharacterStats();
@@ -149,6 +151,7 @@ public class CombatActionController : MonoBehaviour {
         }
         else
         {
+            playerController.DisableEndTurn();
             CSBM.ShowCardUnselected(SelectPlayerCharacter);
             SelectPlayerCharacter.SetMyCurrentCombatCard(null);
         }
@@ -247,6 +250,7 @@ public class CombatActionController : MonoBehaviour {
     {
         if (PerformingAction) { return; }
         if (ActionsAllUsed()) { return; }
+        playerController.RemoveArea();
         int NewActionIndex = findNextActionIndex(ActionIndex);
         SetCurrentActionAs(NewActionIndex);
     }
@@ -347,6 +351,7 @@ public class CombatActionController : MonoBehaviour {
 
     void PerformAction(Action action, Character myCharacter, List<Character> charactersActingUpon)
     {
+        playerController.RemoveArea();
         switch (action.thisActionType)
         {
             case ActionType.Attack:
@@ -379,12 +384,12 @@ public class CombatActionController : MonoBehaviour {
         if (myCharacter.HexInMoveRange(hexSelected, action.Range + myCharacter.GetAgility()))
         {
             UnHighlightHexes();
-            myCharacter.ShowPath(hexSelected.HexNode);
 
             myCharacter.MoveOnPath(hexSelected);
             FindObjectOfType<MyCameraController>().SetTarget(myCharacter.transform);
             playerController.DisableEndTurn();
             PerformingAction = true;
+            playerController.RemoveArea();
             return true;
         }
         return false;
@@ -442,7 +447,7 @@ public class CombatActionController : MonoBehaviour {
         FindObjectOfType<CharacterViewer>().HideActionCard();
         ActionsUsed[ActionIndex] = true;
         playerController.SelectPlayerCharacter.myCurrentCombatCard.DisableCurrentAction(ActionIndex);
-        if (ActionsAllUsed()) { myCurrentAction = NoAction(); }
+        if (ActionsAllUsed()) { myCurrentAction = NoAction();}
         else { SwitchAction(); }
     }
 
@@ -478,6 +483,7 @@ public class CombatActionController : MonoBehaviour {
 
     void ShowAbility(Action action)
     {
+
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCurrentAction.thisActionType == ActionType.Movement)
         {

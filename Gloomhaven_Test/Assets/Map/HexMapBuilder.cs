@@ -41,6 +41,13 @@ public class HexMapBuilder : MonoBehaviour {
         {
             DestroyImmediate(interactionsObjects.transform.GetChild(0).gameObject);
         }
+
+        GameObject characterObjects = FindObjectOfType<CharacterHolder>().gameObject;
+        int count2 = characterObjects.transform.childCount;
+        for (int i = 0; i < count2; i++)
+        {
+            DestroyImmediate(characterObjects.transform.GetChild(0).gameObject);
+        }
     }
 	
 	void AddGap()

@@ -100,7 +100,32 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    public void RemoveArea()
+    {
+        GetComponentInChildren<MeshGenerator>().DeleteMesh();
+        GetComponentInChildren<EdgeLine>().DestroyLine();
+    }
+
+    public void CreateArea(List<Vector3> points, ActionType type)
+    {
+        GetComponentInChildren<MeshGenerator>().CreateMesh(points);
+        GetComponentInChildren<MeshGenerator>().SetCurrentMaterial(type);
+        GetComponentInChildren<EdgeLine>().CreateLine(points.ToArray());
+        GetComponentInChildren<EdgeLine>().SetCurrentMaterial(type);
+    }
+
     public void ChangeCombatState(CombatActionController.CombatState state) { combatController.ChangeCombatState(state); }
+
+    public void SelectCharacterByName(string characterName)
+    {
+        foreach(PlayerCharacter character in myCharacters)
+        {
+            if (character.CharacterName == characterName)
+            {
+                SelectCharacter(character);
+            }
+        }
+    }
 
     // Large Game Actions
     public void SelectCard(Card card)
@@ -157,10 +182,10 @@ public class PlayerController : MonoBehaviour {
             FindObjectOfType<CharacterSelectionButtons>().BreakAllLinks();
 
             CSBM.ShowCardIndicators();
-            combatController.SelectCharacterNotMoving();
+            combatController.SelectCharacter(SelectPlayerCharacter);
 
             //UI
-            endTurnButton.gameObject.SetActive(true);
+            DisableEndTurn();
             initBoard.gameObject.SetActive(true);
 
             //Game
@@ -168,9 +193,21 @@ public class PlayerController : MonoBehaviour {
 
             //Board
             combatController.UnHighlightHexes();
+            RemoveArea();
             hexVisualizer.HighlightSelectionHex(SelectPlayerCharacter.HexOn);
             //Camera
             FindObjectOfType<MyCameraController>().LookAt(SelectPlayerCharacter.transform);
+        }
+    }
+
+    public Action GetCurrentAction()
+    {
+        if (myState == PlayerState.InCombat)
+        {
+            return combatController.GetMyCurrectAction();
+        }else
+        {
+            return outOfCombatController.GetMyCurrentAction();
         }
     }
 
@@ -179,6 +216,7 @@ public class PlayerController : MonoBehaviour {
         myState = PlayerState.OutofCombat;
         foreach (PlayerCharacter character in myCharacters)
         {
+            character.RefreshActions();
             character.DecreaseBuffsDuration();
             character.resetShield(character.GetArmor());
             character.SwitchCombatState(false);
@@ -190,12 +228,13 @@ public class PlayerController : MonoBehaviour {
         }
 
         CSBM.ShowCharacterSelection();
+        CSBM.ShowActions();
         SelectCharacter(myCharacters[0]);
 
         //UI
         SelectPlayerCharacter.GetMyOutOfCombatHand().ShowHand();
         SelectPlayerCharacter.GetMyCombatHand().HideHand();
-        endTurnButton.gameObject.SetActive(false);
+        AllowEndTurn();
         initBoard.ClearInitiativeBoard();
         initBoard.gameObject.SetActive(false);
     }
@@ -210,41 +249,45 @@ public class PlayerController : MonoBehaviour {
                 combatController.EndPlayerTurn();
                 break;
             case PlayerState.OutofCombat:
+                outOfCombatController.EndTurn();
                 break;
         }
     }
 
 
     //Callbacks
-    public void FinishedMoving()
+    public void FinishedMoving(PlayerCharacter characterFinished)
     {
         if (myState == PlayerState.InCombat) { combatController.FinishedMoving(); }
         else if (myState == PlayerState.OutofCombat)
         {
-            outOfCombatController.FinishedMoving();
+            outOfCombatController.FinishedMoving(characterFinished);
             CheckToAllowExitFloorOrOpenDoor();
         }
     }
 
-    public void FinishedAttacking()
+    public void FinishedAttacking(PlayerCharacter characterFinished)
     {
         if (myState == PlayerState.InCombat){ GetComponent<CombatActionController>().FinishedAttacking(); }
         else if (myState == PlayerState.OutofCombat){ GoIntoCombat(); }
     }
 
-    public void FinishedBuffing()
+    public void FinishedBuffing(PlayerCharacter characterFinished)
     {
         if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedBuffing(); }
+        else { outOfCombatController.FinishedAction(characterFinished); }
     }
 
-    public void FinishedHealing()
+    public void FinishedHealing(PlayerCharacter characterFinished)
     {
         if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedHealing(); }
+        else { outOfCombatController.FinishedAction(characterFinished); }
     }
 
-    public void FinishedShielding()
+    public void FinishedShielding(PlayerCharacter characterFinished)
     {
         if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedShielding(); }
+        else { outOfCombatController.FinishedAction(characterFinished); }
     }
 
     //Character selection
@@ -319,6 +362,7 @@ public class PlayerController : MonoBehaviour {
         if (myState == PlayerState.OutofCombat)
         {
             FindObjectOfType<EnemyController>().ShowCharactersView();
+            SelectPlayerCharacter.Selected();
         }
     }
 
@@ -340,7 +384,7 @@ public class PlayerController : MonoBehaviour {
         bool exitAllowed = true;
         foreach (PlayerCharacter character in myCharacters)
         {
-            if (character.HexOn.GetComponent<ExitHex>() == null){ exitAllowed = false; }
+            if (character.HexOn.GetComponent<ExitAreaHex>() == null){ exitAllowed = false; }
         }
         if (exitAllowed) {
             AllowExit();
@@ -352,10 +396,11 @@ public class PlayerController : MonoBehaviour {
     void AllowExit()
     {
         actionButton.gameObject.SetActive(true);
+        //actionButton.enabled = true;
         actionButton.AllowExit();
     }
 
-    void DisableExit()
+    public void DisableExit()
     {
         actionButton.DisableExit();
         actionButton.gameObject.SetActive(false);

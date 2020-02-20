@@ -16,6 +16,8 @@ public class CombatPlayerHand : Hand {
     public List<CombatPlayerCardButton> AllCards = new List<CombatPlayerCardButton>();
     public List<CombatPlayerCardButton> myCardsInHand;
 
+    public int DiscardedCards = 0;
+
     public CombatPlayerCardButton selectedCardLinkedButton;
     public CombatPlayerCard getSelectedCard()
     {
@@ -142,7 +144,7 @@ public class CombatPlayerHand : Hand {
                 selectedCardLinkedButton.DiscardCard();
             }
             myCardsInHand.Remove(selectedCardLinkedButton);
-            outOfCombatHand.allowLongRest();
+            DiscardedCards++;
         }
         SelectedPlayerCard.transform.SetParent(selectedCardLinkedButton.transform);
         SelectedPlayerCard = null;
@@ -150,6 +152,7 @@ public class CombatPlayerHand : Hand {
 
     public void ShortRest()
     {
+        DiscardedCards = 0;
         ShortRestButton.interactable = false;
         CombatPlayerCardButton[] cardButtons = GetComponentsInChildren<CombatPlayerCardButton>();
         List<CombatPlayerCardButton> discardedCards = new List<CombatPlayerCardButton>();
@@ -184,7 +187,6 @@ public class CombatPlayerHand : Hand {
         CombatPlayerCardButton cardToLose = cardsInHand[randomCardIndex];
         cardToLose.LoseCard();
         myCardsInHand.Remove(cardToLose);
-        outOfCombatHand.allowLongRest();
         return true;
     }
 

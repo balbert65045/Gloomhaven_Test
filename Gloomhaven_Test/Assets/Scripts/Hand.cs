@@ -59,6 +59,7 @@ public class Hand : MonoBehaviour {
     {
         for (int i = 0; i < ButtonPositions.Length; i++)
         {
+            if (ButtonPositions[i].GetComponentInChildren<CardButton>() == null) { continue; }
             if (ButtonPositions[i].GetComponentInChildren<CardButton>().myCard == card) { return i; }
         }
         return -1;

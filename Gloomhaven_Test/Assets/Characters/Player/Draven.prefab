@@ -2769,21 +2769,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
   myCT: 0
-  health: 7
+  MaxMoveDistance: 5
+  CurrentMoveDistance: 0
+  health: 10
   ViewDistance: 6
-  baseStrength: 2
+  baseStrength: 0
   baseAgility: 0
   baseDexterity: 0
   baseArmor: 0
+  NodesInWalkingDistance: []
+  NodesInActionRange: []
+  AvailableActions: 2
   SelectionPrefab: {fileID: 1619903764100662, guid: ae73d9958ce1f7a49b786642f0e4aeb2,
     type: 2}
   myType: 3
   characterIcon: {fileID: 21300000, guid: 779e6a039cd50154cb17dcf5ce709518, type: 3}
   CharacterName: Draven
   CombatHandSize: 5
-  InitialCombatCards: []
-  OutOfCombatHandSize: 5
-  InitialOutOfCombatCards: []
+  InitialCombatCards:
+  - {fileID: 1859350248059836, guid: 19e69b8fb5ffe8a43b5738e2681e3bc2, type: 2}
+  - {fileID: 1306751794125916, guid: 84954c37de30cc54199f088d090e84f5, type: 2}
+  - {fileID: 1980213475643082, guid: f355ad5e4f622a8459b9fd073b26e3cc, type: 2}
+  - {fileID: 1453812882587044, guid: 54e47c3cee5bfeb4983d3f56a5862071, type: 2}
+  - {fileID: 1135888573037308, guid: 1200efbb30aa549468d72a92f8cab97c, type: 2}
+  OutOfCombatHandSize: 3
+  InitialOutOfCombatCards:
+  - {fileID: 1112791787048326, guid: 3e7f560be79f2cb4cb26a42b78f29981, type: 2}
+  - {fileID: 1004997761942070, guid: 68d187ec481bd1c4eb0bd87ad4cf998c, type: 2}
+  - {fileID: 1821926498242948, guid: 928db11398c86404b984c73051830049, type: 2}
   CardsStored: []
   DeckPrefab: {fileID: 1338797504036460, guid: e5d157b0ece46694ab726369e358083a, type: 2}
   doorToOpen: {fileID: 0}

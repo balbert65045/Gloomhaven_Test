@@ -13,6 +13,8 @@ public class EnemyGroup : MonoBehaviour {
 
     public int currentCharacterIndex = 0;
 
+    public int RandomCharacterIndex = 0;
+
     MyCameraController myCamera;
     CharacterViewer characterViewer;
 
@@ -56,6 +58,24 @@ public class EnemyGroup : MonoBehaviour {
                     character.InCombat = true;
                     character.ShowHexesViewingAndAlertOthersToCombat();
                 }
+            }
+        }
+    }
+
+    public void selectRandomCharacter()
+    {
+        if (hasCharactersOut())
+        {
+            FindObjectOfType<HexVisualizer>().ReturntHexesToPreviousColor();
+            if (RandomCharacterIndex >= linkedCharacters.Count) { RandomCharacterIndex = 0; }
+            EnemyCharacter character = linkedCharacters[RandomCharacterIndex];
+            RandomCharacterIndex++;
+            FindObjectOfType<HexVisualizer>().HighlightSelectionHex(character.HexOn);
+            FindObjectOfType<MyCameraController>().UnLockCamera();
+            FindObjectOfType<MyCameraController>().LookAt(character.transform);
+            if (FindObjectOfType<CombatActionController>().myCombatState == CombatActionController.CombatState.UsingCombatCards)
+            {
+                FindObjectOfType<EnemyController>().ShowActionCard(character);
             }
         }
     }

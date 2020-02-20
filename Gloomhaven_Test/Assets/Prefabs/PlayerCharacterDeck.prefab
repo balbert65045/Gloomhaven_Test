@@ -248,6 +248,7 @@ GameObject:
   - component: {fileID: 222287355683686510}
   - component: {fileID: 114649114376462418}
   - component: {fileID: 114734755118798174}
+  - component: {fileID: 114781590285532554}
   m_Layer: 5
   m_Name: LongRest
   m_TagString: Untagged
@@ -1427,6 +1428,7 @@ GameObject:
   - component: {fileID: 222944054626590824}
   - component: {fileID: 114441601617873472}
   - component: {fileID: 114232330875564834}
+  - component: {fileID: 114490854643174022}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -2559,7 +2561,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9264706, g: 0.7859027, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2648,6 +2650,21 @@ MonoBehaviour:
   Hand: {fileID: 1347284761711830}
   LongRestButton: {fileID: 114734755118798174}
   combatHand: {fileID: 114948584925398756}
+--- !u!114 &114490854643174022
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1990664105392802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7c23d5fa3e8a774f809f393be841737, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShortRestCard: {fileID: 1240222048827536, guid: e8b37d9e507afd54c97e18a1d4eee388,
+    type: 2}
+  Description: {fileID: 0}
+  showArea: {fileID: 0}
 --- !u!114 &114499431424837574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2890,7 +2907,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9264706, g: 0.7859027, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3011,6 +3028,21 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114781590285532554
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1185717893567960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab53a233be1a72c4c963281e031272ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LongRestCard: {fileID: 1240222048827536, guid: e8b37d9e507afd54c97e18a1d4eee388,
+    type: 2}
+  Description: {fileID: 0}
+  showArea: {fileID: 0}
 --- !u!114 &114795239983594422
 MonoBehaviour:
   m_ObjectHideFlags: 1

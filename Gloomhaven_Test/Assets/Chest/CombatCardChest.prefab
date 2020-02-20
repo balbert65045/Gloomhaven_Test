@@ -54,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1215812269307406}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
   m_LocalScale: {x: 0.6224096, y: 0.6224098, z: 0.6224098}
   m_Children: []
   m_Father: {fileID: 4783103706941290}
@@ -168,4 +168,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myChestType: 0
+  HexOnMaterial: {fileID: 2100000, guid: 79bb823679888b1448d064db04d2ba47, type: 2}
   isOpen: 0

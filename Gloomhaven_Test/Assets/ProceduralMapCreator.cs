@@ -19,14 +19,21 @@ class Rooms
 
 public class ProceduralMapCreator : MonoBehaviour {
 
+    public int TreasureAmount = 7;
+    public int CurrentTreasureAmount = 0;
+
     public int ChallengeRating = 15;
+    public int CurrentChallengeRating = 0;
     public int MaxLength = 15;
+    public GameObject ExplorationChestPrefab;
+    public GameObject CombatChestPrefab;
     public List<GameObject> ObstaclePool = new List<GameObject>();
     public List<GameObject> EnemyPool = new List<GameObject>();
+    public List<GameObject> PlayerCharacters = new List<GameObject>();
 
     HexMapController hexMap;
     HexRoomBuilder hexRoomBuilder;
-    public int RoomIndex = 0;
+    private int RoomIndex = 0;
 
     List<EdgeHexes> EdgesAvailable;
     List<Rooms> RoomsMade; 
@@ -54,9 +61,11 @@ public class ProceduralMapCreator : MonoBehaviour {
     public void BuildMap()
     {
         RoomIndex = 0;
+        CurrentTreasureAmount = TreasureAmount;
         EdgesAvailable = new List<EdgeHexes>();
         RoomsMade = new List<Rooms>();
 
+        CurrentChallengeRating = ChallengeRating;
         hexMap = FindObjectOfType<HexMapController>();
         hexMap.CreateTable();
         hexRoomBuilder = FindObjectOfType<HexRoomBuilder>();
@@ -65,11 +74,13 @@ public class ProceduralMapCreator : MonoBehaviour {
         if (StartHexes.Count == 0) { return; }
         CreateNextRoom();
         PopulateRooms();
+        //Create exit
+        CreateExit();
     }
 
     void PopulateRooms()
-    {
-        int RoomsWithEnemiesInside = ChallengeRating / 3;
+    {       
+        int RoomsWithEnemiesInside = CurrentChallengeRating / 3;
         List<Rooms> RoomToBuildEnemies = new List<Rooms>();
         foreach(Rooms room in RoomsMade) { RoomToBuildEnemies.Add(room); }
         for (int i = 0; i < RoomsWithEnemiesInside; i++)
@@ -79,11 +90,23 @@ public class ProceduralMapCreator : MonoBehaviour {
             RoomToBuildEnemies.Remove(RoomToBuildEnemies[RandomIndex]);
         }    
 
-        foreach(Rooms room in RoomsMade)
+        foreach(Rooms room in RoomsMade) { AddObstaclesToRoom(room.RoomHexes); }
+
+        int totalRooms = RoomsMade.Count;
+        List<Rooms> RoomToBuildChests= new List<Rooms>();
+        foreach (Rooms room in RoomsMade) { RoomToBuildChests.Add(room); }
+        for (int i = 0; i < totalRooms; i++)
         {
-            AddObstaclesToRoom(room.RoomHexes);
-            ShowHexSet(room.RoomHexes, room.RoomName);
+            int RandomIndex = Random.Range(0, RoomToBuildChests.Count);
+            AddChestsToRoom(RoomToBuildChests[RandomIndex].RoomHexes);
+            RoomToBuildChests.Remove(RoomToBuildChests[RandomIndex]);
         }
+
+        // TO Show All Rooms
+        //foreach (Rooms room in RoomsMade)
+        //{
+        //    ShowHexSet(room.RoomHexes, room.RoomName);
+        //}
     }
 
     void CollectAndSortEdges(List<Hex> hexes, List<Hex> EdgeFrom)
@@ -120,23 +143,93 @@ public class ProceduralMapCreator : MonoBehaviour {
 
     List<Hex> CreateStartRoom()
     {
+        int maxLength = MaxLength;
+        MaxLength = 6;
         List<Hex> hexes = BuildRoom(0, 0, RoomSide.Top);
+        MaxLength = maxLength;
         if (hexes.Count == 0) { Debug.LogWarning("Room not made!!"); }
         string RoomName = ((char)((int)('A') + RoomIndex)).ToString();
         Node StartNode = hexMap.GetNode(0, 0);
-        foreach(Hex hex in hexes)
-        {
-            hex.GetComponent<Node>().Shown = true;
-        }
-        ShowHexSet(hexes, RoomName);
+        foreach(Hex hex in hexes) { hex.GetComponent<Node>().Shown = true; }
+        AddPlayerCharactersToRoom(hexes);
+        AddObstaclesToRoom(hexes);
         SetStartNode(StartNode, RoomName);
+        hexes.Add(StartNode.GetComponent<Hex>());
+        ShowHexSet(hexes, RoomName);
         RoomIndex++;
         return hexes;
     }
 
+    void CreateExit()
+    {
+        if (EdgesAvailable.Count <= 0) {
+            Debug.Log("No Room to build an exit");
+            return;
+        }
+        int RandomEdgeIndex = Random.Range(0, EdgesAvailable.Count);
+        EdgeHexes edge = EdgesAvailable[RandomEdgeIndex];
+        int RandomHexIndex = Random.Range(0, edge.Edges.Count);
+        Hex hex = edge.Edges[RandomHexIndex];
+        EdgesAvailable.Remove(edge);
+        if (IsAlreadySurrounded(hex.GetComponent<HexAdjuster>())) { CreateExit(); }
+        else
+        {
+            RoomSide roomToBuildTowards = GetRoomSideToBuildTowards(hex.GetComponent<HexAdjuster>());
+            Node node = hex.GetComponent<Node>();
+            ExitHex exit = hex.gameObject.AddComponent<ExitHex>();
+            node.GetComponent<HexAdjuster>().ClearSides();
+            node.GetComponent<HexWallAdjuster>().DestroyAllWalls();
+            if (roomToBuildTowards == RoomSide.Right) { exit.myExitLocation = ExitHex.ExitLocation.Right; }
+            else if (roomToBuildTowards == RoomSide.Left) { exit.myExitLocation = ExitHex.ExitLocation.Left; }
+            else if (roomToBuildTowards == RoomSide.Down) { exit.myExitLocation = ExitHex.ExitLocation.Middle; }
+            else { exit.myExitLocation = ExitHex.ExitLocation.Middle; }
+            exit.BuildExit();
+            exit.exit.gameObject.SetActive(false); 
+            hex.GetComponent<HexAdjuster>().SetHexToFull();
+        }
+
+    }
+
+    void AddPlayerCharactersToRoom(List<Hex> hexes)
+    {
+        List<Hex> AvailableHexes = GetNonEdgeHexes(hexes);
+        List<Hex> CharacterHexes = new List<Hex>();
+        foreach(GameObject character in PlayerCharacters)
+        {
+            if (CharacterHexes.Count == 0)
+            {
+                int RandomIndex = Random.Range(0, AvailableHexes.Count);
+                AvailableHexes[RandomIndex].EntityToSpawn = character.GetComponent<Entity>();
+                CharacterHexes.Add(AvailableHexes[RandomIndex]);
+            }
+            else
+            {
+                for(int i = 0; i < CharacterHexes.Count; i++)
+                {
+                    List<Node> nodes = hexMap.GetNeighborsNoRoom(CharacterHexes[i].GetComponent<Node>());
+                    bool characterSpawn = false;
+
+                    foreach (Node node in nodes)
+                    {
+                        if (node.edge) { continue; }
+                        if (!node.Used) { continue; }
+                        if (node.GetComponent<Hex>().EntityToSpawn == null)
+                        {
+                            node.GetComponent<Hex>().EntityToSpawn = character.GetComponent<Entity>();
+                            characterSpawn = true;
+                            CharacterHexes.Add(node.GetComponent<Hex>());
+                            break;
+                        }
+                    }
+                    if (characterSpawn) { break; }
+                }
+            }
+        }
+    }
+
     void CreateNextRoom()
     {
-        if (EdgesAvailable.Count <= 0) { return; }
+        if (EdgesAvailable.Count <= 1) { return; }
         int RandomEdgeIndex = Random.Range(0, EdgesAvailable.Count);
         EdgeHexes edge = EdgesAvailable[RandomEdgeIndex];
         int RandomHexIndex = Random.Range(0, edge.Edges.Count);
@@ -150,18 +243,8 @@ public class ProceduralMapCreator : MonoBehaviour {
             if (NewHexes != null && NewHexes.Count > 0)
             {
                 string NewRoomName = ((char)((int)('A') + RoomIndex)).ToString();
-
                 BuildDoor(hex, NewHexes, roomToBuildTowards, NewRoomName);
-
-                //AddObstaclesToRoom(NewHexes);
-
-                // To show all rooms
-                //ShowHexSet(NewHexes, NewRoomName, node);
-                //
-
-                //To Hide all rooms
                 SetNexHexes(NewHexes);
-                //
                 RoomIndex++;
                 CollectAndSortEdges(NewHexes, edge.Edges);
             }
@@ -177,7 +260,7 @@ public class ProceduralMapCreator : MonoBehaviour {
 
     void AddEnemies(List<Hex> hexes)
     {
-        if (ChallengeRating <= 0) { return; }
+        if (CurrentChallengeRating <= 0) { return; }
         List<Hex> NonEdgeHexes = GetNonEdgeHexes(hexes);
         int EnemiesToSpawn = Random.Range(2, 5);
         int RoomChallengeRating = 0;
@@ -190,7 +273,7 @@ public class ProceduralMapCreator : MonoBehaviour {
             NonEdgeHexes.Remove(RandomHex);
             RoomChallengeRating++;
         }
-        ChallengeRating -= RoomChallengeRating;
+        CurrentChallengeRating -= RoomChallengeRating;
     }
 
     void AddObstaclesToRoom(List<Hex> hexes)
@@ -205,6 +288,30 @@ public class ProceduralMapCreator : MonoBehaviour {
             {
                 int RandomObstacleIndex = Random.Range(0, ObstaclePool.Count);
                 AttemptHex.EntityToSpawn = ObstaclePool[RandomObstacleIndex].GetComponent<Entity>(); ;
+            }
+        }
+    }
+
+    void AddChestsToRoom(List<Hex> hexes)
+    {
+        if (CurrentTreasureAmount <= 0) { return; }
+        List<Hex> NonEdgeHexes = GetNonEdgeHexes(hexes);
+        if (NonEdgeHexes.Count <= 0) { return; }
+        Hex RandomHex = NonEdgeHexes[Random.Range(0, NonEdgeHexes.Count)];
+        if (HexNotNextToOtherObstacleOrDoor(RandomHex))
+        {
+            CurrentTreasureAmount--;
+            if (Random.Range(0, 2) == 0) { RandomHex.EntityToSpawn = CombatChestPrefab.GetComponent<Entity>(); }
+            else { RandomHex.EntityToSpawn = ExplorationChestPrefab.GetComponent<Entity>(); }
+        }
+        else
+        {
+            Hex NewRandomHex = NonEdgeHexes[Random.Range(0, NonEdgeHexes.Count)];
+            if (HexNotNextToOtherObstacleOrDoor(NewRandomHex))
+            {
+                CurrentTreasureAmount--;
+                if (Random.Range(0, 2) == 0) { NewRandomHex.EntityToSpawn = CombatChestPrefab.GetComponent<Entity>(); }
+                else { NewRandomHex.EntityToSpawn = ExplorationChestPrefab.GetComponent<Entity>(); }
             }
         }
     }
@@ -261,13 +368,8 @@ public class ProceduralMapCreator : MonoBehaviour {
 
         if (hex.GetComponent<Door>() == null)
         {
-            Debug.Log("Building Door");
             Door door = hex.gameObject.AddComponent<Door>();
-            if (hex.GetComponent<Node>().RoomName.Count <= 1)
-            {
-                Debug.Log("Not In between rooms");
-                return;
-            }
+            if (hex.GetComponent<Node>().RoomName.Count <= 1) { return; }
             RoomSide roomSideTowards = GetRoomSideToBuildTowards(hex.GetComponent<HexAdjuster>());
             door.RoomNameToBuild = hex.GetComponent<Node>().RoomName[1];
             door.GetComponent<HexAdjuster>().ClearSides();
@@ -354,10 +456,14 @@ public class ProceduralMapCreator : MonoBehaviour {
         List<Hex> hexes = hexRoomBuilder.BuildRoomBySize(StartNode, height, width, RoomName, directionBuilding);
         if (hexes != null)
         {
-            Rooms NewRoom = new Rooms();
-            foreach (Hex hex in hexes) { NewRoom.AddHex(hex); }
-            NewRoom.RoomName = RoomName;
-            RoomsMade.Add(NewRoom);
+            foreach (Hex hex in hexes) { hex.GetComponent<Node>().Used = true; }
+            if (RoomName != "A")
+            {
+                Rooms NewRoom = new Rooms();
+                foreach (Hex hex in hexes) { NewRoom.AddHex(hex); }
+                NewRoom.RoomName = RoomName;
+                RoomsMade.Add(NewRoom);
+            }
         }
         return hexes;
     }
@@ -374,9 +480,6 @@ public class ProceduralMapCreator : MonoBehaviour {
             {
                 hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true);
             }
-            //if (hex.GetComponent<HexAdjuster>().IsApartOfBothRooms(StartNode.RoomName)) { continue; }
-           // else
-         //   {
             hex.ShowHexEditor();
             hex.ShowHexEnd();
             hex.GetComponent<Node>().isAvailable = true;
@@ -384,7 +487,6 @@ public class ProceduralMapCreator : MonoBehaviour {
             {
                 hex.GenerateCharacter();
             }
-           // }
         }
     }
 
@@ -395,11 +497,6 @@ public class ProceduralMapCreator : MonoBehaviour {
         node.GetComponent<HexAdjuster>().SetHexToFragment();
         node.GetComponent<HexAdjuster>().RotateHexToTopMiddle();
         node.GetComponent<HexWallAdjuster>().CreateHexWall(2, 0, RoomName);
-        node.GetComponent<HexAdjuster>().RevealRoomEdge();
-        node.GetComponent<HexWallAdjuster>().ShowWall();
-        node.GetComponent<Hex>().ShowHexEditor();
-        node.GetComponent<Hex>().ShowHexEnd();
-        node.isAvailable = true;
         node.Shown = true;
     }
 }

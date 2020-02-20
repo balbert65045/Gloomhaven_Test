@@ -684,6 +684,7 @@ MonoBehaviour:
   - {fileID: 1521424687371040}
   - {fileID: 1404520690162706}
   - {fileID: 1191283907238270}
+  LostAbilityUsed: 0
   cardAbility: {fileID: 114508049826840432}
 --- !u!114 &114508049826840432
 MonoBehaviour:

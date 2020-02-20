@@ -11,6 +11,9 @@ public enum PlayerCharacterType
 
 public class PlayerCharacter : Character
 {
+    public int AvailableActions = 2;
+    public bool OutOfActions() { return AvailableActions <= 0; }
+
     public GameObject SelectionPrefab;
     public CharacterSelectionButton myCharacterSelectionButton { get; set; }
 
@@ -56,23 +59,62 @@ public class PlayerCharacter : Character
         if (character != null) { CharacterFollowing.CharacterLeading = this; }
     }
 
-    public void LeaderMoved(Hex hexMovedFrom)
+    public void LeaderMoved(Hex hexMovedFrom, Hex MovingTo)
     {
-        Follow(hexMovedFrom);
+        if (AvailableActions > 0)
+        {
+            List<Node> FullPath = FindObjectOfType<AStar>().FindPath(HexOn.HexNode, hexMovedFrom.HexNode, myCT);
+            int InitialDistance = FullPath.Count;
+            List<Node> PathToNextArea = FindObjectOfType<AStar>().FindPath(hexMovedFrom.HexNode, MovingTo.HexNode, myCT);
+            FullPath.AddRange(PathToNextArea);
+            int TotalDistance = FullPath.Count;
+            for (int i = 0; i < InitialDistance; i++){ FullPath.RemoveAt(TotalDistance - (i + 1)); }
+
+            NodesInWalkingDistance.Clear();
+            HexMovingTo = FullPath[0].NodeHex;
+            HexMovingTo.CharacterMovingToHex();
+            RemoveLinkFromHex();
+            Node HexToMoveTo = FullPath[0];
+            FullPath.Remove(HexToMoveTo);
+            GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, FullPath);
+        }
     }
 
     public override void MoveOnPath(Hex hex)
     {
         Hex HexMovingFrom = HexOn;
         base.MoveOnPath(hex);
-        if (CharacterFollowing != null) { CharacterFollowing.LeaderMoved(HexMovingFrom); }
+        ActionUsed();
+        if (CharacterFollowing != null) {
+            CharacterFollowing.LeaderMoved(HexMovingFrom, hex);
+            CharacterFollowing.ActionUsed();
+        }
     }
 
-    public override void MovingOnPath()
+    public override void ShowMoveDistance(int moveRange)
     {
-        Hex HexMovingFrom = HexOn;
-        base.MovingOnPath();
-        if (CharacterFollowing != null && HexMovingFrom != null) { CharacterFollowing.LeaderMoved(HexMovingFrom); }
+        CurrentMoveRange = moveRange;
+        List<Node> nodesInDistance = aStar.Diskatas(HexOn.HexNode, moveRange, myCT);
+        NodesInWalkingDistance.Clear();
+        if (AvailableActions <= 0 && playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat) {
+            playerController.RemoveArea();
+            return;
+        }
+        List<Node> nodesInArea = new List<Node>();
+        foreach (Node node in nodesInDistance)
+        {
+            if (!node.Shown || node.edge) { continue; }
+            nodesInArea.Add(node);
+            if (node.NodeHex.EntityHolding != null) { continue; }
+            NodesInWalkingDistance.Add(node);
+        }
+        ShowHexesOnEdgeOfRange(nodesInArea);
+    }
+
+    public void ShowHexesOnEdgeOfRange(List<Node> nodes)
+    {
+        List<Vector3> points = HexMap.GetHexesSurrounding(HexOn.HexNode, nodes);
+        playerController.CreateArea(points, ActionType.Movement);
     }
 
     void Start()
@@ -138,7 +180,13 @@ public class PlayerCharacter : Character
         }
     }
 
-    public void Selected(){ if (!GetMoving()) { hexVisualizer.HighlightSelectionHex(HexOn); }}
+    public void Selected(){
+        if (!GetMoving()) {
+            hexVisualizer.ResetLastHex();
+            hexVisualizer.HighlightSelectionHex(HexOn);
+            ShowMoveDistance(CurrentMoveDistance);
+        }
+    }
 
     //placeholder
     public void ShowHexes(){ StartCoroutine("ShowNodes"); }
@@ -154,6 +202,7 @@ public class PlayerCharacter : Character
     {
         List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1);
         List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance);
+        ExitHex exit = null;
         foreach (Node node in nodesAlmostSeen)
         {
             if (nodesSeen.Contains(node))
@@ -166,9 +215,13 @@ public class PlayerCharacter : Character
                     node.GetComponent<HexAdjuster>().RevealRoomEdge();
                     node.GetComponent<HexWallAdjuster>().ShowWall();
                     node.GetComponent<Hex>().ShowHexEnd();
-                    if (node.GetComponent<Door>() != null)
+                    if (node.GetComponent<Door>() != null && node.GetComponent<Door>().door != null)
                     {
                         node.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true);
+                    }
+                    if (node.GetComponent<ExitHex>() != null) {
+                        exit = node.GetComponent<ExitHex>();
+                        node.GetComponent<ExitHex>().ShowExit();
                     }
                     node.Shown = true;
                     if (node.NodeHex.EntityToSpawn != null)
@@ -185,8 +238,27 @@ public class PlayerCharacter : Character
                 }
             }
         }
+        if (exit != null) { exit.ShowWinArea(); }
+        //playerController.ShowCharacterView();
+    }
 
-        playerController.ShowCharacterView();
+    public void Stop()
+    {
+        StartCoroutine("Stopping");
+    }
+
+    IEnumerator Stopping()
+    {
+        yield return new WaitForSeconds(.3f);
+        GetComponent<CharacterAnimationController>().Stop();
+    }
+
+    public override void LastHexMovingTo()
+    {
+        if (CharacterFollowing != null)
+        {
+            CharacterFollowing.Stop();
+        }
     }
 
     public override bool CheckToFight()
@@ -194,51 +266,59 @@ public class PlayerCharacter : Character
         return playerController.ShowEnemyAreaAndCheckToFight();
     }
 
-    public override void FinishedMoving(Hex hex)
+    public override void FinishedMoving(Hex hex, bool fight)
     {
         HexMovingTo.CharacterArrivedAtHex();
-        FindObjectOfType<PlayerController>().FinishedMoving();
+        FindObjectOfType<PlayerController>().FinishedMoving(this);
         if (doorToOpen != null)
         {
-            OpenDoor();
+            if (CharacterFollowing != null)
+            {
+                CharacterFollowing.GetComponent<CharacterAnimationController>().Stop();
+            }
+            StartCoroutine("OpenDoor");
             doorToOpen = null;
         }
-        else if (ChestToOpen != null)
+        else if (ChestToOpen != null && !fight)
         {
             ChestToOpen.OpenChest(this);
             ChestToOpen = null;
         }
+        if (fight && playerController.myState == PlayerController.PlayerState.OutofCombat) { playerController.GoIntoCombat(); }
     }
 
     public override void FinishedPerformingBuff()
     {
-        FindObjectOfType<PlayerController>().FinishedBuffing();
+        FindObjectOfType<PlayerController>().FinishedBuffing(this);
     }
 
     public override void FinishedAttacking()
     {
-        FindObjectOfType<PlayerController>().FinishedAttacking();
+        base.FinishedAttacking();
+        if (CharactersFinishedTakingDamage >= charactersAttackingAt.Count) { FindObjectOfType<PlayerController>().FinishedAttacking(this); }
     }
 
     public override void FinishedPerformingHealing()
     {
-        FindObjectOfType<PlayerController>().FinishedHealing();
+        FindObjectOfType<PlayerController>().FinishedHealing(this);
     }
 
     public override void FinishedPerformingShielding()
     {
-        FindObjectOfType<PlayerController>().FinishedHealing();
+        FindObjectOfType<PlayerController>().FinishedHealing(this);
     }
 
     //DOOR
-    public void OpenDoor()
+    public IEnumerator OpenDoor()
     {
         if (HexOn.GetComponent<doorConnectionHex>() != null)
         {
             HexOn.GetComponent<doorConnectionHex>().door.OpenHexes(HexOn.HexNode.RoomName[0]);
             ShowViewArea(HexOn, ViewDistance);
-            CheckToFight();
+            if (CheckToFight()) { playerController.GoIntoCombat(); }
+            else{ playerController.ShowCharacterView(); }
         }
+        yield return null;
     }
 
     //Damage
@@ -256,6 +336,20 @@ public class PlayerCharacter : Character
     {
         FindObjectOfType<PlayerController>().CharacterDied(this);
         base.Die();
+    }
+
+    public void ActionUsed()
+    {
+        AvailableActions--;
+        myCharacterSelectionButton.ActionUsed();
+        if (AvailableActions <= 0) { GetMyOutOfCombatHand().ActionsUsedForHand(); }
+    }
+
+    public void RefreshActions()
+    {
+        GetMyOutOfCombatHand().RefeshActions();
+        myCharacterSelectionButton.ActionsAvailable();
+        AvailableActions = 2;
     }
 
 }

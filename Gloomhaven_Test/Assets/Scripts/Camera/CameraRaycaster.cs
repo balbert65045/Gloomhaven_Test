@@ -60,20 +60,40 @@ public class CameraRaycaster : MonoBehaviour {
         return null;
     }
 
-    // Update is called once per frame
-    void Update () {
+    bool ObjectInCharacterRange(GameObject Object)
+    {
+        return playerController.SelectPlayerCharacter.HexInMoveRange(Object.GetComponent<Hex>(), playerController.SelectPlayerCharacter.CurrentMoveDistance); 
+    }
 
-        cursorPoint = Input.mousePosition;
-        transform.position = cursorPoint;
+    void CombatRaycast()
+    {
+        Transform HexFound = HexRaycast();
+        if (HexFound != null && HexFound.GetComponent<Hex>())
+        {
+            notifyCursorOverHexObservers(HexFound.GetComponent<Hex>());
+        }
+        cursorImage.sprite = Pointer;
+    }
 
+    void OutOfCombatRaycast()
+    {
+        if (playerController.SelectPlayerCharacter.OutOfActions()) {
+            cursorImage.sprite = Pointer;
+            return;
+        }
         Transform ActionHit = null;
-        if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat) { ActionHit = WallRaycast(); }
+        ActionHit = WallRaycast();
         if (ActionHit != null)
         {
             if (ActionHit.GetComponent<DoorObject>() != null && !ActionHit.GetComponent<DoorObject>().door.isOpen)
             {
                 if (InteractableObjectOver != ActionHit.gameObject)
                 {
+                    if (!ObjectInCharacterRange(ActionHit.GetComponent<DoorObject>().door.gameObject))
+                    {
+                        cursorImage.sprite = Pointer;
+                        return;
+                    }
                     cursorImage.sprite = DoorSprite;
                     hexVisualizer.ShowDoorPath(ActionHit.GetComponent<DoorObject>().door);
                     InteractableObjectOver = ActionHit.gameObject;
@@ -82,13 +102,20 @@ public class CameraRaycaster : MonoBehaviour {
             }
         }
 
-        if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat){ ActionHit = InteractableRaycast(); }
+        ActionHit = InteractableRaycast();
         if (ActionHit != null)
         {
             if (ActionHit.GetComponent<CardChest>() && !ActionHit.GetComponent<CardChest>().isOpen)
             {
                 if (InteractableObjectOver != ActionHit.gameObject)
                 {
+                    List<Node> AdjacentNodes = FindObjectOfType<HexMapController>().GetNodesAdjacent(ActionHit.GetComponent<Entity>().HexOn.HexNode);
+                    Node ClosestNode = hexVisualizer.GetClosestPathToAdjacentHexes(playerController.SelectPlayerCharacter, ActionHit.GetComponent<Entity>().HexOn);
+                    if (!ObjectInCharacterRange(ClosestNode.gameObject) && !AdjacentNodes.Contains(playerController.SelectPlayerCharacter.HexOn.HexNode))
+                    {
+                        cursorImage.sprite = Pointer;
+                        return;
+                    }
                     cursorImage.sprite = ChestSprite;
                     hexVisualizer.ShowChestPath(ActionHit.GetComponent<Entity>().HexOn);
                     InteractableObjectOver = ActionHit.gameObject;
@@ -97,14 +124,35 @@ public class CameraRaycaster : MonoBehaviour {
             }
         }
         InteractableObjectOver = null;
+
         Transform HexHit = HexRaycast();
-        if (HexHit != null && HexHit.GetComponent<Hex>())
+        if (HexHit != null && HexHit.GetComponent<Hex>() != null)
         {
+            notifyCursorOverHexObservers(HexHit.GetComponent<Hex>());
+            if (!ObjectInCharacterRange(HexHit.gameObject))
+            {
+                cursorImage.sprite = Pointer;
+                return;
+            }
             if (HexHit.GetComponent<Door>() != null && !HexHit.GetComponent<Door>().isOpen) { cursorImage.sprite = DoorSprite; }
             else { cursorImage.sprite = Pointer; }
-            notifyCursorOverHexObservers(HexHit.GetComponent<Hex>());
             return;
         }
         cursorImage.sprite = Pointer;
+    }
+
+    // Update is called once per frame
+    void Update () {
+
+        cursorPoint = Input.mousePosition;
+        transform.position = cursorPoint;
+
+        if (playerController.GetPlayerState() == PlayerController.PlayerState.InCombat) {
+            CombatRaycast();
+        }
+
+        else if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat) {
+            OutOfCombatRaycast();
+        }
     }
 }

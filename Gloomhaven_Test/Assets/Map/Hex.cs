@@ -41,11 +41,8 @@ public class Hex : MonoBehaviour {
         }
     }
 
-    public void TakeAwayThreatArea()
-    {
-        InEnemySeight = false;
-    }
-
+    public void TakeAwayThreatArea() { InEnemySeight = false; }
+    
     public void CharacterMovingToHex() { MovedTo = true; }
     public void CharacterArrivedAtHex() { MovedTo = false; }
 
@@ -101,6 +98,7 @@ public class Hex : MonoBehaviour {
         if (EntityHolding.GetComponent<EnemyCharacter>() != null)
         {
             FindObjectOfType<EnemyController>().LinkSpawnedCharacter(EntityHolding.GetComponent<EnemyCharacter>());
+            EntityHolding.GetComponent<EnemyCharacter>().InCombat = (FindObjectOfType<PlayerController>().myState == PlayerController.PlayerState.InCombat);
         }
         return objectMade;
     }
@@ -115,6 +113,8 @@ public class Hex : MonoBehaviour {
             {
                 Transform interactionParent = FindObjectOfType<InteractionObjects>().gameObject.transform;
                 EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot), interactionParent).GetComponent<Entity>();
+                OGMaterial = EntityHolding.GetComponent<CardChest>().HexOnMaterial;
+                GetComponent<MeshRenderer>().material = OGMaterial;
             }
             else if (EntityToSpawn.GetComponent<Obstacle>() != null)
             {
@@ -133,7 +133,8 @@ public class Hex : MonoBehaviour {
             }
             else
             {
-                EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot)).GetComponent<Entity>();
+                CharacterHolder CH = FindObjectOfType<CharacterHolder>();
+                EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot), CH.transform).GetComponent<Entity>();
             }
             EntityHolding.StartOnHex(this);
         }
@@ -171,12 +172,13 @@ public class Hex : MonoBehaviour {
 
     public void RemoveEntityFromHex()
     {
+        MovedTo = false;
         EntityHolding = null;
     }
 
     public void returnToPreviousColor()
     {
-        GetComponent<MeshRenderer>().material = previousMaterial;
+        GetComponent<MeshRenderer>().material = OGMaterial;
     }
 
     public void UnHighlight()

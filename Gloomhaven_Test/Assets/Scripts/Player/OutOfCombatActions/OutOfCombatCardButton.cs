@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class OutOfCombatCardButton : CardButton, IPointerEnterHandler, IPointerExitHandler{
+public class OutOfCombatCardButton : CardButton, IPointerEnterHandler{
 
     public void UnHighlight()
     {
@@ -14,8 +14,4 @@ public class OutOfCombatCardButton : CardButton, IPointerEnterHandler, IPointerE
         }
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

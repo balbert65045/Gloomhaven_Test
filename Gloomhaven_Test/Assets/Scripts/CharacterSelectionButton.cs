@@ -10,10 +10,16 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
     private PlayerController playerController;
     private Color OGcolor;
 
+    public Sprite ActionAvailable;
+    public Sprite ActionUnavailable;
+
+    public Image Action1;
+    public Image Action2;
+
     public Sprite NoCardSprite;
     public Sprite HasCardSprite;
-
     public Image CardIndicatorImage;
+
     public bool CharacterDead = false;
     public void SetCharacterDeadValue(bool value) { CharacterDead = value;  }
 
@@ -37,10 +43,13 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Dragging = true;
-        transform.parent.SetAsLastSibling();
-        transform.GetComponentInParent<FollowRow>().transform.SetAsLastSibling();
-        CSBS.SetDraggingCharacterSelectionButton(this);
+        if (playerController.myState == PlayerController.PlayerState.OutofCombat)
+        {
+            Dragging = true;
+            transform.parent.SetAsLastSibling();
+            transform.GetComponentInParent<FollowRow>().transform.SetAsLastSibling();
+            CSBS.SetDraggingCharacterSelectionButton(this);
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -145,6 +154,30 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
     public void ReturnToColor()
     {
         GetComponent<Image>().color = OGcolor;
+    }
+
+    public void ShowActions()
+    {
+        Action1.gameObject.SetActive(true);
+        Action2.gameObject.SetActive(true);
+    }
+
+    public void HideActions()
+    {
+        Action1.gameObject.SetActive(false);
+        Action2.gameObject.SetActive(false);
+    }
+
+    public void ActionsAvailable()
+    {
+        Action1.sprite = ActionAvailable;
+        Action2.sprite = ActionAvailable;
+    }
+
+    public void ActionUsed()
+    {
+        if (Action1.sprite != ActionUnavailable) { Action1.sprite = ActionUnavailable; }
+        else { Action2.sprite = ActionUnavailable; }
     }
 
     public void showCardIndicators()

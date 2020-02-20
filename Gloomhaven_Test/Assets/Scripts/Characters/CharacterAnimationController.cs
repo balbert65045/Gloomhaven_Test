@@ -12,8 +12,8 @@ public class CharacterAnimationController : MonoBehaviour {
     List<Node> nodesMovingOn;
 
     Character myCharacter;
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
         myAnimator = GetComponent<Animator>();
         myRigidbody = GetComponent<Rigidbody>();
         myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
@@ -60,10 +60,16 @@ public class CharacterAnimationController : MonoBehaviour {
         }
     }
 
+    public void Stop()
+    {
+        nodesMovingOn.Clear();
+    }
+
     public void MoveTowards(Hex hex, List<Node> nextNodes)
     {
-        transform.LookAt(new Vector3(hex.transform.position.x, transform.position.y, hex.transform.position.z));
         myCharacter.SetMoving(true);
+        if (hex.InEnemySeight) { myCharacter.LastHexMovingTo(); }
+        transform.LookAt(new Vector3(hex.transform.position.x, transform.position.y, hex.transform.position.z));
         myAnimator.SetBool("moving", true);
         hexMovingTo = hex;
         nodesMovingOn = nextNodes;
@@ -76,7 +82,7 @@ public class CharacterAnimationController : MonoBehaviour {
         {
             movePosition = new Vector3(hexMovingTo.transform.position.x, transform.position.y, hexMovingTo.transform.position.z);
             float difference = (transform.position - movePosition).magnitude;
-            if (difference <= .2f)
+            if (difference <= .3f)
             {
                 MoveToNextPosition();
             }
@@ -88,6 +94,7 @@ public class CharacterAnimationController : MonoBehaviour {
         myCharacter.LinktoHex(hexMovingTo);
         if (myCharacter.GetStealthed()) { myCharacter.ReduceStealthDuration(); }
         myCharacter.ShowViewArea(hexMovingTo, GetComponent<Character>().ViewDistance);
+        FindObjectOfType<PlayerController>().ShowCharacterView();
 
         bool fight = false;
         if (!myCharacter.GetStealthed())
@@ -100,7 +107,7 @@ public class CharacterAnimationController : MonoBehaviour {
             myCharacter.SetMoving(false);
             myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
             myAnimator.SetBool("moving", false);
-            myCharacter.FinishedMoving(hexMovingTo);
+            myCharacter.FinishedMoving(hexMovingTo, fight);
         }
         else
         {

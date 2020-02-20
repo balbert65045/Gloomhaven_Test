@@ -13,6 +13,11 @@ public enum Direction
     NorthWest = 6,
 }
 
+public class HexPoint
+{
+    public Vector3 Location;
+}
+
 public class HexMapController : MonoBehaviour {
 
     // Use this for initialization
@@ -37,6 +42,141 @@ public class HexMapController : MonoBehaviour {
         hexBuilder = FindObjectOfType<HexMapBuilder>();
         AllHexes = GetComponentsInChildren<Hex>();
         CreateTable();
+    }
+
+    public HexPoint GetPoint(Node node, int directionIndex)
+    {
+        HexPoint HPoint = new HexPoint();
+        Vector3 point = new Vector3();
+        switch (directionIndex)
+        {
+            case 0:
+                point = (node.transform.position + new Vector3(0.87606f, 0, -0.4955f));
+                break;
+            case 1:
+                point = (node.transform.position + new Vector3(0, 0, -0.991f));
+                break;
+            case 2:
+                point = (node.transform.position + new Vector3(-0.87606f, 0, -0.4955f));
+                break;
+            case 3:
+                point = (node.transform.position + new Vector3(-0.87606f, 0, 0.4955f));
+                break;
+            case 4:
+                point = (node.transform.position + new Vector3(0, 0, 0.991f));
+                break;
+            case 5:
+                point = (node.transform.position + new Vector3(0.87606f, 0, 0.4955f));
+                break;
+        }
+        HPoint.Location = point;
+        return HPoint;
+    }
+
+    public List<Vector3> GetHexesSurrounding(Node StartingNode, List<Node> nodesInArea)
+    {
+        if (nodesInArea.Count == 1 && nodesInArea[0] == StartingNode)
+        {
+            List<Vector3> Points = new List<Vector3>();
+            for (int i = 0; i < 6; i++)
+            {
+                Points.Add(GetPoint(StartingNode, i).Location);
+            }
+            return Points;
+        }
+
+        Node FirstOuterNode = null;
+        int currentDirectionIndex = 0;
+        nodesInArea.Add(StartingNode);
+        for (int i = 0; i < 6; i++)
+        {
+            Node node = FindFirstOuterNode(StartingNode, nodesInArea, i);
+            if (node != StartingNode)
+            {
+                FirstOuterNode = node;
+                currentDirectionIndex = (1 + i) % 6;
+                break;
+            }
+        }
+        List<Node> OuterNodes = new List<Node>();
+        List<Vector3> OuterPoints = new List<Vector3>();
+        Node CurrentNode = FirstOuterNode;
+
+        //first node
+        for (int i = 0; i < 6; i++)
+        {
+            int index = 0;
+            index = (currentDirectionIndex - 1 + i) % 6;
+            int direction = index < 0 ? index + 6 : index;
+            Node node = GetNodeInDirection(GetDirections()[direction], CurrentNode);
+            if (nodesInArea.Contains(node))
+            {
+                currentDirectionIndex = direction;
+                OuterNodes.Add(CurrentNode);
+                CurrentNode = node;
+                break;
+            }
+        }
+
+        HexPoint currentPoint = null;
+        HexPoint firstPoint = null;
+
+        int timeoutTimer = 0;
+        while (firstPoint == null || currentPoint == null || (firstPoint.Location - currentPoint.Location).magnitude > .1f)
+        {
+            if (timeoutTimer > 1000) {
+                Debug.Log("TimedOut");
+                break;
+            }
+            timeoutTimer++;
+            for (int i = 0; i < 6; i++)
+            {
+                int index = 0;
+                index = (currentDirectionIndex + 4 + i) % 6;
+                int direction = index < 0 ? index + 6 : index;
+                Node node = GetNodeInDirection(GetDirections()[direction], CurrentNode);
+                if (nodesInArea.Contains(node))
+                {
+                    currentDirectionIndex = direction;
+                    OuterNodes.Add(CurrentNode);
+                    CurrentNode = node;
+                    break;
+                }
+                else
+                {
+                    if (firstPoint == null)
+                    {
+                        firstPoint = GetPoint(CurrentNode, direction);
+                        OuterPoints.Add(firstPoint.Location);
+                    }
+                    else
+                    {
+                        currentPoint = GetPoint(CurrentNode, direction);
+                        if (currentPoint.Location == firstPoint.Location) { return OuterPoints; }
+                        OuterPoints.Add(currentPoint.Location);
+                    }
+                }
+            }
+        }
+        return OuterPoints;
+    }
+
+    Node FindFirstOuterNode(Node StartingNode, List<Node> nodesInArea, int direction)
+    {
+        Node OuterNode = null;
+        Node CurrentNode = StartingNode;
+        while (OuterNode == null)
+        {
+            Node NextNode = GetNodeInDirection(GetDirections()[direction], CurrentNode);
+            if (NextNode == null || !nodesInArea.Contains(NextNode)) {
+                if (!nodesInArea.Contains(GetNodeInDirection(GetDirections()[direction], NextNode)))
+                {
+                    OuterNode = CurrentNode;
+                }        
+            }
+            CurrentNode = NextNode;
+        }
+        return OuterNode;
     }
 
     public List<Hex> GetAllHexesInThisRoom(string Room, Node StartNode)
@@ -118,7 +258,8 @@ public class HexMapController : MonoBehaviour {
         Node[] nodes = GetNeighbors(node);
         foreach (Node n in nodes)
         {
-            if (node.GetComponent<Door>() != null && !node.GetComponent<Door>().isOpen) { continue; }
+            if (n.edge || !n.Shown) { continue; }
+            if (n.GetComponent<Door>() != null && !n.GetComponent<Door>().isOpen) { continue; }
             if (n != null && n.isConnectedToRoom(node)) {
                 RealNodes.Add(n);
             }
@@ -130,21 +271,7 @@ public class HexMapController : MonoBehaviour {
     {
         List<Node> nodes =  GetRealNeighbors(hexMovingNear.GetComponent<Node>());
         if (nodes.Contains(character.HexOn.HexNode)) { return character.HexOn.HexNode; }
-        Node ClosestNode = null;
-        int closestPathDistance = 100;
-        foreach (Node node in nodes)
-        {
-            if (node == null) { continue; }
-            if (!node.isAvailable || node.edge) { continue; }
-            if (node.NodeHex.EntityHolding != null || node.NodeHex.MovedTo) { continue; }
-            int pathDistance = character.GetPath(node).Count;
-            if (pathDistance < closestPathDistance)
-            {
-                closestPathDistance = pathDistance;
-                ClosestNode = node;
-            }
-        }
-        return ClosestNode;
+        return FindObjectOfType<AStar>().DiskatasWithArea(character.HexOn.HexNode, nodes, character.myCT);
     }
 
     public Vector2[] GetDirections()
@@ -152,16 +279,16 @@ public class HexMapController : MonoBehaviour {
         return new Vector2[] {
             //East
             new Vector2(1, 0),
-            //NorthEast
-            new Vector2(1, -1),
-            //NorthWest
-            new Vector2(0, -1),
-            //West
-            new Vector2(-1, 0),
-            //SouthWest
-            new Vector2(-1, +1),
             //SouthEast
             new Vector2(0, +1),
+            //SouthWest
+            new Vector2(-1, +1),
+            //West
+            new Vector2(-1, 0),
+            //NorthWest
+            new Vector2(0, -1),
+             //NorthEast
+            new Vector2(1, -1),
         };
     }
 
@@ -232,13 +359,11 @@ public class HexMapController : MonoBehaviour {
     public List<Node> GetNodesAdjacent(Node node)
     {
         List<Node> NeighborsNodes = GetRealNeighbors(node);
-
         List<Node> AdjacentNodesAvailable = new List<Node>();
         foreach(Node aNode in NeighborsNodes)
         {
             if (node.isConnectedToRoom(aNode)) { AdjacentNodesAvailable.Add(aNode); }
         }
-
         return AdjacentNodesAvailable;
     }
 
@@ -251,21 +376,25 @@ public class HexMapController : MonoBehaviour {
                 Vector2 direction = FindDirection(OriginNode, StartNode);
                 Node nodeInCleave = GetNextCounterClockwizeNode(OriginNode, StartNode, direction);
                 NodesinAOE.Add(StartNode);
+                if (!IsAPossibleConnectedNode(nodeInCleave, StartNode)) { break; }
                 NodesinAOE.Add(nodeInCleave);
                 break;
             case AOEType.GreatCleave:
                 Vector2 CleaveDirection = FindDirection(OriginNode, StartNode);
                 Node node1InCleave = GetNextCounterClockwizeNode(OriginNode, StartNode, CleaveDirection);
+                NodesinAOE.Add(StartNode);
+                if (!IsAPossibleConnectedNode(node1InCleave, StartNode)) { break; }
+                NodesinAOE.Add(node1InCleave);
                 Vector2 Cleave2Direction = FindDirection(OriginNode, node1InCleave);
                 Node node2InCleave = GetNextCounterClockwizeNode(OriginNode, node1InCleave, Cleave2Direction);
-                NodesinAOE.Add(StartNode);
-                NodesinAOE.Add(node1InCleave);
+                if (!IsAPossibleConnectedNode(node2InCleave, StartNode)) { break; }
                 NodesinAOE.Add(node2InCleave);
                 break;
             case AOEType.Line:
                 Vector2 lineDirection = FindDirection(OriginNode, StartNode);
                 Node node = GetNextNodeInDirection(StartNode, lineDirection);
                 NodesinAOE.Add(StartNode);
+                if (!IsAPossibleConnectedNode(node, StartNode)) { break; }
                 NodesinAOE.Add(node);
                 break;
             case AOEType.SingleTarget:
@@ -273,15 +402,32 @@ public class HexMapController : MonoBehaviour {
                 break;
             case AOEType.Surounding:
                 List<Node> nodes = GetNodesSurrounding(OriginNode);
-                foreach(Node myNode in nodes) { NodesinAOE.Add(myNode); }
+                foreach(Node myNode in nodes) {
+                    if (!IsAPossibleConnectedNode(myNode, StartNode)) { continue; }
+                    NodesinAOE.Add(myNode);
+                }
                 break;
             case AOEType.Circle:
-
+                List<Node> CircleNodes = GetNodesSurrounding(OriginNode);
+                foreach (Node myNode in CircleNodes) {
+                    if (!IsAPossibleConnectedNode(myNode, StartNode)) { continue; }
+                    NodesinAOE.Add(myNode);
+                }
+                NodesinAOE.Add(OriginNode);
+                break;
             case AOEType.Triangle:
 
                 break;
         }
         return NodesinAOE;
+    }
+
+    bool IsAPossibleConnectedNode(Node node1, Node node2)
+    {
+        if (!node1.isConnectedToRoom(node2)) { return false; }
+        if (node1.edge) { return false; }
+        if (!node1.Shown) { return false; }
+        return true;
     }
 
     public List<Node> GetNodesInLOS(Node StartNode, int distance)
@@ -298,7 +444,7 @@ public class HexMapController : MonoBehaviour {
             }
             else
             {
-               Debug.Log("Hit Wall");
+               //Debug.Log("Hit Wall");
             }
         }
         return NodesInLOS;

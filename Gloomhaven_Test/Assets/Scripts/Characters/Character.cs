@@ -31,6 +31,9 @@ public class Character : Entity {
     public enum CharacterType { Good, Bad }
     public CharacterType myCT;
 
+    public int MaxMoveDistance = 15;
+    public int CurrentMoveDistance = 0;
+
     public int health = 10;
     public int ViewDistance = 4;
 
@@ -44,8 +47,8 @@ public class Character : Entity {
     protected HealthBar myHealthBar;
     protected int maxHealth;
 
-    protected List<Node> NodesInWalkingDistance = new List<Node>();
-    protected List<Node> NodesInActionRange = new List<Node>();
+    public List<Node> NodesInWalkingDistance = new List<Node>();
+    public List<Node> NodesInActionRange = new List<Node>();
 
     protected HexMapController HexMap;
     protected AStar aStar;
@@ -78,7 +81,8 @@ public class Character : Entity {
     private Character characterShieldingMe;
     private Character characterThatHealingMe;
     private Character characterThatAttackedMe;
-    private List<Character> charactersAttackingAt;
+    protected List<Character> charactersAttackingAt;
+    protected int CharactersFinishedTakingDamage = 0;
 
     private int TotalHealthLosing;
     private bool GoingToDie = false;
@@ -103,14 +107,21 @@ public class Character : Entity {
     {
         List<Node> nodes = HexMap.GetNodesInLOS(HexOn.HexNode, Range);
         NodesInActionRange.Clear();
-        foreach(Node node in nodes)
+        foreach (Node node in nodes)
         {
             if (!node.Shown) { continue; }
             if (node.edge) { continue; }
-            if (action == ActionType.Attack && node == HexOn.HexNode) { continue; }
             NodesInActionRange.Add(node);
-            hexVisualizer.HighlightActionRangeHex(node.NodeHex, action);
         }
+        if (action == ActionType.Attack && NodesInActionRange.Contains(HexOn.HexNode)) { NodesInActionRange.Remove(HexOn.HexNode); }
+
+        //Have to do this because of silly variable being added
+        List<Node> nodesToSurround = new List<Node>();
+        foreach(Node node in NodesInActionRange) { nodesToSurround.Add(node); }
+        //
+
+        List<Vector3> points = HexMap.GetHexesSurrounding(HexOn.HexNode, nodesToSurround);
+        FindObjectOfType<PlayerController>().CreateArea(points, action);
     }
 
     public bool HexInActionRange(Hex hex) { return NodesInActionRange.Contains(hex.HexNode); }
@@ -125,6 +136,12 @@ public class Character : Entity {
         {
             character.ApplyBuff(value, duration, buffType);
         }
+        StartCoroutine("BuffingPlaceHolder");
+    }
+
+    IEnumerator BuffingPlaceHolder()
+    {
+        yield return new WaitForSeconds(1);
         FinishedPerformingBuff();
     }
 
@@ -204,7 +221,7 @@ public class Character : Entity {
         Agility = baseAgility;
         Dexterity = baseDexterity;
         Armor = baseArmor;
-
+        CurrentMoveDistance = MaxMoveDistance;
     }
 
     private void Start()
@@ -219,15 +236,17 @@ public class Character : Entity {
     }
 
     // CALLBACKS
+    public virtual void LastHexMovingTo() { }
+
     public virtual void ShowViewArea(Hex hex, int distance) { }
 
     public virtual bool CheckToFight() { return false; }
 
     public virtual bool SavingThrow() { return false; }
 
-    public virtual void FinishedMoving(Hex hex) { }
+    public virtual void FinishedMoving(Hex hex, bool fighting = false) { }
 
-    public virtual void FinishedAttacking() { }
+    public virtual void FinishedAttacking() { CharactersFinishedTakingDamage++; }
 
     public void FinishedHealing() { characterThatHealingMe.FinishedPerformingHealing(); }
 
@@ -331,7 +350,7 @@ public class Character : Entity {
     {
         characterThatAttackedMe.FinishedAttacking();
         HexOn.RemoveEntityFromHex();
-        characterThatAttackedMe.ShowNewMoveArea();
+        //characterThatAttackedMe.ShowNewMoveArea();
         Destroy(this.gameObject);
     }
 
@@ -358,7 +377,7 @@ public class Character : Entity {
 
     public void HitOpponent()
     {
-        foreach(Character character in charactersAttackingAt)
+        foreach (Character character in charactersAttackingAt)
         {
             character.GetHit();
         }
@@ -376,6 +395,7 @@ public class Character : Entity {
 
     public void Attack(int damage, List<Character> characters)
     {
+        CharactersFinishedTakingDamage = 0;
         charactersAttackingAt = characters;
         transform.LookAt(characters[0].transform);
         foreach (Character character in characters)
@@ -422,20 +442,16 @@ public class Character : Entity {
         return openNodes;
     }
 
-    public void ShowMoveDistance(int moveRange)
+    public virtual void ShowMoveDistance(int moveRange)
     {
         CurrentMoveRange = moveRange;
-        List<Node> nodesInDistance = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, CurrentMoveRange);
+        List<Node> nodesInDistance = aStar.Diskatas(HexOn.HexNode, moveRange, myCT);
         NodesInWalkingDistance.Clear();
         foreach (Node node in nodesInDistance)
         {
-            if (node.NodeHex.EntityHolding != null || !node.Shown || node.edge) { continue; }
-            if (!aStar.PathAvailable(HexOn.HexNode, node, myCT)){ continue; }
-            if (aStar.FindPath(HexOn.HexNode, node, myCT).Count <= CurrentMoveRange)
-            {
-                NodesInWalkingDistance.Add(node);
-                hexVisualizer.HighlightMoveRangeHex(node.NodeHex);
-            }
+            if (!node.Shown || node.edge) { continue; }
+            if (node.NodeHex.EntityHolding != null) { continue; }
+            NodesInWalkingDistance.Add(node);
         }
     }
 
@@ -466,6 +482,7 @@ public class Character : Entity {
 
     public virtual void MoveOnPath(Hex hex)
     {
+        NodesInWalkingDistance.Clear();
         HexMovingTo = hex;
         HexMovingTo.CharacterMovingToHex();
         RemoveLinkFromHex();
@@ -477,20 +494,8 @@ public class Character : Entity {
         GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, nodes);
     }
 
-    public void Follow(Hex hex)
-    {
-        HexMovingTo = hex;
-        RemoveLinkFromHex();
-        List<Node> nodes = GetPath(hex.HexNode);
-        Node HexToMoveTo = nodes[0];
-        nodes.Remove(HexToMoveTo);
-        GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, nodes);
-        HexOn = hex;
-    }
-
     public virtual void MovingOnPath()
     {
         RemoveLinkFromHex();
     }
-
 }

@@ -6,9 +6,67 @@ public class EnemyController : MonoBehaviour {
     // Use this for initialization
     public EnemyGroup[] enemyGroups;
 
+    public GameObject EnemyMeshGeneratorPrefab;
+    public GameObject EnemyLinePrefab;
+
     void Start()
     {
         enemyGroups = GetComponentsInChildren<EnemyGroup>();
+    }
+
+    public void RemoveAllThreatAreas()
+    {
+        foreach (MeshGenerator meshgen in GetComponentsInChildren<MeshGenerator>())
+        {
+            Destroy(meshgen.gameObject);
+        }
+
+        foreach (EdgeLine line in GetComponentsInChildren<EdgeLine>())
+        {
+            Destroy(line.gameObject);
+        }
+    }
+
+    public void RemoveThreatArea(Character character)
+    {
+        foreach(MeshGenerator meshgen in GetComponentsInChildren<MeshGenerator>())
+        {
+            if (meshgen.characterLinkedTo == character)
+            {
+                Destroy(meshgen.gameObject);
+            }
+        }
+
+        foreach (EdgeLine line in GetComponentsInChildren<EdgeLine>())
+        {
+            if (line.characterLinkedTo == character)
+            {
+                Destroy(line.gameObject);
+            }
+        }
+    }
+
+    public void CreateThreatArea(Character character, List<Vector3> nodesInArea)
+    {
+        GameObject meshGen = Instantiate(EnemyMeshGeneratorPrefab, this.transform);
+        GameObject lineGen = Instantiate(EnemyLinePrefab, this.transform);
+        meshGen.GetComponent<MeshGenerator>().CreateMesh(nodesInArea);
+        meshGen.GetComponent<MeshGenerator>().characterLinkedTo = character;
+        lineGen.GetComponent<EdgeLine>().CreateLine(nodesInArea.ToArray());
+        lineGen.GetComponent<EdgeLine>().characterLinkedTo = character;
+    }
+
+    public bool SelectCharacter(string characterName)
+    {
+        foreach (EnemyGroup group in enemyGroups)
+        {
+            if (group.CharacterNameLinkedTo == characterName)
+            {
+                group.selectRandomCharacter();
+                return true;
+            }
+        }
+        return false;
     }
 
     public bool hasNoMoreCharacters()
@@ -100,9 +158,9 @@ public class EnemyController : MonoBehaviour {
             character.ShowViewAreaInShownHexes();
             if (character.PlayerInView())
             {
+                RemoveAllThreatAreas();
                 character.InCombat = true;
                 character.ShowHexesViewingAndAlertOthersToCombat();
-                FindObjectOfType<PlayerController>().GoIntoCombat();
                 return true;
             }
         }

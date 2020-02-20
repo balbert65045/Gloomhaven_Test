@@ -11,6 +11,8 @@ public class OutOfCombatHand : Hand {
     OutOfCombatCard myCard = null;
     OutOfCombatCardButton linkedButton = null;
 
+    bool AllActionsUsed = false;
+
     public void HideHand()
     {
         OutOfCombatCardButton[] outOfCombatCards = GetComponentsInChildren<OutOfCombatCardButton>();
@@ -43,6 +45,7 @@ public class OutOfCombatHand : Hand {
     public void ShowHand()
     {
         Hand.SetActive(true);
+        if (AllActionsUsed) { return; }
         OutOfCombatCardButton[] outOfCombatCards = GetComponentsInChildren<OutOfCombatCardButton>();
         foreach (OutOfCombatCardButton cardButton in outOfCombatCards)
         {
@@ -59,6 +62,22 @@ public class OutOfCombatHand : Hand {
             cardButton.GetComponent<Button>().interactable = false;
         }
         LongRestButton.interactable = false;
+    }
+
+    public void ActionsUsedForHand()
+    {
+        AllActionsUsed = true;
+        ShowHandTemp();
+    }
+
+    public void RefeshActions()
+    {
+        AllActionsUsed = false;
+        OutOfCombatCardButton[] outOfCombatCards = GetComponentsInChildren<OutOfCombatCardButton>();
+        foreach (OutOfCombatCardButton cardButton in outOfCombatCards)
+        {
+            if (!cardButton.Discarded && !cardButton.Lost) { cardButton.GetComponent<Button>().interactable = true; }
+        }
     }
 
     public OutOfCombatCard GetSelectecdCard()
@@ -81,11 +100,10 @@ public class OutOfCombatHand : Hand {
     {
         if (myCard != null)
         {
-            linkedButton.DiscardCard();
+            LoseCard(myCard);
             linkedButton.unShowCard();
             myCard = null;
             linkedButton = null;
-            allowLongRest();
         }
     }
 
@@ -117,23 +135,8 @@ public class OutOfCombatHand : Hand {
     public void LongRest()
     {
         LongRestButton.interactable = false;
-        OutOfCombatCardButton[] cardButtons = GetComponentsInChildren<OutOfCombatCardButton>();
-        List<OutOfCombatCardButton> discardedCards = new List<OutOfCombatCardButton>();
-        foreach (OutOfCombatCardButton cardButton in cardButtons)
-        {
-            if (cardButton.Discarded) { discardedCards.Add(cardButton); }
-        }
-        if (discardedCards.Count != 0)
-        {
-            int randomCardIndex = Random.Range(0, discardedCards.Count);
-            OutOfCombatCardButton cardToLose = discardedCards[randomCardIndex];
-            LoseCard(cardToLose.myCard);
-            //cardToLose.LoseCard();
-            discardedCards.Remove(cardToLose);
-            foreach (OutOfCombatCardButton cardButton in discardedCards)
-            {
-                cardButton.putBackInHand();
-            }
-        }
+        combatHand.Hand.SetActive(true);
+        combatHand.ShortRest();
+        combatHand.Hand.SetActive(false);
     }
 }

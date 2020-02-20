@@ -44,8 +44,36 @@ public class OutOfCombatActionController : MonoBehaviour {
         }
     }
 
-    public void FinishedMoving()
+    public void EndTurn()
     {
+        foreach(PlayerCharacter character in playerController.myCharacters)
+        {
+            character.RefreshActions();
+            character.DecreaseBuffsDuration();
+        }
+        playerController.SelectPlayerCharacter.Selected();
+    }
+
+    public void FinishedMoving(PlayerCharacter character)
+    {
+        if (NoOtherPlayerMoving()) { playerController.AllowEndTurn(); }
+        if (character != playerController.SelectPlayerCharacter) { return; }
+        playerController.SelectPlayerCharacter.Selected();   
+    }
+
+    bool NoOtherPlayerMoving()
+    {
+        foreach(PlayerCharacter character in playerController.myCharacters)
+        {
+            if (character.GetMoving()) { return false; }
+        }
+        return true;
+    }
+
+    public void FinishedAction(PlayerCharacter character)
+    {
+        if (character != playerController.SelectPlayerCharacter) { return; }
+        if (playerController.SelectPlayerCharacter.GetMoving()) { return; }
         playerController.SelectPlayerCharacter.Selected();
     }
 
@@ -110,26 +138,24 @@ public class OutOfCombatActionController : MonoBehaviour {
 
         myCamera.SetTarget(playerCharacter.transform);
 
-        hexVisualizer.HighlightSelectionHex(playerCharacter.HexOn);
-        hexVisualizer.ResetLastHex();
-
         playerCharacter.myDecks.SetActive(true);
         playerCharacter.GetMyCombatHand().HideHand();
         playerCharacter.GetMyOutOfCombatHand().ShowHand();
+        if (playerCharacter.GetMyCombatHand().DiscardedCards > 0) { playerCharacter.GetMyOutOfCombatHand().allowLongRest(); }
         playerCharacter.myCharacterSelectionButton.CharacterSelected();
+        playerCharacter.Selected();
     }
 
-    public void CheckToMoveOrInteractOutOfCombat(Character myCharacter)
+    public bool CheckToMoveOrInteractOutOfCombat(Character myCharacter)
     {
-        if (myCharacter.GetMoving()) { return; }
+        if (myCharacter.GetMoving()) { return false; }
         Transform WallHit = raycaster.WallRaycast();
         if (WallHit != null)
         {
             if (WallHit.GetComponent<DoorObject>() != null && !WallHit.GetComponent<DoorObject>().door.isOpen)
             {
                 MoveToDoor((PlayerCharacter)myCharacter, WallHit.GetComponent<DoorObject>().door);
-                UnHighlightHexes();
-                return;
+                return true;
             }
         }
 
@@ -139,8 +165,7 @@ public class OutOfCombatActionController : MonoBehaviour {
             if (InterActionHit.GetComponent<CardChest>() != null && !InterActionHit.GetComponent<CardChest>().isOpen)
             {
                 CheckToMoveNearChest((PlayerCharacter)myCharacter, InterActionHit.GetComponent<Entity>().HexOn);
-                UnHighlightHexes();
-                return;
+                return true;
             }
         }
 
@@ -148,28 +173,25 @@ public class OutOfCombatActionController : MonoBehaviour {
         if (HexHit != null && HexHit.GetComponent<Hex>())
         {
             Hex hexSelected = HexHit.GetComponent<Hex>();
-            if (hexSelected == null || !hexSelected.HexNode.Shown) { return; }
+            if (hexSelected == null || !hexSelected.HexNode.Shown) { return false; }
+            if (!myCharacter.HexInMoveRange(hexSelected, myCharacter.CurrentMoveDistance)) { return false; }
             if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().isOpen) {
                 if (((PlayerCharacter)myCharacter).CharacterLeading != null)
                 {
                     FindObjectOfType<CharacterSelectionButtons>().MoveCharacterOutOfFollow(((PlayerCharacter)myCharacter).myCharacterSelectionButton);
                 }
                 MoveToDoor((PlayerCharacter)myCharacter, hexSelected.GetComponent<Door>());
-                return;
+                return true;
             }
-            if (!hexSelected.EntityHolding && !hexSelected.MovedTo)
+            if (hexSelected.EntityHolding == null && !hexSelected.MovedTo)
             {
                 if (hexSelected.InEnemySeight) { MovingIntoCombat = true; }
-                if (((PlayerCharacter)myCharacter).CharacterLeading != null)
-                {
-                    FindObjectOfType<CharacterSelectionButtons>().MoveCharacterOutOfFollow(((PlayerCharacter)myCharacter).myCharacterSelectionButton);
-                }
+                if (((PlayerCharacter)myCharacter).CharacterLeading != null) { FindObjectOfType<CharacterSelectionButtons>().MoveCharacterOutOfFollow(((PlayerCharacter)myCharacter).myCharacterSelectionButton); }
                 myCharacter.MoveOnPath(hexSelected);
-                UnHighlightHexes();
-                return;
+                return true;
             }
         }
-        
+        return false;      
     }
 
     public void CheckToMoveNearChest(PlayerCharacter myCharacter, Hex chestHex)
@@ -177,10 +199,12 @@ public class OutOfCombatActionController : MonoBehaviour {
         Node closestNode = FindObjectOfType<HexMapController>().GetClosestNodeFromNeighbors(chestHex, myCharacter);
         if (closestNode == myCharacter.HexOn.HexNode) {
             LookingInChest = true;
+            myCharacter.ActionUsed();
             chestHex.EntityHolding.GetComponent<CardChest>().OpenChest(myCharacter);
         }
         else if (closestNode != null)
         {
+            if (!myCharacter.HexInMoveRange(closestNode.NodeHex, myCharacter.CurrentMoveDistance)) { return; }
             LookingInChest = true;
             myCharacter.SetChestToOpen(chestHex.EntityHolding.GetComponent<CardChest>());
             myCharacter.MoveOnPath(closestNode.NodeHex);
@@ -190,23 +214,7 @@ public class OutOfCombatActionController : MonoBehaviour {
     public void MoveToDoor(PlayerCharacter myCharacter, Door doorHex)
     {
         if (myCharacter.GetMoving()) { return; }
-        if (doorHex.GetComponent<doorConnectionHex>() != null)
-        {
-            CheckToMoveToDoor(myCharacter, doorHex);
-        }
-        else
-        {
-            CheckToMoveNearDoor(myCharacter, doorHex);
-        }
-    }
-
-    public void CheckToMoveToDoor(PlayerCharacter myCharacter, Door doorHex)
-    {
-        if (myCharacter.HexOn == doorHex.GetComponent<Hex>())
-        {
-            myCharacter.OpenDoor();
-            return;
-        }
+        if (!myCharacter.HexInMoveRange(doorHex.GetComponent<Hex>(), myCharacter.CurrentMoveDistance)) { return; }
         if (doorHex.GetComponent<Hex>().EntityHolding == null && !doorHex.GetComponent<Hex>().MovedTo)
         {
             myCharacter.SetDoorToOpen(doorHex);
@@ -214,15 +222,9 @@ public class OutOfCombatActionController : MonoBehaviour {
         }
     }
 
-    public void CheckToMoveNearDoor(PlayerCharacter myCharacter, Door doorHex)
+    public Action GetMyCurrentAction()
     {
-        Node closestNode= FindObjectOfType<HexMapController>().GetClosestNodeFromNeighbors(doorHex.GetComponent<Hex>(), myCharacter);
-        if (closestNode == myCharacter.HexOn.HexNode) { myCharacter.OpenDoor(); }
-        else if (closestNode != null)
-        {
-            myCharacter.SetDoorToOpen(doorHex);
-            myCharacter.MoveOnPath(closestNode.NodeHex);
-        }
+        return cardUsing.cardAbility.Actions[0];
     }
 
     public void UseAction(PlayerCharacter character)
@@ -230,7 +232,13 @@ public class OutOfCombatActionController : MonoBehaviour {
         if (LookingInChest) { return; }
         if (cardUsing == null)
         {
-            CheckToMoveOrInteractOutOfCombat(character);
+            if (CheckToMoveOrInteractOutOfCombat(character))
+            {
+                UnHighlightHexes();
+                playerController.RemoveArea();
+                playerController.DisableEndTurn();
+                playerController.DisableExit();
+            }
         }
         else
         {
@@ -241,13 +249,14 @@ public class OutOfCombatActionController : MonoBehaviour {
     public void ShowOutOfCombatAbility(OutOfCombatCard card)
     {
         if (cardUsing != card) {
+            UnHighlightHexes();
             cardUsing = card;
             PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
             myCharacter.ShowAction(cardUsing.cardAbility.Actions[0].Range, cardUsing.cardAbility.Actions[0].thisActionType);
         }
         else {
             cardUsing = null;
-            UnHighlightHexes();
+            playerController.SelectPlayerCharacter.Selected();
         }
     }
 
@@ -297,13 +306,16 @@ public class OutOfCombatActionController : MonoBehaviour {
 
         if (success)
         {
+            if (cardUsing.cardAbility.LostAbility) { cardUsing.LostAbilityUsed = true; }
             character.GetMyOutOfCombatHand().DiscardSelectedCard();
             cardUsing = null;
+            character.ActionUsed();
         }
     }
 
     void PerformAction(Action action, List<Character> characters)
     {
+        playerController.RemoveArea();
         switch (action.thisActionType)
         {
             case ActionType.Attack:

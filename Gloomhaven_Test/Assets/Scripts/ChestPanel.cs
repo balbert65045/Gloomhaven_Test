@@ -22,6 +22,7 @@ public class ChestPanel : MonoBehaviour {
     {
         chestOpened = chest;
         CharacterOpeningChest = Character;
+        if (Character.OutOfActions()) { Character.GetMyOutOfCombatHand().RefeshActions(); }
         cardFound = cardPrefab;
         Panel.SetActive(true);
         GameObject card = Instantiate(cardPrefab, CardPosition.transform);
@@ -78,6 +79,9 @@ public class ChestPanel : MonoBehaviour {
     void DoneOpeningChest()
     {
         Panel.SetActive(false);
+        if (CharacterOpeningChest.OutOfActions()) { CharacterOpeningChest.GetMyOutOfCombatHand().ActionsUsedForHand(); }
+        CharacterOpeningChest.Selected();
+        FindObjectOfType<PlayerController>().AllowEndTurn();
         FindObjectOfType<PlayerController>().ReturnToNormal();
     }
 

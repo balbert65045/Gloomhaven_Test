@@ -8,6 +8,11 @@ public class CombatManager : MonoBehaviour {
     private PlayerController playerController;
     private InitiativeBoard initBoard;
 
+    public void SelectCharacter(string characterName)
+    {
+        if (!enemyController.SelectCharacter(characterName)) { playerController.SelectCharacterByName(characterName); }
+    }
+
     public void PlayerDonePickingCombatCards()
     {
         EnemyActionCard[] enemyActions = enemyController.selectEnemyActions();

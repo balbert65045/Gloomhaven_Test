@@ -11,7 +11,7 @@ public enum CardType
 public class CardChest : MonoBehaviour {
 
     public CardType myChestType;
-
+    public Material HexOnMaterial;
     public bool isOpen = false;
 
     public void OpenChest(PlayerCharacter character)

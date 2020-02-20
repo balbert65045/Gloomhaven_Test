@@ -57,6 +57,15 @@ public class CharacterSelectionButtonManager : MonoBehaviour {
         {
             if (button.CharacterDead) { continue; }
             button.showCardIndicators();
+            button.HideActions();
+        }
+    }
+
+    public void ShowActions()
+    {
+        foreach (CharacterSelectionButton button in characterButtons)
+        {
+            button.ShowActions();
         }
     }
 

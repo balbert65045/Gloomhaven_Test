@@ -21,7 +21,7 @@ public class CombatPlayerCardButton : CardButton{
         FindObjectOfType<CombatPlayerHand>().ShowPotential((CombatPlayerCard)myCard);
     }
 
-    public override void OnPointerExit(PointerEventData eventData)
+    public override void PointerExited()
     {
         CombatPlayerHand hand = FindObjectOfType<CombatPlayerHand>();
         if (hand.getSelectedCard() == null)
@@ -33,6 +33,7 @@ public class CombatPlayerCardButton : CardButton{
             hand.HidePotential();
             hand.ShowPotential(hand.getSelectedCard());
         }
+
         if (GetComponentInParent<CombatPlayerHand>().getSelectedCard() != myCard)
         {
             unShowCard();
@@ -63,9 +64,5 @@ public class CombatPlayerCardButton : CardButton{
         base.Start();
         InitText.text = ((CombatPlayerCard)myCard).Initiative.ToString();
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 }

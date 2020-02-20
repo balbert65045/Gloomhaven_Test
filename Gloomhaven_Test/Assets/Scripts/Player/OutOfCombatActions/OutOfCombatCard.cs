@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class OutOfCombatCard : Card {
 
+    public bool LostAbilityUsed = false;
     public CardAbility cardAbility;
 
 	// Use this for initialization

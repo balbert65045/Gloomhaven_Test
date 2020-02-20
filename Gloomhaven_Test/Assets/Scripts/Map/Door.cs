@@ -175,6 +175,10 @@ public class Door : MonoBehaviour {
                     hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(false);
                 }
             }
+            if (hex.GetComponent<ExitHex>() != null)
+            {
+                hex.GetComponent<ExitHex>().HideExit();
+            }
             if (hex.GetComponent<HexAdjuster>().StillShowingRoom()) { continue; }
             else
             {
@@ -199,6 +203,10 @@ public class Door : MonoBehaviour {
             if (hex.GetComponent<Door>() != null && hex.GetComponent<Door>().door != null)
             {
                 hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true);
+            }
+            if (hex.GetComponent<ExitHex>() != null)
+            {
+                hex.GetComponent<ExitHex>().ShowExit();
             }
             if (hex.GetComponent<HexAdjuster>().IsApartOfBothRooms(GetComponent<Node>().RoomName)) { continue; }
             else

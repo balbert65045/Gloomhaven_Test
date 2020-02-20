@@ -186,7 +186,7 @@ public class HexVisualizer : MonoBehaviour {
         Node ClosestNode = GetClosestPathToAdjacentHexes(myCharacter, ChestHex);
         if (ClosestNode != null)
         {
-            ClearLastChangedHexes();
+            ReturnMoveHexes(myCharacter);
             HighlightMovePath(ClosestNode.NodeHex);
         }
     }
@@ -197,12 +197,9 @@ public class HexVisualizer : MonoBehaviour {
         if (outOfCombatcontroller.LookingInChest || outOfCombatcontroller.cardUsing != null) { return; }
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCharacter == null || myCharacter.GetMoving()) { return; }
-        if (myCharacter.HexOn == doorHex.GetComponent<Hex>())
-        {
-            ClearLastChangedHexes();
-            return;
-        }
-        ClearLastChangedHexes();
+        if (!myCharacter.HexInMoveRange(doorHex.GetComponent<Hex>(), myCharacter.CurrentMoveDistance)) { return; }
+        ReturnMoveHexes(myCharacter);
+        if (myCharacter.HexOn == doorHex.GetComponent<Hex>()) { return; }
         if (doorHex.GetComponent<doorConnectionHex>() != null)
         {
             if (doorHex.GetComponent<Hex>().EntityHolding == null && !doorHex.GetComponent<Hex>().MovedTo) { HighlightMovePath(doorHex.GetComponent<Hex>()); }
@@ -273,14 +270,7 @@ public class HexVisualizer : MonoBehaviour {
             {
                 foreach (Hex lastHex in LastHexesChanged)
                 {
-                    if (myCharacter.HexInActionRange(lastHex))
-                    {
-                        HighlightActionRangeHex(lastHex, type);
-                    }
-                    else
-                    {
-                        lastHex.UnHighlight();
-                    }
+                    lastHex.UnHighlight();
                 }
                 LastHexesChanged.Clear();
             }
@@ -292,14 +282,7 @@ public class HexVisualizer : MonoBehaviour {
             {
                 foreach (Hex lastHex in LastHexesChanged)
                 {
-                    if (myCharacter.HexInActionRange(lastHex))
-                    {
-                        HighlightActionRangeHex(lastHex, type);
-                    }
-                    else
-                    {
-                        lastHex.UnHighlight();
-                    }
+                    lastHex.UnHighlight();
                 }
                 LastHexesChanged.Clear();
             }
@@ -309,7 +292,7 @@ public class HexVisualizer : MonoBehaviour {
     public void HighlightActionArea(Hex hex, ActionType type)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(combatcontroller.GetMyCurrectAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
+        List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(playerController.GetCurrentAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
         foreach (Node node in nodesInAOE)
         {
             if (node == null) { break; }
@@ -320,9 +303,21 @@ public class HexVisualizer : MonoBehaviour {
 
     public void ResetLastHex() { LastHexOver = null; }
 
+    void ReturnMoveHexes(Character myCharacter)
+    {
+        if (LastHexesChanged.Count != 0)
+        {
+            foreach (Hex lastHex in LastHexesChanged)
+            {
+                if (myCharacter.HexOn == lastHex) { continue; }
+                lastHex.UnHighlight();
+            }
+            LastHexesChanged.Clear();
+        }
+    }
+
     public void OnHexChanged(Hex hex)
     {
-        
         if (LastHexOver == hex) {return;}
         LastHexOver = hex;
 
@@ -334,9 +329,13 @@ public class HexVisualizer : MonoBehaviour {
             if (outOfCombatcontroller.LookingInChest) { return; }
             if (outOfCombatcontroller.cardUsing == null)
             {
-                ClearLastChangedHexes();
                 if (hex == null || !hex.HexNode.Shown) { return; }
-                HighlightMovePath(hex);
+                if(myCharacter.GetMoving()) { return; }
+                ReturnMoveHexes(myCharacter);
+                if (myCharacter.HexInMoveRange(hex, myCharacter.GetCurrentMoveRange()))
+                {
+                    HighlightMovePath(hex);
+                }
             }
             else
             {
@@ -391,17 +390,7 @@ public class HexVisualizer : MonoBehaviour {
                         {
                             foreach (Hex lastHex in LastHexesChanged)
                             {
-                                if (myCharacter.HexInMoveRange(lastHex, myCharacter.GetCurrentMoveRange()))
-                                {
-                                    // The hex my character is on keep OG color
-                                    if (myCharacter.HexOn == lastHex) { lastHex.UnHighlight(); }
-                                    // else go back to color
-                                    else { HighlightMoveRangeHex(lastHex); }
-                                }
-                                else
-                                {
-                                    lastHex.UnHighlight();
-                                }
+                                lastHex.UnHighlight();
                             }
                             LastHexesChanged.Clear();
                         }

@@ -10,16 +10,16 @@ public class Exit : MonoBehaviour {
 
     public void ShowStairsAndDoor()
     {
-        Door.SetActive(true);
-        DoorFrame.SetActive(true);
-        Stairs.SetActive(true);
+        //Door.SetActive(true);
+        //DoorFrame.SetActive(true);
+        //Stairs.SetActive(true);
     }
 
     public void HideStairsAndDoor()
     {
-        Door.SetActive(false);
-        DoorFrame.SetActive(false);
-        Stairs.SetActive(false);
+        //Door.SetActive(false);
+        //DoorFrame.SetActive(false);
+        //Stairs.SetActive(false);
     }
 
     // Use this for initialization

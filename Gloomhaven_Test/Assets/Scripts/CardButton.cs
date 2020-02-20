@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CardButton : MonoBehaviour, IPointerEnterHandler
 {
     public Text nameText;
     public bool Discarded = false;
@@ -15,13 +15,17 @@ public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public HandCardShowArea showArea;
     private Vector3 OldScale;
 
+    bool Showing = false;
+
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
+        Showing = true;
         showCard();
     }
 
-    public virtual void OnPointerExit(PointerEventData eventData)
+    public virtual void PointerExited()
     {
+        Showing = false;
         if (GetComponentInParent<OutOfCombatHand>().GetSelectecdCard() != myCard)
         {
             unShowCard();
@@ -84,8 +88,28 @@ public class CardButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         myCard.gameObject.SetActive(false);
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
+    bool OverThisButton(List<RaycastResult> results)
+    {
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject.GetComponent<CardButton>() != null && result.gameObject.GetComponent<CardButton>() == this)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Update is called once per frame
+    void Update () {
+		if (Showing)
+        {
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = Input.mousePosition;
+            List<RaycastResult> raysastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, raysastResults);
+            if (!OverThisButton(raysastResults)) { PointerExited(); }
+            
+        }
 	}
 }

@@ -13,6 +13,11 @@ public class InitiativePosition : MonoBehaviour {
 
     public GameObject myCard;
 
+    public void Selected()
+    {
+        FindObjectOfType<CombatManager>().SelectCharacter(CharacterNameLinkedTo);
+    }
+
     public void AddCard(GameObject card)
     {
         myCard = card;
