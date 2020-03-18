@@ -2766,8 +2766,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f57ebbbb58cd7499164f2dd5cb9f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Moving: 0
-  Attacking: 0
 --- !u!114 &114432738888375154
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2779,6 +2777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9770b10ef3166c4e82ff0b2401f1484, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  XpBar: {fileID: 0}
   backGround: {fileID: 1357764969666946}
   HealthEncapsulation: {fileID: 1867739477190262}
   HealthChunk: {fileID: 1699503997114878, guid: 192c6f9611e01614fb493d11c1a777af,
@@ -2814,6 +2813,7 @@ MonoBehaviour:
   Buff4Sprite: {fileID: 212958488127460092}
   CurrentArmorPieces: []
   CurrentHealthPieces: []
+  SavingThrowCoin: {fileID: 0}
 --- !u!114 &114458675185639188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2837,36 +2837,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
+  CharacterCardPrefab: {fileID: 1209044191999950, guid: cac02cb22b69ecc458404b9a13266ed4,
+    type: 2}
+  MyCharacterCard: {fileID: 0}
   myCT: 1
+  MaxMoveDistance: 15
+  CurrentMoveDistance: 0
+  health: 5
   ViewDistance: 4
   baseStrength: 1
   baseAgility: 1
   baseDexterity: 0
   baseArmor: 0
-  Agility: 0
-  Strength: 0
-  Dexterity: 0
-  Armor: 0
-  CurrentArmor: 0
-  CurrentAttackRange: 3
-  CurrentMoveRange: 4
-  health: 5
-  summonSickness: 0
-  maxHealth: 0
-  myHealthBar: {fileID: 0}
   NodesInWalkingDistance: []
-  NodesInAttackRange: []
-  GoingToDie: 0
-  Buffs: []
-  Stealthed: 0
-  StealthDuration: 0
+  NodesInActionRange: []
+  XpOnDeath: 10
   CharacterName: Guard
   enemySprite: {fileID: 21300000, guid: 33cc2533abe2e59459afbc72636bcfaf, type: 3}
-  modifiedAttack: 0
-  modifiedMovement: 0
-  modifiedAttackRange: 0
-  nodesInView: []
   InCombat: 0
+  Alerted: 0
+  nodesInView: []
 --- !u!114 &114869962521520892
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -58,7 +58,7 @@ public class OutOfCombatActionController : MonoBehaviour {
     {
         if (NoOtherPlayerMoving()) { playerController.AllowEndTurn(); }
         if (character != playerController.SelectPlayerCharacter) { return; }
-        playerController.SelectPlayerCharacter.Selected();   
+        playerController.SelectPlayerCharacter.Selected();
     }
 
     bool NoOtherPlayerMoving()
@@ -84,26 +84,18 @@ public class OutOfCombatActionController : MonoBehaviour {
         if (HexHit != null && HexHit.GetComponent<Hex>())
         {
             Hex hex = HexHit.GetComponent<Hex>();
-            if (hex.EntityHolding != null && hex.EntityHolding.GetComponent<EnemyCharacter>())
+            if (hex.EntityHolding != null && hex.EntityHolding.GetComponent<Character>())
             {
                 if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
                 hexVisualizer.HighlightSelectionHex(hex);
                 characterSelected = hex.EntityHolding.GetComponent<Character>();
-                EnemyCharacter character = hex.EntityHolding.GetComponent<EnemyCharacter>();
-                FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
-            }
-            else if (hex.EntityHolding != null && hex.EntityHolding.GetComponent<PlayerCharacter>())
-            {
-                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
-                hexVisualizer.HighlightSelectionHex(hex);
-                characterSelected = hex.EntityHolding.GetComponent<Character>();
-                FindObjectOfType<CharacterViewer>().ShowCharacterStats(characterSelected.GetComponent<PlayerCharacter>().CharacterName, characterSelected.GetComponent<PlayerCharacter>().characterIcon, characterSelected);
+                characterSelected.ShowStats();
             }
             else
             {
                 if (characterSelected != null)
                 {
-                    FindObjectOfType<CharacterViewer>().HideCharacterStats();
+                    FindObjectOfType<CharacterViewer>().HideCharacterCards();
                     FindObjectOfType<CharacterViewer>().HideActionCard();
                     hexVisualizer.UnHighlightHex(characterSelected.HexOn);
                 }
@@ -143,6 +135,7 @@ public class OutOfCombatActionController : MonoBehaviour {
         playerCharacter.GetMyOutOfCombatHand().ShowHand();
         if (playerCharacter.GetMyCombatHand().DiscardedCards > 0) { playerCharacter.GetMyOutOfCombatHand().allowLongRest(); }
         playerCharacter.myCharacterSelectionButton.CharacterSelected();
+        playerCharacter.ShowStats();
         playerCharacter.Selected();
     }
 
@@ -390,27 +383,27 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     void Heal(int value, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.PerformHeal(value, characters);
+        playerController.SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.Heal, value, 0, characters);
     }
 
     void BuffRange(int value, int duration, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Dexterity, characters);
+        playerController.SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffRange, value, duration, characters);
     }
 
     void BuffMove(int value, int duration, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Agility, characters);
+        playerController.SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffMove, value, duration, characters);
     }
 
     void BuffAttack(int value, int duration, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Strength, characters);
+        playerController.SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffAttack, value, duration, characters);
     }
 
     void BuffArmor(int value, int duration, List<Character> characters)
     {
-        playerController.SelectPlayerCharacter.GiveBuff(value, duration, BuffType.Armor, characters);
+        playerController.SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffArmor, value, duration, characters);
     }
 
     void Scout(int value)

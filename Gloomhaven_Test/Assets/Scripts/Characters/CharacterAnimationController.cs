@@ -9,15 +9,36 @@ public class CharacterAnimationController : MonoBehaviour {
     Animator myAnimator;
     Vector3 movePosition;
     Hex hexMovingTo;
+    Hex HexMovingFrom;
     List<Node> nodesMovingOn;
 
     Character myCharacter;
+    bool MovingToFight = false;
+    public void SetMovingToFight(bool value) { MovingToFight = value; }
+
+    int GoldAmount;
+    public GameObject RightHandWeapon;
+
+    ActionType ActionPerforming;
+    int AmountOfAction;
+    int DurationOfAction;
+    List<Character> CharactersAffected;
     // Use this for initialization
     void Start() {
         myAnimator = GetComponent<Animator>();
         myRigidbody = GetComponent<Rigidbody>();
         myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
         myCharacter = GetComponent<Character>();
+    }
+
+    public void HideWeapon()
+    {
+        if (RightHandWeapon != null) { RightHandWeapon.SetActive(false); }
+    }
+
+    public void RevealWeapon()
+    {
+        if (RightHandWeapon != null) { RightHandWeapon.SetActive(true); }
     }
 
     public void SetStealthState(bool stealthed)
@@ -45,6 +66,51 @@ public class CharacterAnimationController : MonoBehaviour {
         myAnimator.SetTrigger("Hit");
     }
 
+    public void DoPickup(int amount)
+    {
+        GoldAmount = amount;
+        myAnimator.SetTrigger("PickUp");
+    }
+
+    public void PickUp()
+    {
+        GetComponent<PlayerCharacter>().CollectGold(GoldAmount);
+    }
+
+    public void DoBuff(ActionType action, int Amount, int Duration, List<Character> charactersEffecting)
+    {
+       ActionPerforming = action;
+       AmountOfAction = Amount;
+       DurationOfAction = Duration;
+       CharactersAffected = charactersEffecting;
+       myAnimator.SetTrigger("Buff");
+    }
+
+    public void Buff()
+    {
+        switch (ActionPerforming)
+        {
+            case ActionType.Heal:
+                GetComponent<Character>().PerformHeal(AmountOfAction, CharactersAffected);
+                break;
+            case ActionType.Shield:
+                GetComponent<Character>().PerformShield(AmountOfAction, CharactersAffected);
+                break;
+            case ActionType.BuffArmor:
+                GetComponent<Character>().GiveBuff(AmountOfAction, DurationOfAction, BuffType.Armor, CharactersAffected);
+                break;
+            case ActionType.BuffAttack:
+                GetComponent<Character>().GiveBuff(AmountOfAction, DurationOfAction, BuffType.Strength, CharactersAffected);
+                break;
+            case ActionType.BuffMove:
+                GetComponent<Character>().GiveBuff(AmountOfAction, DurationOfAction, BuffType.Agility, CharactersAffected);
+                break;
+            case ActionType.BuffRange:
+                GetComponent<Character>().GiveBuff(AmountOfAction, DurationOfAction, BuffType.Dexterity, CharactersAffected);
+                break;
+        }
+    }
+
     public void Hit()
     {
         myCharacter.SetAttacking(false);
@@ -65,18 +131,19 @@ public class CharacterAnimationController : MonoBehaviour {
         nodesMovingOn.Clear();
     }
 
-    public void MoveTowards(Hex hex, List<Node> nextNodes)
+    float oldDifference;
+    public void MoveTowards(Hex hex, List<Node> nextNodes, Hex hexMovingFrom)
     {
+        oldDifference = 10000f;
         myCharacter.SetMoving(true);
-        if (hex.InEnemySeight) { myCharacter.LastHexMovingTo(); }
         transform.LookAt(new Vector3(hex.transform.position.x, transform.position.y, hex.transform.position.z));
         myAnimator.SetBool("moving", true);
         hexMovingTo = hex;
+        HexMovingFrom = hexMovingFrom;
         nodesMovingOn = nextNodes;
         myRigidbody.constraints = RigidbodyConstraints.None;
     }
-	
-	// Update is called once per frame
+
 	void Update () {
 		if (myCharacter.GetMoving())
         {
@@ -86,6 +153,10 @@ public class CharacterAnimationController : MonoBehaviour {
             {
                 MoveToNextPosition();
             }
+            else
+            {
+                oldDifference = difference;
+            }
         }
 	}
 
@@ -94,27 +165,23 @@ public class CharacterAnimationController : MonoBehaviour {
         myCharacter.LinktoHex(hexMovingTo);
         if (myCharacter.GetStealthed()) { myCharacter.ReduceStealthDuration(); }
         myCharacter.ShowViewArea(hexMovingTo, GetComponent<Character>().ViewDistance);
-        FindObjectOfType<PlayerController>().ShowCharacterView();
 
-        bool fight = false;
-        if (!myCharacter.GetStealthed())
-        {
-            fight = myCharacter.CheckToFight(); 
-        }
+        //if (!myCharacter.GetStealthed()) { myCharacter.CheckToFight(); }
 
-        if (nodesMovingOn.Count == 0 || fight)
+        if (nodesMovingOn.Count == 0)
         {
             myCharacter.SetMoving(false);
             myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
             myAnimator.SetBool("moving", false);
-            myCharacter.FinishedMoving(hexMovingTo, fight);
+            myCharacter.FinishedMoving(hexMovingTo, MovingToFight, HexMovingFrom);
+            MovingToFight = false;
         }
         else
         {
             myCharacter.MovingOnPath();
             Node NextHex = nodesMovingOn[0];
             nodesMovingOn.Remove(NextHex);
-            MoveTowards(NextHex.NodeHex, nodesMovingOn);
+            MoveTowards(NextHex.NodeHex, nodesMovingOn, hexMovingTo);
         }
     }
 }

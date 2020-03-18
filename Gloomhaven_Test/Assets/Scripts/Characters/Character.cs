@@ -28,6 +28,9 @@ public class Buff
 
 public class Character : Entity {
 
+    public GameObject CharacterCardPrefab;
+    public CharacterCard MyCharacterCard;
+
     public enum CharacterType { Good, Bad }
     public CharacterType myCT;
 
@@ -80,7 +83,7 @@ public class Character : Entity {
 
     private Character characterShieldingMe;
     private Character characterThatHealingMe;
-    private Character characterThatAttackedMe;
+    protected Character characterThatAttackedMe;
     protected List<Character> charactersAttackingAt;
     protected int CharactersFinishedTakingDamage = 0;
 
@@ -136,12 +139,6 @@ public class Character : Entity {
         {
             character.ApplyBuff(value, duration, buffType);
         }
-        StartCoroutine("BuffingPlaceHolder");
-    }
-
-    IEnumerator BuffingPlaceHolder()
-    {
-        yield return new WaitForSeconds(1);
         FinishedPerformingBuff();
     }
 
@@ -235,8 +232,13 @@ public class Character : Entity {
         maxHealth = health;
     }
 
+    public virtual void DoPositiveAction()
+    {
+
+    }
+
     // CALLBACKS
-    public virtual void LastHexMovingTo() { }
+    public virtual void ShowStats() { }
 
     public virtual void ShowViewArea(Hex hex, int distance) { }
 
@@ -244,7 +246,7 @@ public class Character : Entity {
 
     public virtual bool SavingThrow() { return false; }
 
-    public virtual void FinishedMoving(Hex hex, bool fighting = false) { }
+    public virtual void FinishedMoving(Hex hex, bool fighting = false, Hex HexMovingFrom = null) { }
 
     public virtual void FinishedAttacking() { CharactersFinishedTakingDamage++; }
 
@@ -327,9 +329,12 @@ public class Character : Entity {
         if (amount > 0) { myHealthBar.AddShield(amount); }
     }
 
+    public virtual void SlayedEnemy(float XP)
+    {
+        FinishedAttacking();
+    }
 
     //ATACKING
-
     public virtual void finishedTakingDamage()
     {
         if (GoingToDie) {
@@ -484,6 +489,7 @@ public class Character : Entity {
     {
         NodesInWalkingDistance.Clear();
         HexMovingTo = hex;
+        Hex HexCurrentlyOn = HexOn;
         HexMovingTo.CharacterMovingToHex();
         RemoveLinkFromHex();
         if (hex == HexOn) { FinishedMoving(hex); }
@@ -491,7 +497,7 @@ public class Character : Entity {
         if (nodes[0] == null) { return; }
         Node HexToMoveTo = nodes[0];
         nodes.Remove(HexToMoveTo);
-        GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, nodes);
+        GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, nodes, HexCurrentlyOn);
     }
 
     public virtual void MovingOnPath()

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HealthBar : MonoBehaviour {
 
+    public GameObject XpBar;
     public GameObject backGround;
 
     public GameObject HealthEncapsulation;
@@ -28,6 +29,9 @@ public class HealthBar : MonoBehaviour {
     public TextMesh ArmorValue;
     public GameObject ArmorEncapsulation;
     public GameObject ArmorChunk;
+
+    public GameObject GoldObj;
+    public TextMesh GoldValue;
 
     public GameObject HandAmountEncapsulator;
     public TextMesh HandAmount;
@@ -75,6 +79,19 @@ public class HealthBar : MonoBehaviour {
     {
         GetComponentInParent<Character>().SavedBySavingThrow();
         GetComponentInParent<Character>().finishedTakingDamage();
+    }
+
+    public void AddGold(int amount)
+    {
+        StartCoroutine("GoldAdded", amount);
+    }
+
+    IEnumerator GoldAdded(int amount)
+    {
+        GoldObj.SetActive(true);
+        GoldValue.text = "+ " + amount.ToString();
+        yield return new WaitForSeconds(1f);
+        GoldObj.SetActive(false);
     }
 
     public void SavingThrowDead()
@@ -169,6 +186,22 @@ public class HealthBar : MonoBehaviour {
         HandAmount.text = handSize.ToString();
     }
 
+    public void CreateXpBar(float CurrentXpPercentage)
+    {
+        XpBar.SetActive(true);
+        XpBar.GetComponent<XPBar>().StartXP(CurrentXpPercentage);
+    }
+
+    public void GainXP(float CurrentXpPercentage)
+    {
+        XpBar.GetComponent<XPBar>().SetXp(CurrentXpPercentage);
+    }
+
+    public void LevelUpAndGainXP(float CurrentXpPercentage)
+    {
+        XpBar.GetComponent<XPBar>().LevelUp(CurrentXpPercentage);
+    }
+
     public void CreateHealthBar(int maxHealth)
     {
         backGround.SetActive(true);
@@ -213,7 +246,6 @@ public class HealthBar : MonoBehaviour {
 
     public void AddShield(int shieldAmount)
     {
-
         IEnumerator AddArmorCoroutine = AddingArmor(shieldAmount);
         StartCoroutine(AddArmorCoroutine);
     }

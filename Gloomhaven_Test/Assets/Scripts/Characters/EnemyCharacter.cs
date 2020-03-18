@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class EnemyCharacter : Character {
 
-    // Use this for initialization
+    public float XpOnDeath = 10;
+
     public string CharacterName;
     public Sprite enemySprite;
 
@@ -39,6 +40,21 @@ public class EnemyCharacter : Character {
         {
             ShowHexesViewingAndAlertOthersToCombat();
         }
+        BuildCharacterCard();
+    }
+
+    void BuildCharacterCard()
+    {
+        GameObject myCard = Instantiate(CharacterCardPrefab, FindObjectOfType<CharacterViewer>().transform);
+        MyCharacterCard = myCard.GetComponent<CharacterCard>();
+        MyCharacterCard.ShowCharacterStats(CharacterName, enemySprite, this);
+        MyCharacterCard.HideCharacterStats();
+    }
+
+    public override void ShowStats()
+    {
+        FindObjectOfType<CharacterViewer>().HideCharacterCards();
+        MyCharacterCard.ShowCharacterStats(CharacterName, enemySprite, this);
     }
 
     //OTHER//
@@ -96,6 +112,7 @@ public class EnemyCharacter : Character {
     // Character has seen player and will show area around him and alert other enemies
     public void ShowHexesViewingAndAlertOthersToCombat()
     {
+        FindObjectOfType<EnemyController>().RemoveThreatArea(this);
         Alerted = true;
         InCombat = true;
         StartCoroutine("ShowHexesViewingAndAlertOthersToCombatCo");
@@ -106,7 +123,6 @@ public class EnemyCharacter : Character {
         yield return new WaitForSeconds(.1f);
 
         SwitchCombatState(true);
-        //HexMap.NodesIn
         List<Node> nodesAlmostSeen = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance + 3);
         nodesInView.Clear();
         nodesInView = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance + 2);
@@ -135,7 +151,9 @@ public class EnemyCharacter : Character {
                     node.GetComponent<HexWallAdjuster>().ShowWall();
                     node.GetComponent<Hex>().ShowHexEnd();
                     node.Shown = true;
-                    if (node.GetComponent<Door>() != null) { node.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true); }
+                    if (node.GetComponent<Door>() != null) {
+                        if (node.GetComponent<Door>().door != null) { node.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true); }
+                    }
                     if (node.GetComponent<ExitHex>() != null) {
                         exit = node.GetComponent<ExitHex>();
                         node.GetComponent<ExitHex>().ShowExit() ;
@@ -160,6 +178,7 @@ public class EnemyCharacter : Character {
     {
         FindObjectOfType<EnemyController>().CharacterDied(this);
         base.Die();
+        characterThatAttackedMe.SlayedEnemy(XpOnDeath);
     }
 
     public override void FinishedPerformingShielding()
@@ -180,7 +199,7 @@ public class EnemyCharacter : Character {
         if (charactersAttackingAt == null || CharactersFinishedTakingDamage >= charactersAttackingAt.Count) { finishedActions(); }
     }
 
-    public override void FinishedMoving(Hex hex, bool fight = false)
+    public override void FinishedMoving(Hex hex, bool fight = false, Hex HexMovingFrom = null)
     {
         if (HexMovingTo != null) { HexMovingTo.CharacterArrivedAtHex(); }
         UnShowPath();
@@ -396,11 +415,12 @@ public class EnemyCharacter : Character {
     void MoveOnPathFound(Hex hexMovingTo, List<Node> nodePath)
     {
         hexMovingTo.CharacterMovingToHex();
+        Hex HexCurrentlyOn = HexOn;
         RemoveLinkFromHex();
         if (hexMovingTo == HexOn) { FinishedMoving(hexMovingTo); }
         Node NodeToMoveTo = nodePath[0];
         nodePath.Remove(NodeToMoveTo);
-        GetComponent<CharacterAnimationController>().MoveTowards(NodeToMoveTo.NodeHex, nodePath);
+        GetComponent<CharacterAnimationController>().MoveTowards(NodeToMoveTo.NodeHex, nodePath, HexCurrentlyOn);
     }
 
     //ATTACKING 5.

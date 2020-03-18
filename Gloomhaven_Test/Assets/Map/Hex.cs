@@ -4,12 +4,23 @@ using UnityEngine;
 
 public class Hex : MonoBehaviour {
 
+    public GameObject DoorPrefab;
+    public GameObject ExitPrefab;
+
+    public int goldHolding = 0;
+    public GameObject GoldPrefabSmall;
+    public GameObject GoldPrefabMedium;
+    public GameObject GoldPrefabLarge;
+    public GameObject GoldHolding;
+
     public Entity EntityToSpawn;
     public float EntityOffset = 0.1f;
     public Entity EntityHolding;
 
     public bool MovedTo = false;
-    public bool InEnemySeight = false;
+
+    public List<Hex> EnemysHexInSeight = new List<Hex>();
+    public bool InEnemySeight { get { return EnemysHexInSeight.Count > 0; } }
 
     public Material InvisibleMaterial;
     public Material SlightlyVisibleMaterial;
@@ -28,6 +39,36 @@ public class Hex : MonoBehaviour {
         }
     }
 
+    public int PickUpMoney()
+    {
+        Destroy(GoldHolding);
+        int gold = goldHolding;
+        goldHolding = 0;
+        return gold;
+    }
+
+    public void ShowMoney()
+    {
+        if (goldHolding > 0 && goldHolding < 6)
+        {
+            GoldHolding = Instantiate(GoldPrefabSmall, this.transform);
+            GoldHolding.transform.localPosition = new Vector3(0, 0, -.15f);
+            GoldHolding.transform.localRotation = Quaternion.Euler(new Vector3(-90, 0, 0));
+        }
+        else if (goldHolding > 5 && goldHolding < 11)
+        {
+            GoldHolding = Instantiate(GoldPrefabMedium, this.transform);
+            GoldHolding.transform.localPosition = new Vector3(0, -.1f, -.15f);
+            GoldHolding.transform.localRotation = Quaternion.Euler(new Vector3(-90, 0, 0));
+        }
+        else if (goldHolding > 10)
+        {
+            GoldHolding = Instantiate(GoldPrefabLarge, this.transform);
+            GoldHolding.transform.localPosition = new Vector3(0, 0f, -.15f);
+            GoldHolding.transform.localRotation = Quaternion.Euler(new Vector3(-90, 0, 0));
+        }
+    }
+
     public void setUpHexes()
     {
         if (EntityToSpawn != null && EntityToSpawn.GetComponent<EnemyCharacter>() != null)
@@ -36,12 +77,23 @@ public class Hex : MonoBehaviour {
             List<Node> nodesInEnemyView = FindObjectOfType<HexMapController>().GetNodesAtDistanceFromNode(this.HexNode, viewDistance);
             foreach (Node node in nodesInEnemyView)
             {
-                node.NodeHex.InEnemySeight = true;
+                node.NodeHex.EnemysHexInSeight.Add(this);
             }
         }
     }
 
-    public void TakeAwayThreatArea() { InEnemySeight = false; }
+    public void EnemyAlert()
+    {
+        foreach(Hex hex in EnemysHexInSeight)
+        {
+            if (hex.EntityHolding != null)
+            {
+                hex.EntityHolding.GetComponent<EnemyCharacter>().ShowHexesViewingAndAlertOthersToCombat();
+            }
+        }
+    }
+
+    public void TakeAwayThreatArea() { EnemysHexInSeight.Clear(); }
     
     public void CharacterMovingToHex() { MovedTo = true; }
     public void CharacterArrivedAtHex() { MovedTo = false; }

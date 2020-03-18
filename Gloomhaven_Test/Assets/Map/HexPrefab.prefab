@@ -132,6 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RoomName:
   - A
+  Used: 0
   edge: 0
   isAvailable: 1
   Shown: 0
@@ -149,11 +150,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24293e40bb88eaf4faca50269158f2ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DoorPrefab: {fileID: 1962132347748978, guid: 8a710222cdd6a4e4389834656920235f, type: 2}
+  ExitPrefab: {fileID: 1698867582743384, guid: fa23cf450d918db4e9092b2789cf125f, type: 2}
+  goldHolding: 0
+  GoldPrefabSmall: {fileID: 1623786173805940, guid: 75abfe8dee45df24086c06d60d5ee152,
+    type: 2}
+  GoldPrefabMedium: {fileID: 1007140603126402, guid: 3baf385d2268a814bb1d0e63faae32cc,
+    type: 2}
+  GoldPrefabLarge: {fileID: 1778561823132824, guid: c9f59149859bc604c8a83e310e2c96e7,
+    type: 2}
+  GoldHolding: {fileID: 0}
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  InEnemySeight: 0
+  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}

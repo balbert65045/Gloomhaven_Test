@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharacterViewer : CharacterCard
+public class CharacterViewer : MonoBehaviour
 {
     public GameObject CurrentActionPanel;
     public GameObject CurrentActionPosition;
 
     private GameObject currentActionCard;
+
+    public void HideCharacterCards()
+    {
+        CharacterCard[] cards = GetComponentsInChildren<CharacterCard>();
+        foreach(CharacterCard card in cards)
+        {
+            card.HideCharacterStats();
+        }
+    }
 
     public void ShowActionCard(GameObject card)
     {

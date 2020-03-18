@@ -44,3 +44,18 @@ TagManager:
   - name: Text
     uniqueID: 220950493
     locked: 0
+  - name: Character1
+    uniqueID: 2918554181
+    locked: 0
+  - name: Character2
+    uniqueID: 461675503
+    locked: 0
+  - name: Character3
+    uniqueID: 2545103231
+    locked: 0
+  - name: Character4
+    uniqueID: 2405928539
+    locked: 0
+  - name: Character5
+    uniqueID: 1392964087
+    locked: 0

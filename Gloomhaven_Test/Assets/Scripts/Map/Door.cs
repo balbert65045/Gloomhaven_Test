@@ -11,7 +11,6 @@ public class Door : MonoBehaviour {
         Middle = 3
     }
     public DoorLocation myDoorLocation;
-    public GameObject DoorPrefab;
 
     public RoomSide RoomSideToBuild;
 
@@ -51,7 +50,7 @@ public class Door : MonoBehaviour {
         HexMapController controller = FindObjectOfType<HexMapController>();
         controller.CreateTable();
         InteractionObjects parent = FindObjectOfType<InteractionObjects>();
-        GameObject doorMade = Instantiate(DoorPrefab, parent.transform);
+        GameObject doorMade = Instantiate(GetComponent<Hex>().DoorPrefab, parent.transform);
         GetComponent<HexAdjuster>().SetHexToFull();
         doorConnectionHex connectionHex = null;
         if (GetComponent<doorConnectionHex>() == null) { connectionHex = GetComponent<Node>().gameObject.AddComponent<doorConnectionHex>(); }
@@ -109,6 +108,7 @@ public class Door : MonoBehaviour {
     public void OpenHexes(string RoomComingFrom)
     {
         if (isOpen) { return; }
+        isOpen = true;
         GetComponent<Node>().isAvailable = true;
         door.GetComponent<Animator>().SetTrigger("Open");
         if (!RoomShown)
@@ -137,7 +137,6 @@ public class Door : MonoBehaviour {
                 if (!hex.GetComponent<Node>().edge) { hex.setUpHexes(); }
             }
         }
-        isOpen = true;
         door.GetComponentInParent<DoorWall>().gameObject.SetActive(false);
     }
 

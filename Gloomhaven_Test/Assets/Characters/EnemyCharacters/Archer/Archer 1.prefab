@@ -1509,7 +1509,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1868863097766338}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 87.30751, y: 0.15000013, z: 0.024939451}
+  m_LocalPosition: {x: -0.6922496, y: 0.15000021, z: 8.450897}
   m_LocalScale: {x: 0.5305921, y: 0.530592, z: 0.530592}
   m_Children:
   - {fileID: 4033970002272130}
@@ -2744,8 +2744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f57ebbbb58cd7499164f2dd5cb9f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Moving: 0
-  Attacking: 0
+  RightHandWeapon: {fileID: 1118243630671116}
 --- !u!114 &114105561983515474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2779,6 +2778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9770b10ef3166c4e82ff0b2401f1484, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  XpBar: {fileID: 0}
   backGround: {fileID: 1889945791412136}
   HealthEncapsulation: {fileID: 1115040443868946}
   HealthChunk: {fileID: 1699503997114878, guid: 192c6f9611e01614fb493d11c1a777af,
@@ -2798,6 +2798,8 @@ MonoBehaviour:
   ArmorValue: {fileID: 102252825041478936}
   ArmorEncapsulation: {fileID: 1394909685269840}
   ArmorChunk: {fileID: 1568165000496888, guid: 1af9dd54636643540a4cdf793feb57a2, type: 2}
+  GoldObj: {fileID: 0}
+  GoldValue: {fileID: 0}
   HandAmountEncapsulator: {fileID: 1314892650767980}
   HandAmount: {fileID: 102928672476708662}
   StrengthSprite: {fileID: 21300000, guid: 629ea3e56e6ceb04886b3c957b331eec, type: 3}
@@ -2814,6 +2816,7 @@ MonoBehaviour:
   Buff4Sprite: {fileID: 212279734632872896}
   CurrentArmorPieces: []
   CurrentHealthPieces: []
+  SavingThrowCoin: {fileID: 0}
 --- !u!114 &114450619842802780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2826,36 +2829,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
+  CharacterCardPrefab: {fileID: 1209044191999950, guid: cac02cb22b69ecc458404b9a13266ed4,
+    type: 2}
+  MyCharacterCard: {fileID: 0}
   myCT: 1
+  MaxMoveDistance: 15
+  CurrentMoveDistance: 0
+  health: 4
   ViewDistance: 4
   baseStrength: 0
   baseAgility: 0
   baseDexterity: 1
   baseArmor: 0
-  Agility: 0
-  Strength: 0
-  Dexterity: 0
-  Armor: 0
-  CurrentArmor: 0
-  CurrentAttackRange: 3
-  CurrentMoveRange: 4
-  health: 4
-  summonSickness: 0
-  maxHealth: 0
-  myHealthBar: {fileID: 0}
   NodesInWalkingDistance: []
-  NodesInAttackRange: []
-  GoingToDie: 0
-  Buffs: []
-  Stealthed: 0
-  StealthDuration: 0
+  NodesInActionRange: []
+  XpOnDeath: 10
   CharacterName: Archer
   enemySprite: {fileID: 21300000, guid: 93641462c8a68624c8425002fe016275, type: 3}
-  modifiedAttack: 0
-  modifiedMovement: 0
-  modifiedAttackRange: 0
-  nodesInView: []
   InCombat: 0
+  Alerted: 0
+  nodesInView: []
 --- !u!114 &114461455225871412
 MonoBehaviour:
   m_ObjectHideFlags: 1

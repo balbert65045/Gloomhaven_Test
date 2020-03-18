@@ -7,6 +7,8 @@ public class CharacterCard : MonoBehaviour
 {
 
     public GameObject ViewPanel;
+    public UIXPBar xpBar;
+    public Text Level;
 
     public Text Name;
     public Image CharacterIcon;
@@ -52,6 +54,27 @@ public class CharacterCard : MonoBehaviour
                     break;
             }
         }
+        if (character.GetComponent<PlayerCharacter>() != null)
+        {
+            ShowXP((PlayerCharacter)character);
+        }
+    }
+
+    public void ShowXP(PlayerCharacter character)
+    {
+        Level.text = character.CharacterLevel.ToString();
+        xpBar.SetXP(character.CurrentXP, character.XpUntilNextLevel);
+    }
+
+    public void GainXP(PlayerCharacter character)
+    {
+        xpBar.GainXp(character.CurrentXP, character.XpUntilNextLevel);
+    }
+
+    public void LevelUpAndGainXP(PlayerCharacter character)
+    {
+        xpBar.LevelUpAndGainXP(character.CurrentXP, character.XpUntilNextLevel);
+        Level.text = character.CharacterLevel.ToString();
     }
 
     public void HideCharacterStats()

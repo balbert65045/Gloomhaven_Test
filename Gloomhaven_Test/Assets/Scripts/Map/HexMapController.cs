@@ -38,6 +38,11 @@ public class HexMapController : MonoBehaviour {
         }
     }
 
+    public void SetHexes()
+    {
+        AllHexes = GetComponentsInChildren<Hex>();
+    }
+
     void Awake () {
         hexBuilder = FindObjectOfType<HexMapBuilder>();
         AllHexes = GetComponentsInChildren<Hex>();
@@ -360,6 +365,7 @@ public class HexMapController : MonoBehaviour {
     {
         List<Node> NeighborsNodes = GetRealNeighbors(node);
         List<Node> AdjacentNodesAvailable = new List<Node>();
+        if (node.GetComponent<Door>() != null && node.GetComponent<Door>().isOpen == false) { return AdjacentNodesAvailable; }
         foreach(Node aNode in NeighborsNodes)
         {
             if (node.isConnectedToRoom(aNode)) { AdjacentNodesAvailable.Add(aNode); }
@@ -397,6 +403,16 @@ public class HexMapController : MonoBehaviour {
                 if (!IsAPossibleConnectedNode(node, StartNode)) { break; }
                 NodesinAOE.Add(node);
                 break;
+            case AOEType.LargeLine:
+                Vector2 LargelineDirection = FindDirection(OriginNode, StartNode);
+                Node node1 = GetNextNodeInDirection(StartNode, LargelineDirection);
+                NodesinAOE.Add(StartNode);
+                if (!IsAPossibleConnectedNode(node1, StartNode)) { break; }
+                Node node2 = GetNextNodeInDirection(node1, LargelineDirection);
+                NodesinAOE.Add(node1);
+                if (!IsAPossibleConnectedNode(node2, node1)) { break; }
+                NodesinAOE.Add(node2);
+                break;
             case AOEType.SingleTarget:
                 NodesinAOE.Add(StartNode);
                 break;
@@ -408,12 +424,12 @@ public class HexMapController : MonoBehaviour {
                 }
                 break;
             case AOEType.Circle:
-                List<Node> CircleNodes = GetNodesSurrounding(OriginNode);
+                List<Node> CircleNodes = GetNodesSurrounding(StartNode);
                 foreach (Node myNode in CircleNodes) {
                     if (!IsAPossibleConnectedNode(myNode, StartNode)) { continue; }
                     NodesinAOE.Add(myNode);
                 }
-                NodesinAOE.Add(OriginNode);
+                NodesinAOE.Add(StartNode);
                 break;
             case AOEType.Triangle:
 

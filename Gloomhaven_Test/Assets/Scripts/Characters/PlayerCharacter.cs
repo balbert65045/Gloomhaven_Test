@@ -7,10 +7,18 @@ public enum PlayerCharacterType
     All = 1,
     Knight = 2,
     Barbarian = 3,
+    Mage = 4,
+    Crossbow = 5,
 }
 
 public class PlayerCharacter : Character
 {
+    public CharacterCard CardActingWith;
+
+    public int CharacterLevel = 1;
+    public float CurrentXP = 0;
+    public float XpUntilNextLevel { get { return CharacterLevel * 100 + (CharacterLevel - 1) * 50; } }
+
     public int AvailableActions = 2;
     public bool OutOfActions() { return AvailableActions <= 0; }
 
@@ -52,6 +60,15 @@ public class PlayerCharacter : Character
 
     public PlayerCharacter CharacterLeading = null;
     public PlayerCharacter CharacterFollowing = null;
+
+    public void StopFollowing()
+    {
+        if (CharacterLeading != null) { CharacterLeading.CharacterFollowing = null; }
+        if (CharacterFollowing != null) { CharacterFollowing.BreakOutOfFollow(); }
+        CharacterLeading = null;
+        CharacterFollowing = null;
+    }
+
     public void SetFollow(PlayerCharacter character)
     {
         if (CharacterFollowing != null) { CharacterFollowing.CharacterLeading = null; }
@@ -59,35 +76,132 @@ public class PlayerCharacter : Character
         if (character != null) { CharacterFollowing.CharacterLeading = this; }
     }
 
-    public void LeaderMoved(Hex hexMovedFrom, Hex MovingTo)
+    bool EntityIsOnPositionAndMoving(Hex hex)
+    {
+        if (hex.EntityHolding.GetComponent<PlayerCharacter>() != null)
+        {
+            PlayerCharacter character = hex.EntityHolding.GetComponent<PlayerCharacter>();
+            return character.GetMoving();
+        }
+        return false;
+    }
+
+    public void SetFollowersMoving()
+    {
+        SetMoving(true);
+        if (CharacterFollowing != null) { CharacterFollowing.SetFollowersMoving(); }
+    }
+
+
+    bool CantFollow = false;
+    public void LeaderMoved(Hex hexMovedFrom, List<Node> path)
     {
         if (AvailableActions > 0)
         {
+            SetFollowersMoving();
             List<Node> FullPath = FindObjectOfType<AStar>().FindPath(HexOn.HexNode, hexMovedFrom.HexNode, myCT);
-            int InitialDistance = FullPath.Count;
-            List<Node> PathToNextArea = FindObjectOfType<AStar>().FindPath(hexMovedFrom.HexNode, MovingTo.HexNode, myCT);
-            FullPath.AddRange(PathToNextArea);
-            int TotalDistance = FullPath.Count;
-            for (int i = 0; i < InitialDistance; i++){ FullPath.RemoveAt(TotalDistance - (i + 1)); }
+            FullPath.AddRange(path);
+            FullPath.RemoveAt(FullPath.Count - 1);
+            for (int i = FullPath.Count - 1; i >= 0; i--)
+            {
+                if (playerController.HexesMovingTo.Contains(FullPath[i].NodeHex))
+                {
+                    FullPath.RemoveAt(i);
+                    CantFollow = true;
+                }
+                else if (FullPath[i].NodeHex.EntityHolding != null && FullPath[i].NodeHex.EntityHolding != this)
+                {
+                    if (!EntityIsOnPositionAndMoving(FullPath[i].NodeHex))
+                    {
+                        FullPath.RemoveAt(i);
+                        CantFollow = true;
+                    }else { break; }
+                }
+                else { break; }
+            }
+            if (FullPath.Count == 0) { return; }
+
 
             NodesInWalkingDistance.Clear();
-            HexMovingTo = FullPath[0].NodeHex;
-            HexMovingTo.CharacterMovingToHex();
-            RemoveLinkFromHex();
-            Node HexToMoveTo = FullPath[0];
-            FullPath.Remove(HexToMoveTo);
-            GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, FullPath);
+            List<Node> PathOn = new List<Node>();
+            for (int i = 0; i < FullPath.Count; i++) { PathOn.Add(FullPath[i]); }
+            playerController.AddHexMovingTo(FullPath[FullPath.Count - 1].NodeHex);
+            Follow(FullPath);
+            ActionUsed();
+            if (CharacterFollowing != null)
+            {
+                CharacterFollowing.LeaderMoved(HexOn, PathOn);
+            }
         }
+        else
+        {
+            BreakOutOfFollow();
+        }
+    }
+
+    void BreakOutOfFollow()
+    {
+        if (CharacterFollowing != null) { CharacterFollowing.BreakOutOfFollow(); }
+        CharacterSelectionButtons CSBS = FindObjectOfType<CharacterSelectionButtons>();
+        CSBS.BreakLink(myCharacterSelectionButton);
+        CSBS.AddCharacterWithNoFollow(myCharacterSelectionButton.gameObject);
+        myCharacterSelectionButton.SetPosition();
+    }
+
+    void Follow(List<Node> path)
+    {
+        HexMovingTo = path[0].NodeHex;
+        HexMovingTo.CharacterMovingToHex();
+        Hex HexCurrentlyOn = HexOn;
+        RemoveLinkFromHex();
+        Node HexToMoveTo = path[0];
+        path.Remove(HexToMoveTo);
+        GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, path, HexCurrentlyOn);
     }
 
     public override void MoveOnPath(Hex hex)
     {
+        if (CharacterLeading != null)
+        {
+            CharacterLeading.BreakOutOfFollow();
+        }
         Hex HexMovingFrom = HexOn;
-        base.MoveOnPath(hex);
+        List<Node> nodes = GetPath(hex.HexNode);
+        bool movingToFight = false;
+        if (playerController.myState == PlayerController.PlayerState.OutofCombat)
+        {
+            if (nodes[nodes.Count - 1].NodeHex.InEnemySeight)
+            {
+                movingToFight = true;
+                int start = nodes.Count - 2;
+                for (int i = start; i >= 0; i--)
+                {
+                    if (nodes[i].NodeHex.InEnemySeight) { nodes.RemoveAt(i + 1); }
+                }
+            }
+        }
+
+        List<Node> totalPath = new List<Node>();
+        foreach(Node node in nodes) { totalPath.Add(node); }
+
+        if (nodes[0] == null) { return; }
+        GetComponent<CharacterAnimationController>().SetMovingToFight(movingToFight);
+
+        NodesInWalkingDistance.Clear();
+        HexMovingTo = hex;
+        HexMovingTo.CharacterMovingToHex();
+        RemoveLinkFromHex();
+        if (hex == HexOn) { FinishedMoving(hex); }
+        if (nodes[0] == null) { return; }
+        Node HexToMoveTo = nodes[0];
+        playerController.AddHexMovingTo(nodes[nodes.Count - 1].NodeHex);
+        nodes.Remove(HexToMoveTo);
+
+        GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, nodes, HexMovingFrom);
+
         ActionUsed();
         if (CharacterFollowing != null) {
-            CharacterFollowing.LeaderMoved(HexMovingFrom, hex);
-            CharacterFollowing.ActionUsed();
+            CharacterFollowing.LeaderMoved(HexMovingFrom, totalPath);
         }
     }
 
@@ -124,10 +238,37 @@ public class PlayerCharacter : Character
         if (myHealthBar != null)
         {
             myHealthBar.CreateHealthBar(health);
+            myHealthBar.CreateXpBar(CurrentXP / XpUntilNextLevel);
         }
         maxHealth = health;
         BuildDecks();
         BuildCharacterSelectionIcon();
+        BuildCharacterCards();
+    }
+
+    void BuildCharacterCards()
+    {
+        GameObject myCard = Instantiate(CharacterCardPrefab, FindObjectOfType<CharacterViewer>().transform);
+        MyCharacterCard = myCard.GetComponent<CharacterCard>();
+        MyCharacterCard.ShowCharacterStats(CharacterName, characterIcon, this);
+        MyCharacterCard.HideCharacterStats();
+
+        GameObject myCardActing = Instantiate(CharacterCardPrefab, FindObjectOfType<myCharacterCard>().transform);
+        CardActingWith = myCardActing.GetComponent<CharacterCard>();
+        CardActingWith.ShowCharacterStats(CharacterName, characterIcon, this);
+        CardActingWith.HideCharacterStats();
+    }
+
+    public override void ShowStats()
+    {
+        FindObjectOfType<CharacterViewer>().HideCharacterCards();
+        MyCharacterCard.ShowCharacterStats(CharacterName, characterIcon, this);
+    }
+
+    public void ShowStatsActingWith()
+    {
+        FindObjectOfType<myCharacterCard>().HideCharacterCards();
+        CardActingWith.ShowCharacterStats(CharacterName, characterIcon, this);
     }
 
     public void BuildCharacterSelectionIcon()
@@ -200,9 +341,11 @@ public class PlayerCharacter : Character
 
     public override void ShowViewArea(Hex hex, int distance)
     {
+        if (CharacterLeading != null) { return; }
         List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1);
         List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance);
         ExitHex exit = null;
+        List<EnemyCharacter> charactersViewUpdate = new List<EnemyCharacter>();
         foreach (Node node in nodesAlmostSeen)
         {
             if (nodesSeen.Contains(node))
@@ -215,6 +358,18 @@ public class PlayerCharacter : Character
                     node.GetComponent<HexAdjuster>().RevealRoomEdge();
                     node.GetComponent<HexWallAdjuster>().ShowWall();
                     node.GetComponent<Hex>().ShowHexEnd();
+                    if (node.NodeHex.InEnemySeight)
+                    {
+                        foreach(Hex enemyHex in node.NodeHex.EnemysHexInSeight)
+                        {
+                            if (enemyHex.EntityHolding == null) { continue; }
+                            if (enemyHex.EntityHolding.GetComponent<EnemyCharacter>() == null) { continue; }
+                            if (!charactersViewUpdate.Contains(enemyHex.EntityHolding.GetComponent<EnemyCharacter>()))
+                            {
+                                charactersViewUpdate.Add(enemyHex.EntityHolding.GetComponent<EnemyCharacter>());
+                            }
+                        }
+                    }
                     if (node.GetComponent<Door>() != null && node.GetComponent<Door>().door != null)
                     {
                         node.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true);
@@ -224,6 +379,7 @@ public class PlayerCharacter : Character
                         node.GetComponent<ExitHex>().ShowExit();
                     }
                     node.Shown = true;
+                    node.NodeHex.ShowMoney();
                     if (node.NodeHex.EntityToSpawn != null)
                     {
                         node.NodeHex.CreateCharacter();
@@ -239,52 +395,54 @@ public class PlayerCharacter : Character
             }
         }
         if (exit != null) { exit.ShowWinArea(); }
-        //playerController.ShowCharacterView();
-    }
-
-    public void Stop()
-    {
-        StartCoroutine("Stopping");
-    }
-
-    IEnumerator Stopping()
-    {
-        yield return new WaitForSeconds(.3f);
-        GetComponent<CharacterAnimationController>().Stop();
-    }
-
-    public override void LastHexMovingTo()
-    {
-        if (CharacterFollowing != null)
-        {
-            CharacterFollowing.Stop();
+        foreach(EnemyCharacter character in charactersViewUpdate) {
+            character.ShowViewAreaInShownHexes();
         }
     }
 
     public override bool CheckToFight()
     {
-        return playerController.ShowEnemyAreaAndCheckToFight();
+        if (CharacterLeading == null) { return playerController.ShowEnemyAreaAndCheckToFight(); }
+        else { return false; }
     }
 
-    public override void FinishedMoving(Hex hex, bool fight)
+    public override void FinishedMoving(Hex hex, bool fight = false, Hex hexMovingFrom = null)
     {
+        // Used to stop follow in wierd spots
+        if (CantFollow)
+        {
+            BreakOutOfFollow();
+            CantFollow = false;
+        }
+        playerController.ClearHexesMovingTo();
         HexMovingTo.CharacterArrivedAtHex();
-        FindObjectOfType<PlayerController>().FinishedMoving(this);
+        int goldPickedUp = HexMovingTo.PickUpMoney();
+        if (goldPickedUp > 0)
+        {
+            GetComponent<CharacterAnimationController>().DoPickup(goldPickedUp);
+        }
         if (doorToOpen != null)
         {
-            if (CharacterFollowing != null)
-            {
-                CharacterFollowing.GetComponent<CharacterAnimationController>().Stop();
-            }
             StartCoroutine("OpenDoor");
             doorToOpen = null;
+            return;
         }
         else if (ChestToOpen != null && !fight)
         {
             ChestToOpen.OpenChest(this);
             ChestToOpen = null;
         }
-        if (fight && playerController.myState == PlayerController.PlayerState.OutofCombat) { playerController.GoIntoCombat(); }
+        FindObjectOfType<PlayerController>().FinishedMoving(this);
+        if (fight && playerController.myState == PlayerController.PlayerState.OutofCombat) {
+            HexOn.EnemyAlert();
+            playerController.GoIntoCombat();
+        }
+    }
+
+    public void CollectGold(int amount)
+    {
+        playerController.AddGold(amount);
+        myHealthBar.AddGold(amount);
     }
 
     public override void FinishedPerformingBuff()
@@ -311,6 +469,7 @@ public class PlayerCharacter : Character
     //DOOR
     public IEnumerator OpenDoor()
     {
+        yield return new WaitForSeconds(.1f);
         if (HexOn.GetComponent<doorConnectionHex>() != null)
         {
             HexOn.GetComponent<doorConnectionHex>().door.OpenHexes(HexOn.HexNode.RoomName[0]);
@@ -318,6 +477,7 @@ public class PlayerCharacter : Character
             if (CheckToFight()) { playerController.GoIntoCombat(); }
             else{ playerController.ShowCharacterView(); }
         }
+        FindObjectOfType<PlayerController>().FinishedMoving(this);
         yield return null;
     }
 
@@ -335,7 +495,49 @@ public class PlayerCharacter : Character
     public override void Die()
     {
         FindObjectOfType<PlayerController>().CharacterDied(this);
+        characterThatAttackedMe.FinishedAttacking();
         base.Die();
+    }
+
+    float XpGaining = 0;
+    public void GainXP(float XP)
+    {
+        if (XpGaining == 0)
+        {
+            StartCoroutine("GainXp");
+        }
+        XpGaining += XP;
+    }
+
+    IEnumerator GainXp()
+    {
+        yield return new WaitForSeconds(.1f);
+        CurrentXP += XpGaining;
+        if (CurrentXP > XpUntilNextLevel)
+        {
+            CurrentXP = CurrentXP - XpUntilNextLevel;
+            CharacterLevel++;
+            myHealthBar.LevelUpAndGainXP(CurrentXP / XpUntilNextLevel);
+            if (playerController.SelectPlayerCharacter == this)
+            {
+                CardActingWith.LevelUpAndGainXP(this);
+            }
+        }
+        else
+        {
+            myHealthBar.GainXP(CurrentXP / XpUntilNextLevel);
+            if (playerController.SelectPlayerCharacter == this)
+            {
+                CardActingWith.GainXP(this);
+            }
+        }
+        XpGaining = 0;
+    }
+
+    public override void SlayedEnemy(float XP)
+    {
+        FindObjectOfType<PlayerController>().EnemyVanquished(XP);
+        base.SlayedEnemy(XP);
     }
 
     public void ActionUsed()

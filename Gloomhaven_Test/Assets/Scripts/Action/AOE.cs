@@ -10,7 +10,8 @@ public enum AOEType
     Triangle = 3,
     Surounding = 4, 
     Circle = 5,
-    GreatCleave = 6
+    GreatCleave = 6,
+    LargeLine = 7
 }
 
 [System.Serializable]

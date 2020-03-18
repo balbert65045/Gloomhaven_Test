@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour {
 
@@ -28,10 +29,21 @@ public class PlayerController : MonoBehaviour {
     private CameraRaycaster raycaster;
     private HexVisualizer hexVisualizer;
 
-    private void Awake()
+    public List<Hex> HexesMovingTo = new List<Hex>();
+    public void AddHexMovingTo(Hex hex) { HexesMovingTo.Add(hex); }
+    public void ClearHexesMovingTo() { HexesMovingTo.Clear(); }
+
+    public int GoldHolding = 0;
+
+    //private void Awake()
+    //{
+    //    myCharacters.Clear();
+    //    myCharacters.AddRange(FindObjectsOfType<PlayerCharacter>());
+    //}
+
+    public void BeginGame()
     {
-        myCharacters.Clear();
-        myCharacters.AddRange(FindObjectsOfType<PlayerCharacter>());
+        StartCoroutine("StartGame");
     }
 
     private void Start()
@@ -45,15 +57,15 @@ public class PlayerController : MonoBehaviour {
         endTurnButton = FindObjectOfType<EndTurnButton>();
         actionButton = FindObjectOfType<PlayerActionButton>();
         initBoard = FindObjectOfType<InitiativeBoard>();
-
         actionButton.gameObject.SetActive(false);
-
-        StartCoroutine("StartGame");
     }
 
     IEnumerator StartGame()
     {
         yield return new WaitForSeconds(.5f);
+        myCharacters.Clear();
+        myCharacters.AddRange(FindObjectsOfType<PlayerCharacter>());
+        FindObjectOfType<PlayerCurrency>().SetGoldValue(GoldHolding);
         CSBM.SetUpCharacterSelectionButtons();
         GoOutOfCombat();
     }
@@ -61,9 +73,11 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
+            if (EventSystem.current.IsPointerOverGameObject() == true) {
+                return;
+            }
             switch (myState)
             {
                 case PlayerState.InCombat:
@@ -98,6 +112,18 @@ public class PlayerController : MonoBehaviour {
                 selectAnotherCharacter();
             }
         }
+    }
+
+    public void AddGold(int gold)
+    {
+        GoldHolding += gold;
+        FindObjectOfType<PlayerCurrency>().SetGoldValue(GoldHolding);
+    }
+
+    public void RemoveGold(int gold)
+    {
+        GoldHolding -= gold;
+        FindObjectOfType<PlayerCurrency>().SetGoldValue(GoldHolding);
     }
 
     public void RemoveArea()
@@ -159,7 +185,7 @@ public class PlayerController : MonoBehaviour {
     public void BeginActions(PlayerCharacter character)
     {
         SelectCharacter(character);
-        FindObjectOfType<myCharacterCard>().ShowCharacterStats(SelectPlayerCharacter.name, SelectPlayerCharacter.characterIcon, SelectPlayerCharacter);
+        character.ShowStatsActingWith();
         SelectPlayerCharacter.GetMyCombatHand().ShowSelectedCardToUse();
         CombatPlayerCard card = SelectPlayerCharacter.GetMyCombatHand().getSelectedCard();
         combatController.SetAbilities(card.CardAbility);
@@ -242,7 +268,7 @@ public class PlayerController : MonoBehaviour {
     public void EndPlayerTurn()
     {
         combatController.UnHighlightHexes();
-        FindObjectOfType<CharacterViewer>().HideCharacterStats();
+        FindObjectOfType<CharacterViewer>().HideCharacterCards();
         switch (myState)
         {
             case PlayerState.InCombat:
@@ -293,16 +319,26 @@ public class PlayerController : MonoBehaviour {
     //Character selection
     public void selectAnotherCharacter()
     {
-        foreach (PlayerCharacter character in myCharacters)
+        for(int i = 0; i < myCharacters.Count; i++)
         {
-            if (character != SelectPlayerCharacter)
+            if (myCharacters[i] == SelectPlayerCharacter)
             {
+                int nextCharindex = i + 1 >= myCharacters.Count ? 0 : i + 1;             
                 if (myState == PlayerState.InCombat) { combatController.UnShowSelectedPlayerCards() ; }
                 else if (myState == PlayerState.OutofCombat) { SelectPlayerCharacter.GetMyOutOfCombatHand().unShowAnyCards(); }
-                SelectCharacter(character);
+                SelectCharacter(myCharacters[nextCharindex]);
                 return;
             }
         }
+    }
+
+    public void EnemyVanquished(float XP)
+    {
+        for (int i = 0; i < myCharacters.Count; i++)
+        {
+            myCharacters[i].GainXP(XP);
+        }
+        if (myState == PlayerState.InCombat) { combatController.ShowMoveArea(); }
     }
 
     public void selectNextAvailableCharacter()

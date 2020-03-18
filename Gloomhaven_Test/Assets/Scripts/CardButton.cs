@@ -15,7 +15,7 @@ public class CardButton : MonoBehaviour, IPointerEnterHandler
     public HandCardShowArea showArea;
     private Vector3 OldScale;
 
-    bool Showing = false;
+    protected bool Showing = false;
 
     public virtual void OnPointerEnter(PointerEventData eventData)
     {

@@ -321,6 +321,10 @@ public class AStar : MonoBehaviour
     private List<Node> GetDiskatasAdjacentWalkableNodes(Node fromNode, Character.CharacterType myCT)
     {
         List<Node> walkableNodes = new List<Node>();
+
+        //ClosedDoor
+        if (fromNode.GetComponent<Door>() != null && fromNode.GetComponent<Door>().isOpen == false) { return walkableNodes; }
+
         Node[] nextLocations = controller.GetNeighbors(fromNode);
         foreach (Node node in nextLocations)
         {
@@ -335,6 +339,7 @@ public class AStar : MonoBehaviour
             {
                 continue;
             }
+
             // Ignore non-walkable nodes
             if (!node.isAvailable) { continue; }
             if (node.edge) { continue; }
@@ -350,6 +355,9 @@ public class AStar : MonoBehaviour
     private List<Node> GetAdjacentWalkableNodes(Node fromNode, int limit = 1000)
     {
         List<Node> walkableNodes = new List<Node>();
+
+        //ClosedDoor
+        if (fromNode.GetComponent<Door>() != null && fromNode.GetComponent<Door>().isOpen == false) { return walkableNodes; }
         //List<Node> nextLocations = controller.GetRealNeighbors(fromNode);
         Node[] nextLocations = controller.GetNeighbors(fromNode);
 

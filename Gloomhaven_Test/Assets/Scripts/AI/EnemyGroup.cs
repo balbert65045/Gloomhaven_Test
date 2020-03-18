@@ -66,13 +66,14 @@ public class EnemyGroup : MonoBehaviour {
     {
         if (hasCharactersOut())
         {
-            FindObjectOfType<HexVisualizer>().ReturntHexesToPreviousColor();
+            FindObjectOfType<HexVisualizer>().UnhighlightHexes();
             if (RandomCharacterIndex >= linkedCharacters.Count) { RandomCharacterIndex = 0; }
             EnemyCharacter character = linkedCharacters[RandomCharacterIndex];
             RandomCharacterIndex++;
             FindObjectOfType<HexVisualizer>().HighlightSelectionHex(character.HexOn);
             FindObjectOfType<MyCameraController>().UnLockCamera();
             FindObjectOfType<MyCameraController>().LookAt(character.transform);
+            character.ShowStats();
             if (FindObjectOfType<CombatActionController>().myCombatState == CombatActionController.CombatState.UsingCombatCards)
             {
                 FindObjectOfType<EnemyController>().ShowActionCard(character);
@@ -102,6 +103,7 @@ public class EnemyGroup : MonoBehaviour {
     public void UnLinkCharacterToGroup(EnemyCharacter character)
     {
         linkedCharacters.Remove(character);
+        if (FindObjectOfType<PlayerController>().myState != PlayerController.PlayerState.InCombat) { return; }
         if (linkedCharacters.Count == 0) {
             FindObjectOfType<InitiativeBoard>().takeCharacterOffBoard(CharacterNameLinkedTo);
             mydeck.DiscardCard(currentAction);
@@ -149,7 +151,7 @@ public class EnemyGroup : MonoBehaviour {
     {
         currentCharacterIndex = 0;
         FindObjectOfType<CharacterViewer>().HideActionCard();
-        FindObjectOfType<CharacterViewer>().HideCharacterStats();
+        FindObjectOfType<CharacterViewer>().HideCharacterCards();
         mydeck.DiscardCard(currentAction);
         if (currentAction.Shuffle) { mydeck.Shuffle(); }
         FindObjectOfType<CombatManager>().PerformNextInInitiative();
@@ -177,7 +179,7 @@ public class EnemyGroup : MonoBehaviour {
 
     public void ShowCharacter(EnemyCharacter character)
     {
-        characterViewer.ShowCharacterStats(character.CharacterName, character.enemySprite, character);
+        character.ShowStats();
         characterViewer.ShowActionCard(currentAction.gameObject);
         currentAction.setUpCard(character.GetStrength(), character.GetAgility(), character.GetDexterity());
     }

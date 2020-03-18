@@ -23,6 +23,7 @@ public class CombatPlayerCardButton : CardButton{
 
     public override void PointerExited()
     {
+        Showing = false;
         CombatPlayerHand hand = FindObjectOfType<CombatPlayerHand>();
         if (hand.getSelectedCard() == null)
         {

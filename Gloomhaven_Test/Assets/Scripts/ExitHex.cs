@@ -11,14 +11,13 @@ public class ExitHex : MonoBehaviour {
         Middle = 3
     }
     public ExitLocation myExitLocation;
-    public GameObject ExitPrefab;
 
     public GameObject exit;
 
     public void BuildExit()
     {
         InteractionObjects parent = FindObjectOfType<InteractionObjects>();
-        exit = Instantiate(ExitPrefab, parent.transform);
+        exit = Instantiate(GetComponent<Hex>().ExitPrefab, parent.transform);
         exit.transform.localPosition = transform.position + (Vector3.up * .8f);
         switch (myExitLocation)
         {

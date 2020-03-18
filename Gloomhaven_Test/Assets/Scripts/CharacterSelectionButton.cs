@@ -27,6 +27,8 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
     public bool Linked = false;
     Vector3 StartPosition;
 
+    public List<CharacterSelectionButton> AdjacentCharacters = new List<CharacterSelectionButton>();
+
     CharacterSelectionButtons CSBS;
     GraphicRaycaster m_raycaster;
 
@@ -45,10 +47,24 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
     {
         if (playerController.myState == PlayerController.PlayerState.OutofCombat)
         {
+            AdjacentCharacters.Clear();
             Dragging = true;
             transform.parent.SetAsLastSibling();
             transform.GetComponentInParent<FollowRow>().transform.SetAsLastSibling();
             CSBS.SetDraggingCharacterSelectionButton(this);
+            RevealAdjacentCharactersToFollow();
+        }
+    }
+
+    void RevealAdjacentCharactersToFollow()
+    {
+        HexMapController hexmap = FindObjectOfType<HexMapController>();
+        List<Node> adjacentNodes = hexmap.GetNodesAdjacent(characterLinkedTo.HexOn.HexNode);
+        CharacterSelectionButton[] AllButtons = FindObjectsOfType<CharacterSelectionButton>();
+        foreach (CharacterSelectionButton button in AllButtons)
+        {
+            if (adjacentNodes.Contains(button.characterLinkedTo.HexOn.HexNode) && button.characterLinkedTo.CharacterFollowing == null) { AdjacentCharacters.Add(button); }
+            else { button.GetComponent<Button>().interactable = false; }
         }
     }
 
@@ -62,7 +78,7 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
             Dragging = false;
             CSBS.SetDraggingCharacterSelectionButton(null);
             CharacterSelectionButton FollowingButton = GetButtonFromResults(results);
-            if (FollowingButton != null)
+            if (FollowingButton != null && AdjacentCharacters.Contains(FollowingButton))
             {
                 CSBS.SetFollowing(this, FollowingButton);
                 Linked = true;
@@ -73,6 +89,9 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
                 if (!Linked) { CSBS.AddCharacterWithNoFollow(gameObject); }
                 SetPosition();
             }
+
+            CharacterSelectionButton[] AllButtons = FindObjectsOfType<CharacterSelectionButton>();
+            foreach (CharacterSelectionButton button in AllButtons) { button.GetComponent<Button>().interactable = true; }
         }
     }
 
@@ -81,7 +100,7 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
         Linked = value;
     }
 
-    void SetPosition()
+    public void SetPosition()
     {
         transform.localPosition = Vector3.zero;
         StartPosition = transform.position;

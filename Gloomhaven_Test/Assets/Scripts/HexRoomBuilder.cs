@@ -134,7 +134,7 @@ public class HexRoomBuilder : MonoBehaviour {
                 node.GetComponent<HexAdjuster>().DownRoomSide = RoomName;
                 break;
         }
-        if (node.isAvailable)
+        if (node.isAvailable || node.Used)
         {
             node.AddRoomName(RoomName);
             node.GetComponent<HexWallAdjuster>().CreateHexWall(2, 1, RoomName);
@@ -182,12 +182,12 @@ public class HexRoomBuilder : MonoBehaviour {
                 node.GetComponent<HexAdjuster>().RightRoomSide = RoomName;
                 break;
         }
-        if (node.isAvailable)
+        if (node.isAvailable || node.Used)
         {
             node.AddRoomName(RoomName);
             EndHex endHex = node.gameObject.AddComponent<EndHex>();
             endHex.WallLayer = WallLayer;
-            node.GetComponentInChildren<FlatWall>().LinkWallToRoom(RoomName);
+            if (node.GetComponentInChildren<FlatWall>() != null) { node.GetComponentInChildren<FlatWall>().LinkWallToRoom(RoomName); }
         }
         else
         {

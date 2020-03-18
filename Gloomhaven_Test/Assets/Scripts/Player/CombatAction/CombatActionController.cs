@@ -81,6 +81,7 @@ public class CombatActionController : MonoBehaviour {
             playerCharacter.GetMyCombatHand().ShowHand();
             playerCharacter.GetMyCombatHand().ShowSelectedCard();
             playerCharacter.GetMyOutOfCombatHand().HideHand();
+            playerCharacter.ShowStats();
             ShowActions(playerCharacter);
             CSBM.ShowCharacterButtonSelected(playerCharacter);
         }
@@ -123,7 +124,7 @@ public class CombatActionController : MonoBehaviour {
                 playerController.RemoveArea();
                 FindObjectOfType<EndTurnButton>().DisableEndTurn();
                 SelectPlayerCharacter.GetMyCombatHand().HideSelectedCard();
-                FindObjectOfType<myCharacterCard>().HideCharacterStats();
+                FindObjectOfType<myCharacterCard>().HideCharacterCards();
                 SelectPlayerCharacter.myCurrentCombatCard.UnHighlightAllActions();
                 FindObjectOfType<CombatManager>().PerformNextInInitiative();
                 break;
@@ -192,11 +193,9 @@ public class CombatActionController : MonoBehaviour {
             }
             else
             {
-                if (characterSelected != null) {
-                    FindObjectOfType<CharacterViewer>().HideCharacterStats();
-                    FindObjectOfType<CharacterViewer>().HideActionCard();
-                    hexVisualizer.UnHighlightHex(characterSelected.HexOn);
-                }
+                FindObjectOfType<CharacterViewer>().HideCharacterCards();
+                FindObjectOfType<CharacterViewer>().HideActionCard();
+                hexVisualizer.UnhighlightHexes();
             }
         }
     }
@@ -207,29 +206,19 @@ public class CombatActionController : MonoBehaviour {
         if (HexHit != null && HexHit.GetComponent<Hex>())
         {
             Hex hexSelected = HexHit.GetComponent<Hex>();
-            if (hexSelected.EntityHolding != null && hexSelected.EntityHolding.GetComponent<EnemyCharacter>())
+            if (hexSelected.EntityHolding != null && hexSelected.EntityHolding.GetComponent<Character>())
             {
-                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
+                hexVisualizer.UnhighlightHexes();
+                //if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
                 hexVisualizer.HighlightSelectionHex(hexSelected);
                 characterSelected = hexSelected.EntityHolding.GetComponent<Character>();
-                EnemyCharacter character = hexSelected.EntityHolding.GetComponent<EnemyCharacter>();
-                FindObjectOfType<CharacterViewer>().ShowCharacterStats(character.CharacterName, character.enemySprite, character);
-            }
-            else if  (hexSelected.EntityHolding != null && hexSelected.EntityHolding.GetComponent<PlayerCharacter>())
-            {
-                if (characterSelected != null) { hexVisualizer.UnHighlightHex(characterSelected.HexOn); }
-                hexVisualizer.HighlightSelectionHex(hexSelected);
-                characterSelected = hexSelected.EntityHolding.GetComponent<Character>();
-                FindObjectOfType<CharacterViewer>().ShowCharacterStats(characterSelected.GetComponent<PlayerCharacter>().CharacterName, characterSelected.GetComponent<PlayerCharacter>().characterIcon, characterSelected);
+                characterSelected.ShowStats();
             }
             else
             {
-                if (characterSelected != null)
-                {
-                    FindObjectOfType<CharacterViewer>().HideCharacterStats();
-                    FindObjectOfType<CharacterViewer>().HideActionCard();
-                    hexVisualizer.UnHighlightHex(characterSelected.HexOn);
-                }
+                FindObjectOfType<CharacterViewer>().HideCharacterCards();
+                FindObjectOfType<CharacterViewer>().HideActionCard();
+                hexVisualizer.UnhighlightHexes();
             }
         }
     }
@@ -358,22 +347,22 @@ public class CombatActionController : MonoBehaviour {
                 myCharacter.Attack(action.thisAOE.Damage, charactersActingUpon);
                 break;
             case ActionType.Heal:
-                myCharacter.PerformHeal(action.thisAOE.Damage, charactersActingUpon);
+                myCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.Heal, action.thisAOE.Damage, 0, charactersActingUpon);
                 break;
             case ActionType.Shield:
-                myCharacter.PerformShield(action.thisAOE.Damage, charactersActingUpon);
+                myCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.Shield, action.thisAOE.Damage, 0, charactersActingUpon);
                 break;
             case ActionType.BuffAttack:
-                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Strength, charactersActingUpon);
+                myCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffAttack, action.thisAOE.Damage, action.Duration, charactersActingUpon);
                 break;
             case ActionType.BuffMove:
-                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Agility, charactersActingUpon);
+                myCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffMove, action.thisAOE.Damage, action.Duration, charactersActingUpon);
                 break;
             case ActionType.BuffArmor:
-                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Armor, charactersActingUpon);
+                myCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffArmor, action.thisAOE.Damage, action.Duration, charactersActingUpon);
                 break;
             case ActionType.BuffRange:
-                myCharacter.GiveBuff(action.thisAOE.Damage, action.Duration, BuffType.Dexterity, charactersActingUpon);
+                myCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffRange, action.thisAOE.Damage, action.Duration, charactersActingUpon);
                 break;
         }
     }
@@ -443,7 +432,7 @@ public class CombatActionController : MonoBehaviour {
         UnHighlightHexes();
         hexVisualizer.HighlightSelectionHex(playerController.SelectPlayerCharacter.HexOn);
         characterSelected = null;
-        FindObjectOfType<CharacterViewer>().HideCharacterStats();
+        FindObjectOfType<CharacterViewer>().HideCharacterCards();
         FindObjectOfType<CharacterViewer>().HideActionCard();
         ActionsUsed[ActionIndex] = true;
         playerController.SelectPlayerCharacter.myCurrentCombatCard.DisableCurrentAction(ActionIndex);

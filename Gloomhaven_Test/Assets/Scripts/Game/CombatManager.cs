@@ -104,7 +104,7 @@ public class CombatManager : MonoBehaviour {
 
     void BeginNewTurn()
     {
-        FindObjectOfType<MyCameraController>().LookAt(playerController.SelectPlayerCharacter.transform);
+        if (playerController.SelectPlayerCharacter != null) { FindObjectOfType<MyCameraController>().LookAt(playerController.SelectPlayerCharacter.transform); }
         FindObjectOfType<MyCameraController>().UnLockCamera();
         //TakeAwaySummoningSickness();
         //FindObjectOfType<EnemyCardButton>().SetInteractable(false);

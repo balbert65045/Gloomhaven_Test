@@ -19,5 +19,9 @@ public class ProceduralMapCreatorEditor : Editor {
         {
             proceduralMapCreator.BuildNewMap();
         }
+        if (GUILayout.Button("Build New Map And Show"))
+        {
+            proceduralMapCreator.BuildNewMapAndReveal();
+        }
     }
 }
