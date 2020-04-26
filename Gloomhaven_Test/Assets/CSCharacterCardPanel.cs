@@ -27,14 +27,4 @@ public class CSCharacterCardPanel : MonoBehaviour {
         Card.transform.localScale = new Vector3(1.17f, 1.17f, 1.17f);
         Card.transform.localPosition = Vector3.zero;
     }
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

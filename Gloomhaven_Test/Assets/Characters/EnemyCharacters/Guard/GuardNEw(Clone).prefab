@@ -2766,6 +2766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f57ebbbb58cd7499164f2dd5cb9f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RightHandWeapon: {fileID: 0}
 --- !u!114 &114432738888375154
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2797,6 +2798,8 @@ MonoBehaviour:
   ArmorValue: {fileID: 102150205690055734}
   ArmorEncapsulation: {fileID: 1593547818033840}
   ArmorChunk: {fileID: 1568165000496888, guid: 1af9dd54636643540a4cdf793feb57a2, type: 2}
+  GoldObj: {fileID: 0}
+  GoldValue: {fileID: 0}
   HandAmountEncapsulator: {fileID: 1074021421520444}
   HandAmount: {fileID: 102260228649716946}
   StrengthSprite: {fileID: 21300000, guid: 629ea3e56e6ceb04886b3c957b331eec, type: 3}
@@ -2843,9 +2846,9 @@ MonoBehaviour:
   myCT: 1
   MaxMoveDistance: 15
   CurrentMoveDistance: 0
-  health: 5
+  health: 4
   ViewDistance: 4
-  baseStrength: 1
+  baseStrength: 0
   baseAgility: 1
   baseDexterity: 0
   baseArmor: 0

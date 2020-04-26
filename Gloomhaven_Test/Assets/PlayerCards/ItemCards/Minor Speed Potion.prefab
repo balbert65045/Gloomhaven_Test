@@ -334,6 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07754c6f8ad101a479a573fe10a0edb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 3
   myType: 1
   NameText: {fileID: 114505485574653738}
   AbilityLinePositions:

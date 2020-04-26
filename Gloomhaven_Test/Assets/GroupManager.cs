@@ -20,6 +20,7 @@ public class GroupManager : MonoBehaviour {
         {
             CreateLevel();
         }
+        Time.timeScale = 1;
     }
 
     void CreateLevel()

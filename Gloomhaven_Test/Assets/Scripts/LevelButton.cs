@@ -16,6 +16,12 @@ public class LevelButton : MonoBehaviour {
 		
 	}
 
+    public void LoadLevelIndex()
+    {
+        levelManager.LevelIndex++;
+        LoadLevelIndex();
+    }
+
     public void ReloadLevel()
     {
         levelManager.ReloadLevel();

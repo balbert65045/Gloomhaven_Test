@@ -3269,12 +3269,11 @@ MonoBehaviour:
     type: 2}
   myType: 2
   characterIcon: {fileID: 21300000, guid: 63aec19504d64eb408af12d0ec2c1356, type: 3}
-  CharacterName: Kaladin
+  CharacterName: Knight
   CombatHandSize: 5
   InitialCombatCards: []
   OutOfCombatHandSize: 3
   InitialOutOfCombatCards: []
-  CardsStored: []
   DeckPrefab: {fileID: 1338797504036460, guid: b0a40256eace37a49b71bc4a6413a1a6, type: 2}
   doorToOpen: {fileID: 0}
   CharacterLeading: {fileID: 0}
@@ -3312,6 +3311,8 @@ MonoBehaviour:
   - -2
   - x0
   - x2
+  - +0
+  - +0
 --- !u!114 &114969573110868282
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -255,7 +255,9 @@ public class EnemyCharacter : Character {
     {
         hexVisualizer.HighlightArmorPointHex(HexOn);
         yield return new WaitForSeconds(.5f);
-        Shield(ShieldAmount, this);
+        List<Character> characterActingUpon = new List<Character>();
+        characterActingUpon.Add(GetComponent<Character>());
+        GetComponent<CharacterAnimationController>().DoBuff(ActionType.Shield, ShieldAmount, 0, characterActingUpon);
         yield return null;
     }
 

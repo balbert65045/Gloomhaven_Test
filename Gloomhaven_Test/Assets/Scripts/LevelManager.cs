@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour {
 
     // Use this for initialization
-    
 
+    public int LevelIndex = 1;
     public float autoLoadNextLevelAfter;
 
     private void Awake()
@@ -31,6 +31,11 @@ public class LevelManager : MonoBehaviour {
     private void Update()
     {
         
+    }
+
+    public void LoadNextLevelFromIndex()
+    {
+        SceneManager.LoadScene("Level"+ LevelIndex.ToString());
     }
 
     public void LoadLevelWithDelay(string levelName, float timeDelay)

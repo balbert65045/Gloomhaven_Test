@@ -3162,7 +3162,6 @@ MonoBehaviour:
   InitialCombatCards: []
   OutOfCombatHandSize: 5
   InitialOutOfCombatCards: []
-  CardsStored: []
   DeckPrefab: {fileID: 1338797504036460, guid: 9ef7ad7585baf55408cd43f36afa9b11, type: 2}
   doorToOpen: {fileID: 0}
   CharacterLeading: {fileID: 0}
@@ -3271,6 +3270,8 @@ MonoBehaviour:
   - -2
   - x0
   - x2
+  - +0
+  - +0
 --- !u!114 &114886266150366280
 MonoBehaviour:
   m_ObjectHideFlags: 1

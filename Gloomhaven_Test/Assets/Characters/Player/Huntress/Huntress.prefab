@@ -3275,6 +3275,8 @@ MonoBehaviour:
   - -2
   - x0
   - x2
+  - +0
+  - +0
 --- !u!114 &114755194460934828
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3309,12 +3311,11 @@ MonoBehaviour:
     type: 2}
   myType: 5
   characterIcon: {fileID: 21300000, guid: 280f25096d46fca47ad829c50ec2ec7c, type: 3}
-  CharacterName: CrossbowWarrior
+  CharacterName: Huntress
   CombatHandSize: 5
   InitialCombatCards: []
   OutOfCombatHandSize: 3
   InitialOutOfCombatCards: []
-  CardsStored: []
   DeckPrefab: {fileID: 1338797504036460, guid: 3716dede558307c4f98e6fcab1a8be73, type: 2}
   doorToOpen: {fileID: 0}
   CharacterLeading: {fileID: 0}

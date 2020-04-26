@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour {
 
+    public string ID;
     public PlayerCharacterType myType;
     public Text NameText;
 

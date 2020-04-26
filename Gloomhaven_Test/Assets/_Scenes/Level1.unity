@@ -142,7 +142,7 @@ RectTransform:
   m_Children:
   - {fileID: 167316403}
   m_Father: {fileID: 1600241967}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6830,34 +6830,6 @@ MonoBehaviour:
   InitValue: 0
   Init: {fileID: 789495257}
   myCard: {fileID: 0}
---- !u!1 &717131851
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 717131852}
-  m_Layer: 0
-  m_Name: test
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &717131852
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 717131851}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 810.8258, y: 631.27026, z: -2.75}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &735004153
 GameObject:
   m_ObjectHideFlags: 0
@@ -7283,7 +7255,7 @@ Transform:
   - {fileID: 1600675956}
   - {fileID: 1003585476}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &789495257
 GameObject:
@@ -9113,9 +9085,9 @@ MonoBehaviour:
   CurrentGoldAmount: 81
   TreasureAmount: 7
   CurrentTreasureAmount: 0
-  ChallengeRating: 15
+  ChallengeRating: 0
   CurrentChallengeRating: -1
-  MaxLength: 15
+  MaxLength: 10
   ExplorationChestPrefab: {fileID: 1879929830829648, guid: 3d8c8b7f5f572ed4c962a155080c8dc2,
     type: 2}
   CombatChestPrefab: {fileID: 1617780405176490, guid: fd06cee8ed4310a43bbd02c143908d92,
@@ -9129,7 +9101,6 @@ MonoBehaviour:
   - {fileID: 1266607874677300, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
   - {fileID: 1266607874677300, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
   - {fileID: 1868863097766338, guid: 7ef124a65c9767c49a7b73dd7cc53834, type: 2}
-  - {fileID: 1795565890930410, guid: 36a2737e6a0479242bc19751b4f39e56, type: 2}
   PlayerCharacters:
   - {fileID: 1213946937077070, guid: 21cc12e9de7dde643ad7e21f772fd8d8, type: 2}
   - {fileID: 1238893708736784, guid: 4376c26fe804dca4d88484520008b347, type: 2}
@@ -10515,7 +10486,7 @@ RectTransform:
   m_Children:
   - {fileID: 337335388}
   m_Father: {fileID: 1600241967}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -11551,16 +11522,16 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1314887974}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 579.33136, y: 300, z: 0}
+  m_LocalScale: {x: 1.645, y: 1.645, z: 1.645}
   m_Children: []
-  m_Father: {fileID: 1600241967}
-  m_RootOrder: 15
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 579.33136, y: 300}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1314887976
@@ -11574,6 +11545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba3306884b01eaa4982885316bd1be8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ItemCards: []
   KightCombatCards:
   - {fileID: 1598520124889812, guid: 7c8ce099e58b8d94cae5f5cdec6e7314, type: 2}
   - {fileID: 1611772661633124, guid: 5596a2f21615ece45aac1c795cdce30c, type: 2}
@@ -11608,6 +11580,10 @@ MonoBehaviour:
   - {fileID: 1050939361721888, guid: 717e8f0be080e36418482f20acffc3e3, type: 2}
   - {fileID: 1196707724942742, guid: fe4ee89b289163546a684c0466f4ef30, type: 2}
   - {fileID: 1228884951200074, guid: 613daf73a748caa448287f1a344d7d37, type: 2}
+  HuntressCombatCards: []
+  HuntressOutOfCombatCards: []
+  MageCombatCards: []
+  MageOutOfCombatCards: []
 --- !u!1 &1337777657
 GameObject:
   m_ObjectHideFlags: 0
@@ -13554,7 +13530,6 @@ RectTransform:
   - {fileID: 1971114297}
   - {fileID: 1381946113}
   - {fileID: 100605586}
-  - {fileID: 1314887975}
   - {fileID: 2665717}
   - {fileID: 1159898987}
   m_Father: {fileID: 0}
@@ -14695,14 +14670,14 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1761965432}
-        m_MethodName: ReloadLevel
-        m_Mode: 1
+        m_MethodName: LoadLevel
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: CardSelection
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,

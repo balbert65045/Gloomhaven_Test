@@ -35,9 +35,9 @@ public class PlayerCharacter : Character
     public int OutOfCombatHandSize = 5;
     public GameObject[] InitialOutOfCombatCards;
 
-    //TODO change this to be an ID to later be able to lookup
-    public List<string> CardsStored;
-    public void AddCardToBeStored(string cardToBeStored) { CardsStored.Add(cardToBeStored); }
+    public void AddCardToBeStored(GameObject cardToBeStored) { FindObjectOfType<GroupCardStorage>().AddCardStored(cardToBeStored, CharacterName); }
+    public void AddCardToHand(GameObject cardToBeStored) { FindObjectOfType<GroupCardStorage>().AddCardHolding(cardToBeStored, CharacterName); }
+    public void ReplacingCardInHand(GameObject cardToBeInHand, GameObject cardToBeOutOfHand) { FindObjectOfType<GroupCardStorage>().ReplaceCard(cardToBeInHand, cardToBeOutOfHand, CharacterName); }
 
     public GameObject DeckPrefab;
 
@@ -495,7 +495,6 @@ public class PlayerCharacter : Character
     public override void Die()
     {
         FindObjectOfType<PlayerController>().CharacterDied(this);
-        characterThatAttackedMe.FinishedAttacking();
         base.Die();
     }
 

@@ -739,6 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07754c6f8ad101a479a573fe10a0edb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 2
   myType: 2
   NameText: {fileID: 114161473882216476}
   AbilityLinePositions:
@@ -747,6 +748,7 @@ MonoBehaviour:
   - {fileID: 1101318353738280}
   - {fileID: 1526524142819426}
   - {fileID: 1262402440246532}
+  LostAbilityUsed: 0
   cardAbility: {fileID: 114337352863435562}
 --- !u!222 &222104112748141898
 CanvasRenderer:

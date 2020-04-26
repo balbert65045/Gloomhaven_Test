@@ -2835,7 +2835,7 @@ MonoBehaviour:
   myCT: 1
   MaxMoveDistance: 15
   CurrentMoveDistance: 0
-  health: 4
+  health: 3
   ViewDistance: 4
   baseStrength: 0
   baseAgility: 0

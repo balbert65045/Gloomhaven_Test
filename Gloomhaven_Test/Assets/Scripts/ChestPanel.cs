@@ -57,7 +57,7 @@ public class ChestPanel : MonoBehaviour {
     {
         Destroy(CardPosition.GetComponentInChildren<Card>().gameObject);
         GetCorrectHand().AddCard(cardFound);
-        CharacterOpeningChest.AddCardToBeStored(cardFound.name);
+        CharacterOpeningChest.AddCardToHand(cardFound);
         DoneOpeningChest();
     }
 
@@ -65,14 +65,15 @@ public class ChestPanel : MonoBehaviour {
     {
         Destroy(CardPosition.GetComponentInChildren<Card>().gameObject);
         GetCorrectHand().ReplaceCard(cardFound, cardSelectedForReplace.gameObject);
-        CharacterOpeningChest.AddCardToBeStored(cardFound.name);
+        GameObject CardReplacing = FindObjectOfType<PlayerCardDatabase>().FindCardInDatabase(cardSelectedForReplace);
+        CharacterOpeningChest.ReplacingCardInHand(cardFound, CardReplacing);
         DoneOpeningChest();
     }
 
     public void Store()
     {
         Destroy(CardPosition.GetComponentInChildren<Card>().gameObject);
-        CharacterOpeningChest.AddCardToBeStored(cardFound.name);
+        CharacterOpeningChest.AddCardToBeStored(cardFound);
         DoneOpeningChest();
     }
 

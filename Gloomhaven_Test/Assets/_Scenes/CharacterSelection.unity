@@ -17730,6 +17730,109 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2020455570}
   m_Mesh: {fileID: 4300000, guid: a0b1ecb5f740bbf4c93ffc78e6c87a18, type: 3}
+--- !u!1 &2036254928
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 2036254930}
+  - component: {fileID: 2036254929}
+  m_Layer: 5
+  m_Name: CardDatabase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2036254929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2036254928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3306884b01eaa4982885316bd1be8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemCards:
+  - {fileID: 1112791787048326, guid: 3e7f560be79f2cb4cb26a42b78f29981, type: 2}
+  - {fileID: 1050939361721888, guid: 717e8f0be080e36418482f20acffc3e3, type: 2}
+  - {fileID: 1196707724942742, guid: fe4ee89b289163546a684c0466f4ef30, type: 2}
+  - {fileID: 1228884951200074, guid: 613daf73a748caa448287f1a344d7d37, type: 2}
+  KightCombatCards:
+  - {fileID: 1598520124889812, guid: 7c8ce099e58b8d94cae5f5cdec6e7314, type: 2}
+  - {fileID: 1611772661633124, guid: 5596a2f21615ece45aac1c795cdce30c, type: 2}
+  - {fileID: 1374807210639592, guid: b56c31cfab2ab61438a557c13b42ea94, type: 2}
+  - {fileID: 1916420345430276, guid: d53c05fbed3fb9645a3eb0e3ec5bf073, type: 2}
+  - {fileID: 1590837455980908, guid: e4d5596186f0e6e488d50ea30d915157, type: 2}
+  - {fileID: 1575221511390722, guid: d0a9e241da60b3f44854b3c3c0dc0931, type: 2}
+  - {fileID: 1260301595911204, guid: 2323e360da9dc184d87d615896c8b48b, type: 2}
+  - {fileID: 1286555505255412, guid: 64612239d2fdc8f40905cabe18c770e9, type: 2}
+  - {fileID: 1288090604164676, guid: 9371056909d0cf041bf346963440aa08, type: 2}
+  KightOutOfCombatCards:
+  - {fileID: 1319229349747006, guid: 66e060332cd6b084e9073dfccc8be873, type: 2}
+  - {fileID: 1447322340989380, guid: 9b56697c41cccf543884c00d36e40a87, type: 2}
+  - {fileID: 1055152885680816, guid: fa291bc759889b14f89caf9d25b6e1ae, type: 2}
+  BarbarianCombatCards:
+  - {fileID: 1859350248059836, guid: 19e69b8fb5ffe8a43b5738e2681e3bc2, type: 2}
+  - {fileID: 1306751794125916, guid: 84954c37de30cc54199f088d090e84f5, type: 2}
+  - {fileID: 1453812882587044, guid: 54e47c3cee5bfeb4983d3f56a5862071, type: 2}
+  - {fileID: 1612223997712038, guid: ac12a13d88a82964d830e1064f3e85cf, type: 2}
+  - {fileID: 1135888573037308, guid: 1200efbb30aa549468d72a92f8cab97c, type: 2}
+  - {fileID: 1963880027457126, guid: 20d73d0f43b06b142830156386d0db95, type: 2}
+  - {fileID: 1941919730156234, guid: 0797c68e2a6715a479a54056a375d8c0, type: 2}
+  BarbarianOutOfCombatCards:
+  - {fileID: 1004997761942070, guid: 68d187ec481bd1c4eb0bd87ad4cf998c, type: 2}
+  - {fileID: 1821926498242948, guid: 928db11398c86404b984c73051830049, type: 2}
+  HuntressCombatCards:
+  - {fileID: 1658143582709560, guid: 596a595c899f45241aa39bfddf61c5d7, type: 2}
+  - {fileID: 1286345387372262, guid: 028ef4fd78f5101498ba06acff7582a2, type: 2}
+  - {fileID: 1330039047818434, guid: 7fc0f5a073ac0f448b115494dd39ad22, type: 2}
+  - {fileID: 1116115984732230, guid: d0e171ad9e0aae347adef3e3bced11d7, type: 2}
+  - {fileID: 1406051328625778, guid: 968c759eeff092f4c9c67a81dc467ead, type: 2}
+  - {fileID: 1935056284577718, guid: fa9f4beab337e1349a95fa8eaccff56f, type: 2}
+  - {fileID: 1446851689208920, guid: 593e0197990bab944890818b864e8fdc, type: 2}
+  - {fileID: 1780938058274726, guid: 9ebd0371940f043459299c8554d476fe, type: 2}
+  - {fileID: 1404770128902354, guid: dab9fe4a6cfbb244f946f98febdbc246, type: 2}
+  HuntressOutOfCombatCards:
+  - {fileID: 1622609508600622, guid: 7f20e270c21b46549a64dc06ecab92d4, type: 2}
+  - {fileID: 1964895719919346, guid: 2ee341faa87c67d4cab71a0584ca2af0, type: 2}
+  - {fileID: 1078318510034324, guid: cdec6bf9729e5f147bcd7ae90db94690, type: 2}
+  MageCombatCards:
+  - {fileID: 1102692746052702, guid: 033f4ede00c43ed40aaa6cab4da7ab8d, type: 2}
+  - {fileID: 1343294514269820, guid: 53119f6cd5672ff4497f4110c65d3bf4, type: 2}
+  - {fileID: 1086863748522374, guid: f72449818cd9cee44aa3df701a9973d8, type: 2}
+  - {fileID: 1360636859778082, guid: 8656fcae098cb80459b3f32ddd5e091d, type: 2}
+  - {fileID: 1375773208868038, guid: 171a0697cb19b7a468e73762a62700a7, type: 2}
+  - {fileID: 1059809333527508, guid: 37badcd14f95d104ea397e7a042de70c, type: 2}
+  - {fileID: 1143611712537198, guid: 2f371e39306915f438eee9b07319e975, type: 2}
+  - {fileID: 1834786211646018, guid: 169592baafca6a345bb3acdaf51481d9, type: 2}
+  - {fileID: 1069824937641708, guid: 3b1874bc6137f3e4abb7f41a49b27e4e, type: 2}
+  - {fileID: 1201324628335170, guid: f2adce365c65ab04cbb05e0c218d9120, type: 2}
+  MageOutOfCombatCards:
+  - {fileID: 1957162425658818, guid: 16c85fee311bf9d40af21e2a371293d5, type: 2}
+  - {fileID: 1708057483415580, guid: 322807edb85dc0a44b9a21457a6a5020, type: 2}
+--- !u!224 &2036254930
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2036254928}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 579.33136, y: 300, z: 0}
+  m_LocalScale: {x: 1.645, y: 1.645, z: 1.645}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 579.33136, y: 300}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2045536243
 GameObject:
   m_ObjectHideFlags: 0
