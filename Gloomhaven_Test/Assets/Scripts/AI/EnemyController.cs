@@ -9,6 +9,24 @@ public class EnemyController : MonoBehaviour {
     public GameObject EnemyMeshGeneratorPrefab;
     public GameObject EnemyLinePrefab;
 
+    public GameObject ThreatAreaPrefab;
+
+    public void CreateThreatAreaShown(EnemyCharacter character, List<Node> nodes)
+    {
+        GameObject newThreatAreaObj = Instantiate(ThreatAreaPrefab);
+        ThreatArea newThreatArea = newThreatAreaObj.GetComponent<ThreatArea>();
+        newThreatArea.AddEnemyCharacter(character);
+        newThreatArea.AddEnemyNodes(nodes);
+        newThreatArea.UpdateVisualArea();
+    }
+
+    public void CreateThreatAreaHidden(List<Node> nodes)
+    {
+        GameObject newThreatAreaObj = Instantiate(ThreatAreaPrefab);
+        ThreatArea newThreatArea = newThreatAreaObj.GetComponent<ThreatArea>();
+        newThreatArea.AddEnemyNodes(nodes);
+    }
+
     void Start()
     {
         enemyGroups = GetComponentsInChildren<EnemyGroup>();
@@ -100,6 +118,15 @@ public class EnemyController : MonoBehaviour {
         group.beginActions();
     }
 
+    public EnemyGroup GetGroupFromCharacter(EnemyCharacter character)
+    {
+        foreach (EnemyGroup group in enemyGroups)
+        {
+            if (group.linkedCharacters.Contains(character)) { return group; }
+        }
+        return null;
+    }
+
     EnemyGroup GetGroupFromCard(EnemyActionCard card)
     {
         foreach (EnemyGroup group in enemyGroups)
@@ -143,36 +170,33 @@ public class EnemyController : MonoBehaviour {
         }
     }
 
-    public void ShowCharactersView()
+    public bool ShowEnemyViewAreaAndCheckToFight(PlayerCharacter playerCharacter)
     {
-        foreach (EnemyCharacter character in enemiesOut())
+        if (playerCharacter.HexOn.InThreatArea())
         {
-            character.ShowViewAreaInShownHexes();
+            CreateCombatZone(playerCharacter);
+            playerCharacter.HexOn.ThreatAreaIn.TurnIntoCombatZone(playerCharacter.myCombatZone);
+            return true;
         }
-    }
-
-    public bool ShowEnemyViewAreaAndCheckToFight()
-    {
-        foreach (EnemyCharacter character in enemiesOut())
-        {
-            character.ShowViewAreaInShownHexes();
-            if (character.PlayerInView())
-            {
-                RemoveAllThreatAreas();
-                character.InCombat = true;
-                character.ShowHexesViewingAndAlertOthersToCombat();
-                return true;
-            }
-        }
+        //foreach (EnemyCharacter character in enemiesOut())
+        //{
+        //    if (character.InCombat()) { continue; }
+        //    PlayerCharacter characterFound = character.PlayerInView();
+        //    if (characterFound != null)
+        //    {
+        //        CreateCombatZone(playerCharacter);
+        //        playerCharacter.myCombatZone.AddCharacterToCombat(character);
+        //        RemoveAllThreatAreas();
+        //        character.ShowHexesViewingAndAlertOthersToCombat();
+        //        return true;
+        //    }
+        //}
         return false;
     }
 
-    public void CheckToFight()
+    public void CreateCombatZone(Character PlayerCharacter)
     {
-        foreach (EnemyGroup EG in enemyGroups)
-        {
-            EG.CheckToPutCharacterInCombat();
-        }
+        FindObjectOfType<CombatManager>().CreateCombatZone(PlayerCharacter);
     }
 
     public void takeAwayBuffs()

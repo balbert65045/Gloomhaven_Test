@@ -42,10 +42,17 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
         m_raycaster = FindObjectOfType<Canvas>().GetComponent<GraphicRaycaster>();
     }
 
+    public void BreakLink()
+    {
+        SetLinked(false);
+        CSBS.AddCharacterWithNoFollow(this.gameObject);
+        characterLinkedTo.SetFollow(null);
+    }
+
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (playerController.myState == PlayerController.PlayerState.OutofCombat)
+        if (!characterLinkedTo.InCombat())
         {
             AdjacentCharacters.Clear();
             Dragging = true;

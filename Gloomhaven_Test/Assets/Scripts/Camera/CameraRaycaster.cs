@@ -147,11 +147,12 @@ public class CameraRaycaster : MonoBehaviour {
         cursorPoint = Input.mousePosition;
         transform.position = cursorPoint;
 
-        if (playerController.GetPlayerState() == PlayerController.PlayerState.InCombat) {
+        if (playerController.SelectPlayerCharacter == null) { return; }
+
+        if (playerController.SelectPlayerCharacter.InCombat()) {
             CombatRaycast();
         }
-
-        else if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat) {
+        else {
             OutOfCombatRaycast();
         }
     }

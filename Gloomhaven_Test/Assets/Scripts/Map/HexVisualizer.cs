@@ -322,8 +322,8 @@ public class HexVisualizer : MonoBehaviour {
         LastHexOver = hex;
 
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-
-        if (playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat)
+        if (myCharacter == null) { return; }
+        if (!myCharacter.InCombat() && combatcontroller.PickingCards())
         {
             if (myCharacter.GetMoving()) { return; }
             if (outOfCombatcontroller.LookingInChest) { return; }
@@ -378,7 +378,7 @@ public class HexVisualizer : MonoBehaviour {
                 }
             }
         }
-        else if (playerController.GetPlayerState() == PlayerController.PlayerState.InCombat && combatcontroller.GetCombatState() == CombatActionController.CombatState.UsingCombatCards)
+        else if (myCharacter.InCombat() && combatcontroller.GetCombatState() == CombatActionController.CombatState.UsingCombatCards)
         {
             if (hex == null || !hex.HexNode.Shown) { return; }
             switch (combatcontroller.GetMyCurrectAction().thisActionType)

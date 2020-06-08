@@ -64,11 +64,11 @@ public class MyCameraController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            RotationAngle *= Quaternion.AngleAxis(90, Vector3.up);
+            RotationAngle *= Quaternion.AngleAxis(60, Vector3.up);
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
-            RotationAngle *= Quaternion.AngleAxis(-90, Vector3.up);
+            RotationAngle *= Quaternion.AngleAxis(-60, Vector3.up);
         }
 
         Pivot.transform.rotation = Quaternion.Lerp(Pivot.transform.rotation, RotationAngle, 10 * Time.deltaTime);

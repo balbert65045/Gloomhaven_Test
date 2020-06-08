@@ -42,26 +42,6 @@ public class EnemyGroup : MonoBehaviour {
         }
     }
 
-    public void CheckToPutCharacterInCombat()
-    {
-        foreach (EnemyCharacter character in linkedCharacters)
-        {
-            if (!character.InCombat)
-            {
-                //character.ShowViewAreaInShownHexes();
-                if (character.PlayerInView())
-                {
-                    if (!hasCharacterInCombat())
-                    {
-                        FindObjectOfType<CombatManager>().AddGroupToCombat(this);
-                    }
-                    character.InCombat = true;
-                    character.ShowHexesViewingAndAlertOthersToCombat();
-                }
-            }
-        }
-    }
-
     public void selectRandomCharacter()
     {
         if (hasCharactersOut())
@@ -90,7 +70,7 @@ public class EnemyGroup : MonoBehaviour {
     {
         foreach (EnemyCharacter character in linkedCharacters)
         {
-            if (character.InCombat) { return true; }
+            if (character.InCombat()) { return true; }
         }
         return false;
     }
@@ -102,10 +82,14 @@ public class EnemyGroup : MonoBehaviour {
 
     public void UnLinkCharacterToGroup(EnemyCharacter character)
     {
+        if (character.myCombatZone == null) {}
+        else
+        {
+            character.myCombatZone.removeCharacter(character);
+        }
         linkedCharacters.Remove(character);
-        if (FindObjectOfType<PlayerController>().myState != PlayerController.PlayerState.InCombat) { return; }
+
         if (linkedCharacters.Count == 0) {
-            FindObjectOfType<InitiativeBoard>().takeCharacterOffBoard(CharacterNameLinkedTo);
             mydeck.DiscardCard(currentAction);
             if (currentAction.Shuffle) { mydeck.Shuffle(); }
         }
@@ -131,7 +115,7 @@ public class EnemyGroup : MonoBehaviour {
         else if (currentCharacterIndex < linkedCharacters.Count)
         {
             EnemyCharacter character = linkedCharacters[currentCharacterIndex];
-            if (character.GetSummonSickness() || !character.InCombat)
+            if (character.GetSummonSickness() || !character.InCombat())
             {
                 currentCharacterIndex++;
                 performNextCharacterAction();
@@ -170,6 +154,14 @@ public class EnemyGroup : MonoBehaviour {
     IEnumerator WaitAndPerformCharacterAction()
     {
         EnemyCharacter character = linkedCharacters[currentCharacterIndex];
+        character.myCombatZone.ShowInitiativeBoard();
+        character.myCombatZone.ShowMyCharacterAsCurrentAction(this.CharacterNameLinkedTo);
+        CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
+        foreach (CombatZone combatZone in combatZones)
+        {
+            if (character.myCombatZone == combatZone) { combatZone.HideZone(); }
+            else { combatZone.ShowZone(); }
+        }
         myCamera.SetTarget(character.transform);
         ShowCharacter(character);
         yield return new WaitForSeconds(.5f);

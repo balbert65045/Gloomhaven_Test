@@ -13,14 +13,26 @@ public class Hex : MonoBehaviour {
     public GameObject GoldPrefabLarge;
     public GameObject GoldHolding;
 
+    public string chestFor;
     public Entity EntityToSpawn;
     public float EntityOffset = 0.1f;
     public Entity EntityHolding;
 
     public bool MovedTo = false;
 
-    public List<Hex> EnemysHexInSeight = new List<Hex>();
-    public bool InEnemySeight { get { return EnemysHexInSeight.Count > 0; } }
+    public bool InThreatArea() { return ThreatAreaIn != null; }
+    public ThreatArea ThreatAreaIn = null;
+
+    public bool InCombatZone() { return CombatZonesIn.Count > 0; }
+    public List<CombatZone> CombatZonesIn = new List<CombatZone>();
+    public void AddCombatZone(CombatZone cz)
+    {
+        if (!CombatZonesIn.Contains(cz)) { CombatZonesIn.Add(cz); }
+    }
+    public void RemoveCombatZone(CombatZone cz)
+    {
+        if (CombatZonesIn.Contains(cz)) { CombatZonesIn.Remove(cz); }
+    }
 
     public Material InvisibleMaterial;
     public Material SlightlyVisibleMaterial;
@@ -29,7 +41,7 @@ public class Hex : MonoBehaviour {
     public Material previousMaterial { get; set; }
     public Node HexNode { get; set; }
 
-    private void Start()
+    private void Awake()
     {
         previousMaterial = OGMaterial;
         HexNode = GetComponent<Node>();
@@ -38,6 +50,11 @@ public class Hex : MonoBehaviour {
             HideHex();
         }
     }
+
+    public bool HasEnemy() { return EntityHolding != null && EntityHolding.GetComponent<EnemyCharacter>() != null; }
+    public EnemyCharacter GetEnemy() { return EntityHolding.GetComponent<EnemyCharacter>(); }
+    public bool HasPlayer() { return EntityHolding != null && EntityHolding.GetComponent<PlayerCharacter>() != null; }
+    public bool HasCharacter() { return EntityHolding != null && EntityHolding.GetComponent<Character>() != null; }
 
     public int PickUpMoney()
     {
@@ -69,31 +86,24 @@ public class Hex : MonoBehaviour {
         }
     }
 
+
     public void setUpHexes()
     {
         if (EntityToSpawn != null && EntityToSpawn.GetComponent<EnemyCharacter>() != null)
         {
             int viewDistance = EntityToSpawn.GetComponent<EnemyCharacter>().ViewDistance;
-            List<Node> nodesInEnemyView = FindObjectOfType<HexMapController>().GetNodesAtDistanceFromNode(this.HexNode, viewDistance);
+            List<Node> nodesInEnemyView = FindObjectOfType<HexMapController>().GetNodesInLOS(this.HexNode, viewDistance);
             foreach (Node node in nodesInEnemyView)
             {
-                node.NodeHex.EnemysHexInSeight.Add(this);
+                if (node.NodeHex.ThreatAreaIn != null)
+                {
+                    node.NodeHex.ThreatAreaIn.AddEnemyNodes(nodesInEnemyView);
+                    return;
+                }
             }
+            FindObjectOfType<EnemyController>().CreateThreatAreaHidden(nodesInEnemyView);
         }
     }
-
-    public void EnemyAlert()
-    {
-        foreach(Hex hex in EnemysHexInSeight)
-        {
-            if (hex.EntityHolding != null)
-            {
-                hex.EntityHolding.GetComponent<EnemyCharacter>().ShowHexesViewingAndAlertOthersToCombat();
-            }
-        }
-    }
-
-    public void TakeAwayThreatArea() { EnemysHexInSeight.Clear(); }
     
     public void CharacterMovingToHex() { MovedTo = true; }
     public void CharacterArrivedAtHex() { MovedTo = false; }
@@ -150,7 +160,6 @@ public class Hex : MonoBehaviour {
         if (EntityHolding.GetComponent<EnemyCharacter>() != null)
         {
             FindObjectOfType<EnemyController>().LinkSpawnedCharacter(EntityHolding.GetComponent<EnemyCharacter>());
-            EntityHolding.GetComponent<EnemyCharacter>().InCombat = (FindObjectOfType<PlayerController>().myState == PlayerController.PlayerState.InCombat);
         }
         return objectMade;
     }
@@ -167,6 +176,7 @@ public class Hex : MonoBehaviour {
                 EntityHolding = Instantiate(EntityToSpawn.gameObject, StartPos, Quaternion.Euler(startingRot), interactionParent).GetComponent<Entity>();
                 OGMaterial = EntityHolding.GetComponent<CardChest>().HexOnMaterial;
                 GetComponent<MeshRenderer>().material = OGMaterial;
+                EntityHolding.GetComponent<CardChest>().SetCharacter(chestFor);
             }
             else if (EntityToSpawn.GetComponent<Obstacle>() != null)
             {

@@ -78,36 +78,53 @@ public class PlayerController : MonoBehaviour {
             if (EventSystem.current.IsPointerOverGameObject() == true) {
                 return;
             }
-            switch (myState)
+            Character characterOver = CheckIfOverCharacter();
+            if (characterOver != null)
             {
-                case PlayerState.InCombat:
-                    combatController.CheckToSelectCharacter();
-                    break;
-                case PlayerState.OutofCombat:
-                    outOfCombatController.CheckToShowCharacterStats();
-                    break;
+                if (characterOver.GetComponent<EnemyCharacter>() != null)
+                {
+                    if (SelectPlayerCharacter.InCombat())
+                    {
+                        combatController.CheckToSelectCharacter();
+                    }
+                    else
+                    {
+                        outOfCombatController.CheckToShowCharacterStats();
+                    }
+                }
+                else
+                {
+                    if (characterOver.GetComponent<PlayerCharacter>().InCombat())
+                    {
+                        combatController.CheckToSelectCharacter();
+                    }
+                    else
+                    {
+                        outOfCombatController.CheckToShowCharacterStats();
+                    }
+                }
             }
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            if (myState == PlayerState.OutofCombat)
-            {
-                outOfCombatController.UseAction(SelectPlayerCharacter);
-            }
-            else if (myState == PlayerState.InCombat)
+            if (SelectPlayerCharacter.InCombat())
             {
                 combatController.CheckToUseActions();
+            }
+            else
+            {
+                outOfCombatController.UseAction(SelectPlayerCharacter);
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (myState == PlayerState.InCombat)
+            if (SelectPlayerCharacter.InCombat())
             {
                 combatController.SwitchActionOrSelectCharacter();
             } 
-            else if (myState == PlayerState.OutofCombat)
+            else
             {
                 selectAnotherCharacter();
             }
@@ -156,39 +173,55 @@ public class PlayerController : MonoBehaviour {
     // Large Game Actions
     public void SelectCard(Card card)
     {
-        switch (myState)
+        if (SelectPlayerCharacter.InCombat())
         {
-            case PlayerState.InCombat:
-                combatController.SelectCard(card);
-                break;
-            case PlayerState.OutofCombat:
-                outOfCombatController.SelectCard(card);
-                break;
+            combatController.SelectCard(card);
+        }
+        else
+        {
+            outOfCombatController.SelectCard(card);
         }
     }
 
     public void BeginNewTurn()
     {
         CSBM.ShowCharacterSelection();
-        CSBM.ShowCardIndicators();
         foreach (PlayerCharacter character in myCharacters)
         {
+            if (!character.InCombat()) {
+                character.RefreshActions();
+                continue;
+            }
+            character.myCharacterSelectionButton.showCardIndicators();
             character.DecreaseBuffsDuration();
             character.resetShield(character.GetArmor());
             character.GetMyCombatHand().discardSelectedCard();
             character.SetMyCurrentCombatCard(null);
         }
         combatController.ChangeCombatState(CombatActionController.CombatState.SelectingCombatCards);
+        FindObjectOfType<CorruptionController>().TurnPassed();
         SelectCharacter(myCharacters[0]);
     }
 
     public void BeginActions(PlayerCharacter character)
     {
+        SelectPlayerCharacter = character;
         SelectCharacter(character);
-        character.ShowStatsActingWith();
+        SelectPlayerCharacter.ShowStatsActingWith();
         SelectPlayerCharacter.GetMyCombatHand().ShowSelectedCardToUse();
         CombatPlayerCard card = SelectPlayerCharacter.GetMyCombatHand().getSelectedCard();
         combatController.SetAbilities(card.CardAbility);
+    }
+
+    public void PlayerMovedIntoCombat()
+    {
+        outOfCombatController.FinishedMovingIntoCombat();
+        combatController.SelectCharacter(SelectPlayerCharacter);
+        DisableEndTurn();
+        combatController.UnHighlightHexes();
+        RemoveArea();
+        hexVisualizer.HighlightSelectionHex(SelectPlayerCharacter.HexOn);
+        FindObjectOfType<MyCameraController>().LookAt(SelectPlayerCharacter.transform);
     }
 
     public void GoIntoCombat()
@@ -215,7 +248,7 @@ public class PlayerController : MonoBehaviour {
             initBoard.gameObject.SetActive(true);
 
             //Game
-            FindObjectOfType<CombatManager>().ShowPeopleInCombat();
+            //FindObjectOfType<CombatManager>().ShowPeopleInCombat();
 
             //Board
             combatController.UnHighlightHexes();
@@ -228,7 +261,7 @@ public class PlayerController : MonoBehaviour {
 
     public Action GetCurrentAction()
     {
-        if (myState == PlayerState.InCombat)
+        if (SelectPlayerCharacter.InCombat())
         {
             return combatController.GetMyCurrectAction();
         }else
@@ -269,23 +302,31 @@ public class PlayerController : MonoBehaviour {
     {
         combatController.UnHighlightHexes();
         FindObjectOfType<CharacterViewer>().HideCharacterCards();
-        switch (myState)
+        if (PlayerInCombat())
         {
-            case PlayerState.InCombat:
-                combatController.EndPlayerTurn();
-                break;
-            case PlayerState.OutofCombat:
-                outOfCombatController.EndTurn();
-                break;
+            combatController.EndPlayerTurn();
         }
+        else
+        {
+            BeginNewTurn();
+        }
+    }
+
+    bool PlayerInCombat()
+    {
+        foreach(PlayerCharacter character in myCharacters)
+        {
+            if (character.InCombat()) { return true; }
+        }
+        return false;
     }
 
 
     //Callbacks
     public void FinishedMoving(PlayerCharacter characterFinished)
     {
-        if (myState == PlayerState.InCombat) { combatController.FinishedMoving(); }
-        else if (myState == PlayerState.OutofCombat)
+        if (characterFinished.InCombat()) { combatController.FinishedMoving(); }
+        else
         {
             outOfCombatController.FinishedMoving(characterFinished);
             CheckToAllowExitFloorOrOpenDoor();
@@ -294,25 +335,24 @@ public class PlayerController : MonoBehaviour {
 
     public void FinishedAttacking(PlayerCharacter characterFinished)
     {
-        if (myState == PlayerState.InCombat){ GetComponent<CombatActionController>().FinishedAttacking(); }
-        else if (myState == PlayerState.OutofCombat){ GoIntoCombat(); }
+        if (characterFinished.InCombat()) { GetComponent<CombatActionController>().FinishedAttacking(); }
     }
 
     public void FinishedBuffing(PlayerCharacter characterFinished)
     {
-        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedBuffing(); }
+        if (characterFinished.InCombat()) { GetComponent<CombatActionController>().FinishedBuffing(); }
         else { outOfCombatController.FinishedAction(characterFinished); }
     }
 
     public void FinishedHealing(PlayerCharacter characterFinished)
     {
-        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedHealing(); }
+        if (characterFinished.InCombat()) { GetComponent<CombatActionController>().FinishedHealing(); }
         else { outOfCombatController.FinishedAction(characterFinished); }
     }
 
     public void FinishedShielding(PlayerCharacter characterFinished)
     {
-        if (myState == PlayerState.InCombat) { GetComponent<CombatActionController>().FinishedShielding(); }
+        if (characterFinished.InCombat()) { GetComponent<CombatActionController>().FinishedShielding(); }
         else { outOfCombatController.FinishedAction(characterFinished); }
     }
 
@@ -323,9 +363,9 @@ public class PlayerController : MonoBehaviour {
         {
             if (myCharacters[i] == SelectPlayerCharacter)
             {
-                int nextCharindex = i + 1 >= myCharacters.Count ? 0 : i + 1;             
-                if (myState == PlayerState.InCombat) { combatController.UnShowSelectedPlayerCards() ; }
-                else if (myState == PlayerState.OutofCombat) { SelectPlayerCharacter.GetMyOutOfCombatHand().unShowAnyCards(); }
+                int nextCharindex = i + 1 >= myCharacters.Count ? 0 : i + 1;
+                if (SelectPlayerCharacter.InCombat()) { combatController.UnShowSelectedPlayerCards(); }
+                else{ SelectPlayerCharacter.GetMyOutOfCombatHand().unShowAnyCards(); }
                 SelectCharacter(myCharacters[nextCharindex]);
                 return;
             }
@@ -338,7 +378,7 @@ public class PlayerController : MonoBehaviour {
         {
             myCharacters[i].GainXP(XP);
         }
-        if (myState == PlayerState.InCombat) { combatController.ShowMoveArea(); }
+        if (SelectPlayerCharacter.InCombat()) { combatController.ShowMoveArea(); }
     }
 
     public void selectNextAvailableCharacter()
@@ -356,14 +396,31 @@ public class PlayerController : MonoBehaviour {
 
     public void SelectCharacter(PlayerCharacter playerCharacter)
     {
-        if (myState == PlayerState.OutofCombat)
-        {
-            outOfCombatController.SelectCharacter(playerCharacter);
-        }
-        else if (myState == PlayerState.InCombat)
+        if (SelectPlayerCharacter != null && SelectPlayerCharacter != playerCharacter && SelectPlayerCharacter.InCombat() && combatController.UsingCards()) { return; }
+        if (SelectPlayerCharacter != null && SelectPlayerCharacter.doorToOpen != null) { return; }
+        RemoveArea();
+        if (playerCharacter.InCombat())
         {
             combatController.SelectCharacter(playerCharacter);
         }
+        else
+        {
+            outOfCombatController.SelectCharacter(playerCharacter);
+        }
+    }
+
+    public Character CheckIfOverCharacter()
+    {
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
+        {
+            Hex hex = HexHit.GetComponent<Hex>();
+            if (hex.EntityHolding != null && hex.EntityHolding.GetComponent<Character>())
+            {
+                return hex.EntityHolding.GetComponent<Character>();
+            }
+        }
+        return null;
     }
 
     public void CheckToSelectCharacter()
@@ -395,22 +452,17 @@ public class PlayerController : MonoBehaviour {
 
     public void ShowCharacterView()
     {
-        if (myState == PlayerState.OutofCombat)
+        if (!SelectPlayerCharacter.InCombat())
         {
-            FindObjectOfType<EnemyController>().ShowCharactersView();
             SelectPlayerCharacter.Selected();
         }
     }
 
-    public bool ShowEnemyAreaAndCheckToFight()
+    public bool ShowEnemyAreaAndCheckToFight(PlayerCharacter character)
     {
-        if (myState == PlayerState.OutofCombat)
+        if (!character.InCombat())
         {
-            return FindObjectOfType<EnemyController>().ShowEnemyViewAreaAndCheckToFight();
-        }
-        else if (myState == PlayerState.InCombat)
-        {
-            FindObjectOfType<EnemyController>().CheckToFight();
+            return FindObjectOfType<EnemyController>().ShowEnemyViewAreaAndCheckToFight(character);
         }
         return false;
     }
@@ -452,7 +504,14 @@ public class PlayerController : MonoBehaviour {
     //End Turn Button
     public void AllowEndTurn()
     {
-        endTurnButton.AllowEndTurn();
+        if (combatController.PickingCards() && combatController.AllPlayersHaveCardSelected())
+        {
+            endTurnButton.AllowEndTurn();
+        }
+        else if (combatController.UsingCards())
+        {
+            endTurnButton.AllowEndTurn();
+        }
     }
 
     public void DisableEndTurn()
@@ -464,7 +523,6 @@ public class PlayerController : MonoBehaviour {
     {
         myCharacters.Remove(character);
         CSBM.RemoveCharacterButton(character);
-        FindObjectOfType<InitiativeBoard>().takeCharacterOffBoard(character.CharacterName);
         if (myCharacters.Count == 0)
         {
             Time.timeScale = 0;
@@ -472,14 +530,16 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    public void ChestOpenedFor(Card card)
+    public void ChestOpenedFor(List<Card> cards)
     {
-        if (card.GetComponent<OutOfCombatCard>() != null)
+        if (cards[0].GetComponent<OutOfCombatCard>() != null)
         {
             SelectPlayerCharacter.GetMyOutOfCombatHand().DisableViewButton();
         }
-        else if (card.GetComponentInChildren<CombatPlayerCard>() != null) {
-            ((CombatPlayerCard)card).SetUpCardActions();
+        else if (cards[0].GetComponentInChildren<CombatPlayerCard>() != null) {
+            ((CombatPlayerCard)cards[0]).SetUpCardActions();
+            ((CombatPlayerCard)cards[1]).SetUpCardActions();
+            ((CombatPlayerCard)cards[2]).SetUpCardActions();
             SelectPlayerCharacter.GetMyCombatHand().ShowHand();
             SelectPlayerCharacter.GetMyCombatHand().DisableBasicAttack();
             SelectPlayerCharacter.GetMyCombatHand().DisableViewButton();

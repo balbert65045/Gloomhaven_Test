@@ -14,6 +14,11 @@ public class InitiativeBoard : MonoBehaviour {
     public List<Vector3> PositionList = new List<Vector3>();
     public List<GameObject> InitiativeCards;
 
+    public void PlaceIndicatorOnName(string CharacterName)
+    {
+
+    }
+
     static int SortByInitiative(InitiativePosition IP1, InitiativePosition IP2)
     {
         return IP1.InitValue.CompareTo(IP2.InitValue);
@@ -30,6 +35,25 @@ public class InitiativeBoard : MonoBehaviour {
         turnIndex = 0;
     }
 
+    public void ShowMyCharacterAsCurrentAction(string characterName)
+    {
+        InitiativePosition IP = FindInitPositionWithName(characterName);
+        if (IP != null)
+        {
+            ActiveIndicator.SetActive(true);
+            ActiveIndicator.transform.position = new Vector3(IP.transform.position.x, ActiveIndicator.transform.position.y, ActiveIndicator.transform.position.z);
+        }
+    }
+
+    InitiativePosition FindInitPositionWithName(string name)
+    {
+        foreach (InitiativePosition IP in ActiveInitPositions)
+        {
+            if (IP.CharacterNameLinkedTo == name) { return IP; }
+        }
+        return null;
+    }
+
     public void placeCharacterIcons(PlayerController playerController, EnemyGroup[] enemyGroups)
     {
         int totalCharacterTypes = playerController.myCharacters.Count + enemyGroups.Length;
@@ -37,20 +61,45 @@ public class InitiativeBoard : MonoBehaviour {
         int nextPosition = startingPosition;
         for (int i = 0; i < totalCharacterTypes; i++)
         {
-            if (i < playerController.myCharacters.Count) { PlaceCharacterOnBoard(nextPosition, playerController.myCharacters[i].characterIcon, playerController.myCharacters[i].CharacterName); }
-            else { PlaceCharacterOnBoard(nextPosition, enemyGroups[i - playerController.myCharacters.Count].CharacterIcon, enemyGroups[i - playerController.myCharacters.Count].CharacterNameLinkedTo); }
+            if (i < playerController.myCharacters.Count) { PlaceCharacterOnBoard(nextPosition, playerController.myCharacters[i].characterIcon, playerController.myCharacters[i].CharacterName, true); }
+            else { PlaceCharacterOnBoard(nextPosition, enemyGroups[i - playerController.myCharacters.Count].CharacterIcon, enemyGroups[i - playerController.myCharacters.Count].CharacterNameLinkedTo, false); }
             nextPosition++;
         }
     }
 
-    public void AddCharacterToBoard(EnemyGroup enemy)
+    public void placeCharacterIconsUsingCharacters(List<PlayerCharacter> playerCharacters, List<EnemyGroup> enemyGroups)
     {
-        PlaceCharacterOnBoard(0, enemy.CharacterIcon, enemy.CharacterNameLinkedTo);
+        int totalCharacterTypes = playerCharacters.Count + enemyGroups.Count;
+        startingPosition = (InitiativePositions.Length - totalCharacterTypes) / 2;
+        int nextPosition = startingPosition;
+        for (int i = 0; i < totalCharacterTypes; i++)
+        {
+            if (i < playerCharacters.Count) { PlaceCharacterOnBoard(nextPosition, playerCharacters[i].characterIcon, playerCharacters[i].CharacterName, true); }
+            else { PlaceCharacterOnBoard(nextPosition, enemyGroups[i - playerCharacters.Count].CharacterIcon, enemyGroups[i - playerCharacters.Count].CharacterNameLinkedTo, false); }
+            nextPosition++;
+        }
     }
 
-    void PlaceCharacterOnBoard(int position, Sprite charIcon, string characterName)
+    public void AddCharacterIcon(PlayerCharacter playerCharacter)
     {
-        InitiativePositions[position].LinkCharacter(charIcon, characterName);
+        startingPosition = ((InitiativePositions.Length - ActiveInitPositions.Count) / 2) - 1;
+        PlaceCharacterOnBoard(startingPosition, playerCharacter.characterIcon, playerCharacter.CharacterName, true);
+    }
+
+    public void AddCharacterToBoard(EnemyGroup enemy)
+    {
+        PlaceCharacterOnBoard(0, enemy.CharacterIcon, enemy.CharacterNameLinkedTo, false);
+    }
+
+    public void AddCharacterFromInitPos(InitiativePosition InitPos)
+    {
+        PlaceCharacterOnBoard(0, InitPos.InitiativeCharacterImage.sprite, InitPos.CharacterNameLinkedTo, InitPos.player);
+        AddInitiative(InitPos.CharacterNameLinkedTo, (int)InitPos.InitValue, InitPos.myCard);
+    }
+
+    void PlaceCharacterOnBoard(int position, Sprite charIcon, string characterName, bool player)
+    {
+        InitiativePositions[position].LinkCharacter(charIcon, characterName, player);
         InitiativePositions[position].transform.localPosition = PositionList[position];
         ActiveInitPositions.Add(InitiativePositions[position]);
     }
@@ -69,16 +118,26 @@ public class InitiativeBoard : MonoBehaviour {
         }
     }
 
-    public void AddInitiative(string CharacterName, int Initiative, GameObject ActionCard)
+    public bool AlreadyHasThisCharacter(string nameLinkedTo)
+    {
+        foreach (InitiativePosition initPos in ActiveInitPositions)
+        {
+            if (initPos.CharacterNameLinkedTo == nameLinkedTo) { return true; }
+        }
+        return false;
+    }
+
+    public InitiativePosition AddInitiative(string CharacterName, int Initiative, GameObject ActionCard)
     {
         foreach(InitiativePosition IP in ActiveInitPositions)
         {
             if (IP.CharacterNameLinkedTo == CharacterName) {
                 IP.SetInitiative(Initiative);
                 IP.AddCard(ActionCard);
-                return;
+                return IP;
             }
         }
+        return null;
     }
 
     public void OrganizeInits()
@@ -103,12 +162,38 @@ public class InitiativeBoard : MonoBehaviour {
         return null;
     }
 
-	// Use this for initialization
-	void Start () {
-		for (int i = 0; i < InitiativePositions.Length; i++)
+    public string GetCurrentCharacter()
+    {
+        return ActiveInitPositions[turnIndex].CharacterNameLinkedTo;
+    }
+
+    public void PutIndicatorOnCharacter(string name)
+    {
+        for (int i = 0; i < ActiveInitPositions.Count; i++)
+        {
+            if (ActiveInitPositions[i].CharacterNameLinkedTo == name)
+            {
+                ActiveIndicator.gameObject.SetActive(true);
+                ActiveIndicator.transform.position = new Vector3(ActiveInitPositions[i].transform.position.x, ActiveIndicator.transform.position.y, ActiveIndicator.transform.position.z);
+                turnIndex = i;
+            }
+        }
+    }
+
+    public void InitializeBoard()
+    {
+        for (int i = 0; i < InitiativePositions.Length; i++)
         {
             PositionList.Add(InitiativePositions[i].transform.localPosition);
         }
+    } 
+
+	// Use this for initialization
+	void Start () {
+		//for (int i = 0; i < InitiativePositions.Length; i++)
+  //      {
+  //          PositionList.Add(InitiativePositions[i].transform.localPosition);
+  //      }
 	}
 	
 	// Update is called once per frame

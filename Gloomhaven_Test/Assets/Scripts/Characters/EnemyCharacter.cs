@@ -9,7 +9,6 @@ public class EnemyCharacter : Character {
     public string CharacterName;
     public Sprite enemySprite;
 
-    public bool InCombat = false;
     public bool Alerted = false;
 
     public List<Node> nodesInView = new List<Node>();
@@ -25,6 +24,11 @@ public class EnemyCharacter : Character {
 
     PlayerCharacter ClosestCharacter;
 
+    public EnemyGroup GetGroup()
+    {
+        return FindObjectOfType<EnemyController>().GetGroupFromCharacter(this);
+    }
+
     void Start()
     {
         myHealthBar = GetComponentInChildren<HealthBar>();
@@ -36,11 +40,50 @@ public class EnemyCharacter : Character {
         Shield(baseArmor, this);
         HexMap = FindObjectOfType<HexMapController>();
 
-        if (InCombat)
-        {
-            ShowHexesViewingAndAlertOthersToCombat();
-        }
         BuildCharacterCard();
+        //Make threat Area
+        if (HexOn.CombatZonesIn.Count == 0)
+        {
+            AddThreatAreaOnSpawn();
+        }
+        //Join Combat Zone
+        else
+        {
+            DelayedSwitchCombatState();
+            HexOn.CombatZonesIn[0].AddCharacterToCombat(this);
+            myCombatZone.ShowPeopleInCombat();
+        }
+    }
+
+    void DestroyThreatArea()
+    {
+        ThreatArea[] areas = FindObjectsOfType<ThreatArea>();
+        foreach(ThreatArea area in areas)
+        {
+            if (area.ThreatNodes.Contains(HexOn.HexNode)) { Destroy(area.gameObject); }
+        }
+    }
+
+    void AddThreatAreaOnSpawn()
+    {
+        HexOn.ThreatAreaIn.AddEnemyCharacter(this);
+    }
+
+    void AddThreatArea()
+    {
+        nodesInView = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance);
+        foreach(Node node in nodesInView)
+        {
+            if (node.NodeHex.ThreatAreaIn != null)
+            {
+                //Probably need to merge threat area here
+                node.NodeHex.ThreatAreaIn.AddEnemyCharacter(this);
+                node.NodeHex.ThreatAreaIn.AddEnemyNodes(nodesInView);
+                node.NodeHex.ThreatAreaIn.UpdateVisualArea();
+                return;
+            }
+        }
+        FindObjectOfType<EnemyController>().CreateThreatAreaShown(this, nodesInView);
     }
 
     void BuildCharacterCard()
@@ -70,12 +113,17 @@ public class EnemyCharacter : Character {
 
     //VIEW//
 
+    public void RecreateThreatArea()
+    {
+        AddThreatArea();
+    }
+
     // When first created show what character can see
     public void ShowViewAreaInShownHexes()
     {
         nodesInView.Clear();
-        nodesInView = HexMap.GetNodesAtDistanceFromNode(HexOn.HexNode, ViewDistance);
-        if (!InCombat)
+        nodesInView = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance);
+        if (!InCombat())
         {
             FindObjectOfType<EnemyController>().RemoveThreatArea(this);
             List<Node> DangerZone = new List<Node>();
@@ -91,86 +139,43 @@ public class EnemyCharacter : Character {
     }
 
     //Checks if the player is in view
-    public bool PlayerInView()
+    public PlayerCharacter PlayerInView()
     {
+        nodesInView = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance);
         foreach (Node node in nodesInView)
         {
-            if (node.NodeHex.EntityHolding != null && node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>() != null) { return true; }
+            if (node.NodeHex.EntityHolding != null && node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>() != null) { return node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>(); }
         }
-        return false;
+        return null;
     }
 
     public override void finishedTakingDamage()
     {
-        base.finishedTakingDamage();
-        if (!InCombat)
+        if (!InCombat())
         {
-            ShowHexesViewingAndAlertOthersToCombat();
-        }
-    }
-
-    // Character has seen player and will show area around him and alert other enemies
-    public void ShowHexesViewingAndAlertOthersToCombat()
-    {
-        FindObjectOfType<EnemyController>().RemoveThreatArea(this);
-        Alerted = true;
-        InCombat = true;
-        StartCoroutine("ShowHexesViewingAndAlertOthersToCombatCo");
-    }
-
-    IEnumerator ShowHexesViewingAndAlertOthersToCombatCo()
-    {
-        yield return new WaitForSeconds(.1f);
-
-        SwitchCombatState(true);
-        List<Node> nodesAlmostSeen = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance + 3);
-        nodesInView.Clear();
-        nodesInView = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance + 2);
-
-        EnemyCharacter[] EnemiesOut = FindObjectOfType<EnemyController>().enemiesOut();
-        foreach (EnemyCharacter character in EnemiesOut)
-        {
-            if (character != this && !character.Alerted)
+            if (HexOn.CombatZonesIn.Count == 0)
             {
-                character.ShowHexesViewingAndAlertOthersToCombat();
-            }
-        }
-
-        ExitHex exit = null;
-        foreach (Node node in nodesAlmostSeen)
-        {
-            node.NodeHex.TakeAwayThreatArea();
-            if (nodesInView.Contains(node))
-            {
-                node.GetComponent<HexWallAdjuster>().ShowWall();
-                if (!node.GetComponent<HexAdjuster>().FullyShown()) { node.GetComponent<HexAdjuster>().RevealRoomEdge(); }
-                if (!node.Shown)
-                {
-                    node.NodeHex.ShowHex();
-                    node.GetComponent<HexAdjuster>().RevealRoomEdge();
-                    node.GetComponent<HexWallAdjuster>().ShowWall();
-                    node.GetComponent<Hex>().ShowHexEnd();
-                    node.Shown = true;
-                    if (node.GetComponent<Door>() != null) {
-                        if (node.GetComponent<Door>().door != null) { node.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true); }
-                    }
-                    if (node.GetComponent<ExitHex>() != null) {
-                        exit = node.GetComponent<ExitHex>();
-                        node.GetComponent<ExitHex>().ShowExit() ;
-                    }
-                    if (node.NodeHex.EntityToSpawn != null) { node.NodeHex.CreateCharacter(); }
-                }
+                HexOn.CombatZonesIn[0].AddCharacterToCombat(this);
+                DelayedSwitchCombatState();
             }
             else
             {
-                if (!node.Shown)
-                {
-                    node.GetComponent<HexAdjuster>().RevealRoomEdge();
-                    node.GetComponent<Hex>().slightlyShowHex();
-                }
+                FindObjectOfType<CombatManager>().CreateCombatZone(this);
+                HexOn.ThreatAreaIn.TurnIntoCombatZone(myCombatZone);
             }
         }
-        if (exit != null) { exit.ShowWinArea(); }
+        base.finishedTakingDamage();
+    }
+
+    public void DelayedSwitchCombatState()
+    {
+        StartCoroutine("SwitchToCombatStateInTime");
+    }
+
+    IEnumerator SwitchToCombatStateInTime()
+    {
+        yield return new WaitForSeconds(.1f);
+        SwitchCombatState(true);
     }
 
     //Callbacks
@@ -205,6 +210,21 @@ public class EnemyCharacter : Character {
         UnShowPath();
         LinktoHex(hex);
         CheckToAttack(ClosestCharacter);
+        if (InCombat())
+        {
+            myCombatZone.UpdateCombatNodes();
+            if (HexOn.InCombatZone() && HexOn.CombatZonesIn.Count > 1)
+            {
+                CombatZone[] combatZones = HexOn.CombatZonesIn.ToArray();
+                foreach (CombatZone combatZone in combatZones)
+                {
+                    if (combatZone != myCombatZone)
+                    {
+                        myCombatZone.MergeCombatZone(combatZone, GetGroup().CharacterNameLinkedTo);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -300,6 +320,7 @@ public class EnemyCharacter : Character {
 
     PlayerCharacter BreadthFirst()
     {
+        if (myCombatZone.GetPlyaerCharacters().Count == 0) { return null; }
         List<Hex> frontier = new List<Hex>();
         frontier.Add(HexOn);
         List<Hex> visited = new List<Hex>();
@@ -319,7 +340,10 @@ public class EnemyCharacter : Character {
                 {
                     if (next.NodeHex.EntityHolding != null && next.NodeHex.EntityHolding.GetComponent<PlayerCharacter>() != null)
                     {
-                        return next.NodeHex.EntityHolding.GetComponent<PlayerCharacter>();
+                        if (myCombatZone.GetPlyaerCharacters().Contains(next.NodeHex.EntityHolding.GetComponent<PlayerCharacter>()))
+                        {
+                            return next.NodeHex.EntityHolding.GetComponent<PlayerCharacter>();
+                        }
                     }
                     newFrontier.Add(next.NodeHex);
                     Visited.Add(next.NodeHex);

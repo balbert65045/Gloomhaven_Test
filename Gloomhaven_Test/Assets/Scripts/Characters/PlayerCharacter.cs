@@ -27,6 +27,7 @@ public class PlayerCharacter : Character
 
     public PlayerCharacterType myType;
 
+    public Sprite characterSymbol;
     public Sprite characterIcon;
     public string CharacterName;
 
@@ -60,6 +61,8 @@ public class PlayerCharacter : Character
 
     public PlayerCharacter CharacterLeading = null;
     public PlayerCharacter CharacterFollowing = null;
+
+    List<Node> NodesSeen = new List<Node>();
 
     public void StopFollowing()
     {
@@ -168,15 +171,15 @@ public class PlayerCharacter : Character
         Hex HexMovingFrom = HexOn;
         List<Node> nodes = GetPath(hex.HexNode);
         bool movingToFight = false;
-        if (playerController.myState == PlayerController.PlayerState.OutofCombat)
+        if (!InCombat())
         {
-            if (nodes[nodes.Count - 1].NodeHex.InEnemySeight)
+            if (nodes[nodes.Count - 1].NodeHex.InThreatArea() || nodes[nodes.Count - 1].NodeHex.InCombatZone())
             {
                 movingToFight = true;
                 int start = nodes.Count - 2;
                 for (int i = start; i >= 0; i--)
                 {
-                    if (nodes[i].NodeHex.InEnemySeight) { nodes.RemoveAt(i + 1); }
+                    if (nodes[i].NodeHex.InThreatArea() || nodes[i].NodeHex.InCombatZone()) { nodes.RemoveAt(i + 1); }
                 }
             }
         }
@@ -210,7 +213,7 @@ public class PlayerCharacter : Character
         CurrentMoveRange = moveRange;
         List<Node> nodesInDistance = aStar.Diskatas(HexOn.HexNode, moveRange, myCT);
         NodesInWalkingDistance.Clear();
-        if (AvailableActions <= 0 && playerController.GetPlayerState() == PlayerController.PlayerState.OutofCombat) {
+        if (AvailableActions <= 0 && !InCombat()) {
             playerController.RemoveArea();
             return;
         }
@@ -244,6 +247,7 @@ public class PlayerCharacter : Character
         BuildDecks();
         BuildCharacterSelectionIcon();
         BuildCharacterCards();
+        ShowViewArea(HexOn, ViewDistance);
     }
 
     void BuildCharacterCards()
@@ -339,36 +343,28 @@ public class PlayerCharacter : Character
         ShowViewArea(HexOn, ViewDistance);
     }
 
+    //TODo completely show edges
     public override void ShowViewArea(Hex hex, int distance)
     {
         if (CharacterLeading != null) { return; }
-        List<Node> nodesAlmostSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance + 1);
-        List<Node> nodesSeen = HexMap.GetNodesAtDistanceFromNode(hex.HexNode, distance);
+        List<Node> nodesAlmostSeen = HexMap.GetNodesInLOS(hex.HexNode, distance + 1);
+        NodesSeen = HexMap.GetNodesInLOS(hex.HexNode, distance);
         ExitHex exit = null;
         List<EnemyCharacter> charactersViewUpdate = new List<EnemyCharacter>();
+        List<ThreatArea> ThreatAreasToUpdate = new List<ThreatArea>();
         foreach (Node node in nodesAlmostSeen)
         {
-            if (nodesSeen.Contains(node))
+            if (node.edge) { continue; }
+            if (NodesSeen.Contains(node))
             {
                 node.GetComponent<HexWallAdjuster>().ShowWall();
-                if (!node.GetComponent<HexAdjuster>().FullyShown()) { node.GetComponent<HexAdjuster>().RevealRoomEdge(); }
                 if (!node.Shown)
                 {
                     node.GetComponent<Hex>().ShowHex();
-                    node.GetComponent<HexAdjuster>().RevealRoomEdge();
-                    node.GetComponent<HexWallAdjuster>().ShowWall();
-                    node.GetComponent<Hex>().ShowHexEnd();
-                    if (node.NodeHex.InEnemySeight)
+                    if (node.GetComponent<Door>() == null) { node.GetComponent<HexAdjuster>().RevealEdgeHexes(); }
+                    if (node.NodeHex.ThreatAreaIn != null)
                     {
-                        foreach(Hex enemyHex in node.NodeHex.EnemysHexInSeight)
-                        {
-                            if (enemyHex.EntityHolding == null) { continue; }
-                            if (enemyHex.EntityHolding.GetComponent<EnemyCharacter>() == null) { continue; }
-                            if (!charactersViewUpdate.Contains(enemyHex.EntityHolding.GetComponent<EnemyCharacter>()))
-                            {
-                                charactersViewUpdate.Add(enemyHex.EntityHolding.GetComponent<EnemyCharacter>());
-                            }
-                        }
+                        if (!ThreatAreasToUpdate.Contains(node.NodeHex.ThreatAreaIn)) { ThreatAreasToUpdate.Add(node.NodeHex.ThreatAreaIn); }
                     }
                     if (node.GetComponent<Door>() != null && node.GetComponent<Door>().door != null)
                     {
@@ -395,15 +391,54 @@ public class PlayerCharacter : Character
             }
         }
         if (exit != null) { exit.ShowWinArea(); }
-        foreach(EnemyCharacter character in charactersViewUpdate) {
-            character.ShowViewAreaInShownHexes();
+        foreach(ThreatArea threatArea in ThreatAreasToUpdate) {
+            threatArea.UpdateVisualArea();
         }
     }
 
     public override bool CheckToFight()
     {
-        if (CharacterLeading == null) { return playerController.ShowEnemyAreaAndCheckToFight(); }
-        else { return false; }
+        if (CharacterLeading == null)
+        {
+            if (playerController.ShowEnemyAreaAndCheckToFight(this))
+            {
+                GoIntoCombat();
+                AddOtherCharactersToFightInView();
+                myCombatZone.ShowPeopleInCombat();
+                playerController.PlayerMovedIntoCombat();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void AddOtherCharactersToFightInView()
+    {
+        //Reveal others
+        NodesSeen = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance - 3);
+        CombatNodes = NodesSeen;
+        myCombatZone.AddNodesToCombatNodes(NodesSeen);
+        foreach (Node node in NodesSeen)
+        {
+            if (node.NodeHex.EntityHolding != null && node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>() != null)
+            {
+                PlayerCharacter character = node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>();
+                if (!character.InCombat())
+                {
+                    character.GoIntoCombat();
+                    myCombatZone.AddCharacterToCombat(character);
+                    character.AddOtherCharactersToFightInView();
+                }
+            }
+        }
+    }
+
+    void GoIntoCombat()
+    {
+        SwitchCombatState(true);
+        myCharacterSelectionButton.BreakLink();
+        myCharacterSelectionButton.showCardIndicators();
+        myCharacterSelectionButton.HideActions();
     }
 
     public override void FinishedMoving(Hex hex, bool fight = false, Hex hexMovingFrom = null)
@@ -429,13 +464,53 @@ public class PlayerCharacter : Character
         }
         else if (ChestToOpen != null && !fight)
         {
-            ChestToOpen.OpenChest(this);
+            ChestToOpen.OpenChest();
             ChestToOpen = null;
         }
         FindObjectOfType<PlayerController>().FinishedMoving(this);
-        if (fight && playerController.myState == PlayerController.PlayerState.OutofCombat) {
-            HexOn.EnemyAlert();
-            playerController.GoIntoCombat();
+        if (fight && !InCombat()) {
+            if (HexOn.InCombatZone())
+            {
+                HexOn.CombatZonesIn[0].AddCharacterToCombat(this);
+                if (HexOn.CombatZonesIn.Count > 1)
+                {
+                    MergeCombatZones();
+                }
+                GoIntoCombat();
+                AddOtherCharactersToFightInView();
+                myCombatZone.ShowPeopleInCombat();
+                playerController.PlayerMovedIntoCombat();
+            }
+            else
+            {
+                FindObjectOfType<CombatManager>().CreateCombatZone(this);
+                HexOn.ThreatAreaIn.TurnIntoCombatZone(myCombatZone);
+                GoIntoCombat();
+                AddOtherCharactersToFightInView();
+                myCombatZone.ShowPeopleInCombat();
+                playerController.PlayerMovedIntoCombat();
+            }
+        }
+        else if (InCombat())
+        {
+            AddOtherCharactersToFightInView();
+            myCombatZone.UpdateCombatNodes();
+            if (HexOn.InCombatZone() && HexOn.CombatZonesIn.Count > 1)
+            {
+                MergeCombatZones();
+            }
+        }
+    }
+
+    public void MergeCombatZones()
+    {
+        CombatZone[] combatZones = HexOn.CombatZonesIn.ToArray();
+        foreach (CombatZone combatZone in combatZones)
+        {
+            if (combatZone != myCombatZone)
+            {
+                myCombatZone.MergeCombatZone(combatZone, this.CharacterName);
+            }
         }
     }
 
@@ -453,7 +528,19 @@ public class PlayerCharacter : Character
     public override void FinishedAttacking()
     {
         base.FinishedAttacking();
-        if (CharactersFinishedTakingDamage >= charactersAttackingAt.Count) { FindObjectOfType<PlayerController>().FinishedAttacking(this); }
+        if (CharactersFinishedTakingDamage >= charactersAttackingAt.Count) {
+            FindObjectOfType<PlayerController>().FinishedAttacking(this);
+            if (!InCombat())
+            {
+                foreach(Character character in charactersAttackingAt)
+                {
+                    if (character.myCombatZone == null) { continue; }
+                    character.myCombatZone.AddCharacterToCombat(this);
+                    AddOtherCharactersToFightInView();
+                    myCombatZone.ShowPeopleInCombat();
+                }
+            }
+        }
     }
 
     public override void FinishedPerformingHealing()
@@ -473,9 +560,10 @@ public class PlayerCharacter : Character
         if (HexOn.GetComponent<doorConnectionHex>() != null)
         {
             HexOn.GetComponent<doorConnectionHex>().door.OpenHexes(HexOn.HexNode.RoomName[0]);
-            ShowViewArea(HexOn, ViewDistance);
-            if (CheckToFight()) { playerController.GoIntoCombat(); }
-            else{ playerController.ShowCharacterView(); }
+            if (!CheckToFight()) {
+                ShowViewArea(HexOn, ViewDistance);
+                playerController.ShowCharacterView();
+            }
         }
         FindObjectOfType<PlayerController>().FinishedMoving(this);
         yield return null;
@@ -495,6 +583,10 @@ public class PlayerCharacter : Character
     public override void Die()
     {
         FindObjectOfType<PlayerController>().CharacterDied(this);
+        if (InCombat())
+        {
+            this.myCombatZone.removeCharacter(this);
+        }
         base.Die();
     }
 

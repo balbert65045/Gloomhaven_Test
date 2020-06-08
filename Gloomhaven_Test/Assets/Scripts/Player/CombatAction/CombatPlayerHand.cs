@@ -133,6 +133,7 @@ public class CombatPlayerHand : Hand {
 
     public void discardSelectedCard()
     {
+        if (selectedCardLinkedButton == null) { return; }
         selectedCardLinkedButton.Unhighlight();
         if (!selectedCardLinkedButton.basicAttack) {
             if (SelectedPlayerCard.LostAbilityUsed) {

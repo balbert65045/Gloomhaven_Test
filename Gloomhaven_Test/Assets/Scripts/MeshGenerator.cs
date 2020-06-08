@@ -39,6 +39,7 @@ public class MeshGenerator : MonoBehaviour {
 
     public void DeleteMesh()
     {
+        if (mesh == null) { return; }
         mesh.Clear();
     }
 

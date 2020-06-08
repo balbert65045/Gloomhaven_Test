@@ -111,6 +111,7 @@ public class Door : MonoBehaviour {
         isOpen = true;
         GetComponent<Node>().isAvailable = true;
         door.GetComponent<Animator>().SetTrigger("Open");
+        door.GetComponentInParent<DoorWall>().gameObject.SetActive(false);
         if (!RoomShown)
         {
             foreach (Hex hex in hexesToOpenTo)
@@ -137,7 +138,6 @@ public class Door : MonoBehaviour {
                 if (!hex.GetComponent<Node>().edge) { hex.setUpHexes(); }
             }
         }
-        door.GetComponentInParent<DoorWall>().gameObject.SetActive(false);
     }
 
     public void ShowHexes()

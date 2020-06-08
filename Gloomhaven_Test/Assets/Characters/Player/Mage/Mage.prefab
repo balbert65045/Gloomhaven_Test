@@ -1929,7 +1929,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1896386512822764}
   m_LocalRotation: {x: -0.000000029802322, y: -0.7071068, z: -0.000000029802322, w: 0.7071068}
-  m_LocalPosition: {x: 1.6395859, y: 0.15000017, z: -2.7031043}
+  m_LocalPosition: {x: -1.4833933, y: 0.15000011, z: 21.519073}
   m_LocalScale: {x: 0.50779766, y: 0.5077971, z: 0.5077975}
   m_Children:
   - {fileID: 4281807977646112}
@@ -3149,6 +3149,8 @@ MonoBehaviour:
   baseArmor: 0
   NodesInWalkingDistance: []
   NodesInActionRange: []
+  myCombatZone: {fileID: 0}
+  CombatNodes: []
   CardActingWith: {fileID: 0}
   CharacterLevel: 1
   CurrentXP: 0
@@ -3156,6 +3158,7 @@ MonoBehaviour:
   SelectionPrefab: {fileID: 1502150263415464, guid: 7e5bde58463bc6d46a9ffee59ecb6ea5,
     type: 2}
   myType: 4
+  characterSymbol: {fileID: 21300000, guid: f6d9b5a931cf4844888f30f32144af43, type: 3}
   characterIcon: {fileID: 21300000, guid: 3c1a5d600562c104681f556180c0b5d0, type: 3}
   CharacterName: Mage
   CombatHandSize: 5

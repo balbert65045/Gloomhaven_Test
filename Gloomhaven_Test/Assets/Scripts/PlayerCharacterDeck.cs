@@ -11,7 +11,7 @@ public class PlayerCharacterDeck : MonoBehaviour {
     {
         outOfCombatHand.HideHand();
         PlayerController PC = FindObjectOfType<PlayerController>();
-        if (PC.myState == PlayerController.PlayerState.InCombat)
+        if (PC.SelectPlayerCharacter.InCombat())
         {
             combatHand.ShowHand();
         }
@@ -25,7 +25,7 @@ public class PlayerCharacterDeck : MonoBehaviour {
     {
         combatHand.HideHand();
         PlayerController PC = FindObjectOfType<PlayerController>();
-        if (PC.myState == PlayerController.PlayerState.OutofCombat)
+        if (!PC.SelectPlayerCharacter.InCombat())
         {
             outOfCombatHand.ShowHand();
         }

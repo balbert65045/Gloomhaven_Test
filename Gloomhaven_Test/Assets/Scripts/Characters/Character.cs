@@ -106,6 +106,15 @@ public class Character : Entity {
     public bool GetAttacking() { return Attacking; }
     public void SetAttacking(bool value) { Attacking = value; }
 
+    public CombatZone myCombatZone;
+    public void SetCombatZone(CombatZone combatZone) { myCombatZone = combatZone; }
+    public bool InCombat() { return myCombatZone != null; }
+
+    public List<Node> CombatNodes = new List<Node>();
+
+    public bool IsPlayer() { return GetComponent<PlayerCharacter>() != null; }
+    public bool IsEnemy() { return GetComponent<EnemyCharacter>() != null; }
+
     public void ShowAction(int Range, ActionType action)
     {
         List<Node> nodes = HexMap.GetNodesInLOS(HexOn.HexNode, Range);
@@ -280,6 +289,25 @@ public class Character : Entity {
         myHealthBar.LoseHealth(TotalHealthLosing, UsingSavingThrow);
     }
 
+    public void TakeTrueDamage(int amount)
+    {
+        GetComponent<CharacterAnimationController>().GetHit();
+        int healthBeforeDamage = health;
+        TotalHealthLosing = amount;
+        health -= Mathf.Clamp(amount, 0, 1000);
+        bool UsingSavingThrow = GetComponent<PlayerCharacter>() != null && health <= 0;
+        if (UsingSavingThrow)
+        {
+            int HealthDifference = healthBeforeDamage - 1;
+            TotalHealthLosing = HealthDifference;
+        }
+        else
+        {
+            if (health <= 0) { GoingToDie = true; }
+        }
+        myHealthBar.LoseHealth(TotalHealthLosing, UsingSavingThrow);
+    }
+
     public void SwitchCombatState(bool InCombat)
     {
         GetComponent<CharacterAnimationController>().SwitchCombatState(InCombat);
@@ -342,7 +370,10 @@ public class Character : Entity {
         }
         else
         {
-            characterThatAttackedMe.FinishedAttacking();
+            if (characterThatAttackedMe != null)
+            {
+                characterThatAttackedMe.FinishedAttacking();
+            }
         }
     }
 
@@ -353,7 +384,10 @@ public class Character : Entity {
 
     public virtual void Die()
     {
-        characterThatAttackedMe.FinishedAttacking();
+        if (characterThatAttackedMe != null)
+        {
+            characterThatAttackedMe.FinishedAttacking();
+        }
         HexOn.RemoveEntityFromHex();
         //characterThatAttackedMe.ShowNewMoveArea();
         Destroy(this.gameObject);

@@ -1975,7 +1975,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1285553498728560}
   m_LocalRotation: {x: -0.000000029802322, y: -0.7071068, z: -0.000000029802322, w: 0.7071068}
-  m_LocalPosition: {x: 1.8920878, y: 0.15000014, z: -7.5716243}
+  m_LocalPosition: {x: -1.4877573, y: 0.1500002, z: 22.28766}
   m_LocalScale: {x: 0.5077979, y: 0.5077971, z: 0.5077977}
   m_Children:
   - {fileID: 4164043760583196}
@@ -3303,6 +3303,8 @@ MonoBehaviour:
   baseArmor: 0
   NodesInWalkingDistance: []
   NodesInActionRange: []
+  myCombatZone: {fileID: 0}
+  CombatNodes: []
   CardActingWith: {fileID: 0}
   CharacterLevel: 1
   CurrentXP: 0
@@ -3310,6 +3312,7 @@ MonoBehaviour:
   SelectionPrefab: {fileID: 1143715652436044, guid: c2660d91b0ba49b459ebcc87bc1250c2,
     type: 2}
   myType: 5
+  characterSymbol: {fileID: 21300000, guid: 80364b2c02ee4d84a856c8f47478c5b6, type: 3}
   characterIcon: {fileID: 21300000, guid: 280f25096d46fca47ad829c50ec2ec7c, type: 3}
   CharacterName: Huntress
   CombatHandSize: 5

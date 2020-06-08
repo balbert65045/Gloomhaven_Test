@@ -13540,6 +13540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f724af0ce353145846e04b11ec88df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LevelIndex: 1
   autoLoadNextLevelAfter: 0
 --- !u!4 &1587359787
 Transform:
@@ -16218,17 +16219,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyGroupCardStorage:
   - CharacterName: 
-    CardsObtained: []
-    CardsHolding: []
+    CombatCardsObtained: []
+    CombatCardsHolding: []
+    ExplorationCardsObtained: []
+    ExplorationCardsHolding: []
   - CharacterName: 
-    CardsObtained: []
-    CardsHolding: []
+    CombatCardsObtained: []
+    CombatCardsHolding: []
+    ExplorationCardsObtained: []
+    ExplorationCardsHolding: []
   - CharacterName: 
-    CardsObtained: []
-    CardsHolding: []
+    CombatCardsObtained: []
+    CombatCardsHolding: []
+    ExplorationCardsObtained: []
+    ExplorationCardsHolding: []
   - CharacterName: 
-    CardsObtained: []
-    CardsHolding: []
+    CombatCardsObtained: []
+    CombatCardsHolding: []
+    ExplorationCardsObtained: []
+    ExplorationCardsHolding: []
 --- !u!1 &1929766875
 GameObject:
   m_ObjectHideFlags: 0

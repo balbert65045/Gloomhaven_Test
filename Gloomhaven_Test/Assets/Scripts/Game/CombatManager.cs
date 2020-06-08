@@ -8,6 +8,36 @@ public class CombatManager : MonoBehaviour {
     private PlayerController playerController;
     private InitiativeBoard initBoard;
 
+    int InitIndex = 0;
+    List<InitiativePosition> InitiativesInPlay = new List<InitiativePosition>();
+    static int SortByInitiative(InitiativePosition IP1, InitiativePosition IP2)
+    {
+        return IP1.InitValue.CompareTo(IP2.InitValue);
+    }
+    public void OrganizeAllInitiatives()
+    {
+        InitiativesInPlay.Sort(SortByInitiative);
+    }
+    public GameObject GetNextInitiativeCard()
+    {
+        if (InitIndex < InitiativesInPlay.Count)
+        {
+            GameObject card = InitiativesInPlay[InitIndex].GetCard();
+            return card;
+        }
+        return null;
+    }
+
+    public GameObject CombatZonePrefab;
+
+    public CombatZone CreateCombatZone(Character Character)
+    {
+        GameObject NewCombatZone = Instantiate(CombatZonePrefab);
+        NewCombatZone.transform.position = new Vector3(0, 0, 0);
+        NewCombatZone.GetComponent<CombatZone>().AddCharacterToCombat(Character);
+        return NewCombatZone.GetComponent<CombatZone>();
+    }
+
     public void SelectCharacter(string characterName)
     {
         if (!enemyController.SelectCharacter(characterName)) { playerController.SelectCharacterByName(characterName); }
@@ -16,19 +46,22 @@ public class CombatManager : MonoBehaviour {
     public void PlayerDonePickingCombatCards()
     {
         EnemyActionCard[] enemyActions = enemyController.selectEnemyActions();
-        PlayerCharacter[] playerCharacters = FindObjectsOfType<PlayerCharacter>();
-
-        foreach(PlayerCharacter playerCharacter in playerCharacters)
+        CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
+        foreach(CombatZone combatZone in combatZones)
         {
-            CombatPlayerCard playerCard = playerCharacter.GetMyCurrentCombatCard();
-            initBoard.AddInitiative(playerCharacter.CharacterName, playerCard.Initiative, playerCard.gameObject);
+            List<InitiativePosition> InitiativesInZone = combatZone.PopulateInitiatives(enemyActions);
+            foreach(InitiativePosition initiative in InitiativesInZone)
+            {
+                bool alreadThere = false;
+                foreach(InitiativePosition ExistingIP in InitiativesInPlay)
+                {
+                    if (ExistingIP.CharacterNameLinkedTo == initiative.CharacterNameLinkedTo) { alreadThere = true; }
+                }
+                if (!alreadThere) { InitiativesInPlay.Add(initiative); }
+            }
         }
-
-        foreach (EnemyActionCard enemyAction in enemyActions)
-        {
-            initBoard.AddInitiative(enemyAction.characterName, enemyAction.Initiative, enemyAction.gameObject);
-        }
-        initBoard.OrganizeInits();
+        OrganizeAllInitiatives();
+        InitIndex = 0;
 
         playerController.ChangeCombatState(CombatActionController.CombatState.WaitingInCombat);
         PerformNextInInitiative();
@@ -65,9 +98,12 @@ public class CombatManager : MonoBehaviour {
     public void PerformNextInInitiative()
     {
     
-        GameObject card = initBoard.GetNextInitiativeCard();
+        GameObject card = GetNextInitiativeCard();
+        InitIndex++;
         if (card != null)
         {
+            CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
+            foreach(CombatZone combatZone in combatZones) { combatZone.ShowInitiativeBoard(); }
             if (card.GetComponent<CombatPlayerCard>() != null)
             {
                 // Not the way to do this
@@ -82,7 +118,12 @@ public class CombatManager : MonoBehaviour {
                     }
                 }
 
-                if (currentPlayerCharacter == null) { Debug.LogWarning("No character with that card"); }
+                if (currentPlayerCharacter == null || currentPlayerCharacter.myCombatZone == null || currentPlayerCharacter.GetGoingToDie()) {
+                    PerformNextInInitiative();
+                    return;
+                }
+                currentPlayerCharacter.myCombatZone.ShowInitiativeBoard();
+                currentPlayerCharacter.myCombatZone.ShowMyCharacterAsCurrentAction(currentPlayerCharacter.CharacterName);
                 FindObjectOfType<MyCameraController>().LookAt(currentPlayerCharacter.transform);
                 FindObjectOfType<MyCameraController>().UnLockCamera();
                 playerController.ChangeCombatState(CombatActionController.CombatState.UsingCombatCards);
@@ -97,8 +138,14 @@ public class CombatManager : MonoBehaviour {
         }
         else
         {
-            if (enemyController.hasNoMoreCharacters()) { playerController.GoOutOfCombat(); }
-            else { BeginNewTurn(); }
+            CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
+            foreach (CombatZone combatZone in combatZones)
+            {
+                combatZone.CheckToEndZone();
+            }
+            //if (enemyController.hasNoMoreCharacters()) { playerController.GoOutOfCombat(); }
+            //CheckCombatZones
+            BeginNewTurn();
         }
     }
 
@@ -110,8 +157,13 @@ public class CombatManager : MonoBehaviour {
         //FindObjectOfType<EnemyCardButton>().SetInteractable(false);
         //announcmentBoard.ShowText("Pick Cards");
         enemyController.takeAwayBuffs();
-        initBoard.ClearInitiativeBoard();
-        ShowPeopleInCombat();
+        InitiativesInPlay.Clear();
+        CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
+        foreach(CombatZone combatZone in combatZones)
+        {
+            if (!combatZone.Dissolving) { combatZone.ShowPeopleInCombat(); }
+        }
+        //ShowPeopleInCombat();
         playerController.BeginNewTurn();
     }
 

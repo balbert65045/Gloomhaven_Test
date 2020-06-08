@@ -16,6 +16,13 @@ public class HexAdjuster : MonoBehaviour {
     public string DownRoomSide;
 
     bool CompletelyShown = false;
+    Node myNode;
+
+    private void Start()
+    {
+        hexMap = FindObjectOfType<HexMapController>();
+        myNode = GetComponent<Node>();
+    }
 
     public void ClearSides()
     {
@@ -90,6 +97,24 @@ public class HexAdjuster : MonoBehaviour {
             RotateHexToTopRight();
         }
         return true;
+    }
+
+    HexMapController hexMap;
+    public void RevealEdgeHexes()
+    {
+        if (hexMap == null) { hexMap = FindObjectOfType<HexMapController>(); }
+        List<Node> nodes = hexMap.GetNeighborsNoRoom(myNode);
+        foreach (Node node in nodes)
+        {
+            if (node.edge)
+            {
+                if (!node.GetComponent<HexAdjuster>().CompletelyShown && node.isConnectedToRoom(myNode)) {
+                    node.GetComponent<HexAdjuster>().RevealRoomEdge();
+                    node.NodeHex.ShowHex();
+                    node.GetComponent<HexWallAdjuster>().ShowWall();
+                }
+            }
+        }
     }
 
     public void RevealRoomEdge()

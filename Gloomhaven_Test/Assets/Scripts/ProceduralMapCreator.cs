@@ -101,7 +101,7 @@ public class ProceduralMapCreator : MonoBehaviour {
     }
 
     void PopulateRooms()
-    {       
+    {
         int RoomsWithEnemiesInside = CurrentChallengeRating / 3;
         List<Rooms> RoomToBuildEnemies = new List<Rooms>();
         foreach(Rooms room in RoomsMade) { RoomToBuildEnemies.Add(room); }
@@ -272,6 +272,7 @@ public class ProceduralMapCreator : MonoBehaviour {
         }
     }
 
+    List<GameObject> charactersAvailableForChest;
     void CreateNextRoom()
     {
         if (EdgesAvailable.Count <= 1) { return; }
@@ -336,6 +337,7 @@ public class ProceduralMapCreator : MonoBehaviour {
         }
     }
 
+    List<GameObject> CharactersThatNeedAChest = new List<GameObject>();
     void AddChestsToRoom(List<Hex> hexes)
     {
         if (CurrentTreasureAmount <= 0) { return; }
@@ -345,8 +347,14 @@ public class ProceduralMapCreator : MonoBehaviour {
         if (HexNotNextToOtherObstacleOrDoor(RandomHex))
         {
             CurrentTreasureAmount--;
-            if (Random.Range(0, 2) == 0) { RandomHex.EntityToSpawn = CombatChestPrefab.GetComponent<Entity>(); }
-            else { RandomHex.EntityToSpawn = ExplorationChestPrefab.GetComponent<Entity>(); }
+            string chestCharacter = RepopulateAndSubtractCharacterFromList();
+            if (Random.Range(0, 2) == 0) {
+                RandomHex.chestFor = chestCharacter;
+                RandomHex.EntityToSpawn = CombatChestPrefab.GetComponent<Entity>(); }
+            else {
+                RandomHex.chestFor = chestCharacter;
+                RandomHex.EntityToSpawn = ExplorationChestPrefab.GetComponent<Entity>();
+            }
         }
         else
         {
@@ -354,10 +362,33 @@ public class ProceduralMapCreator : MonoBehaviour {
             if (HexNotNextToOtherObstacleOrDoor(NewRandomHex))
             {
                 CurrentTreasureAmount--;
-                if (Random.Range(0, 2) == 0) { NewRandomHex.EntityToSpawn = CombatChestPrefab.GetComponent<Entity>(); }
-                else { NewRandomHex.EntityToSpawn = ExplorationChestPrefab.GetComponent<Entity>(); }
+                string chestCharacter = RepopulateAndSubtractCharacterFromList();
+                if (Random.Range(0, 2) == 0) {
+                    NewRandomHex.chestFor = chestCharacter;
+                    NewRandomHex.EntityToSpawn = CombatChestPrefab.GetComponent<Entity>();
+                }
+                else {
+                    NewRandomHex.chestFor = chestCharacter;
+                    NewRandomHex.EntityToSpawn = ExplorationChestPrefab.GetComponent<Entity>();
+                }
             }
         }
+    }
+
+    string RepopulateAndSubtractCharacterFromList()
+    {
+        if (CharactersThatNeedAChest.Count == 0)
+        {
+            foreach(GameObject character in PlayerCharacters)
+            {
+                CharactersThatNeedAChest.Add(character);
+            }
+        }
+
+        int randomIndex = Random.Range(0, CharactersThatNeedAChest.Count);
+        GameObject chestCharacter = CharactersThatNeedAChest[randomIndex];
+        CharactersThatNeedAChest.RemoveAt(randomIndex);
+        return chestCharacter.GetComponent<PlayerCharacter>().CharacterName;
     }
 
     bool HexNotNextToOtherObstacleOrDoor(Hex hex)

@@ -38,6 +38,8 @@ public class CombatActionController : MonoBehaviour {
     {
         myCombatState = state;
     }
+    public bool PickingCards() { return myCombatState == CombatState.SelectingCombatCards; }
+    public bool UsingCards() { return myCombatState == CombatState.UsingCombatCards; }
 
     // Use this for initialization
     void Start () {
@@ -64,17 +66,27 @@ public class CombatActionController : MonoBehaviour {
     {
 
         if (playerCharacter.GetMoving()) { return; }
+        CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
         PlayerCharacter SelectPlayerCharacter = playerController.SelectPlayerCharacter;
         if (myCombatState == CombatState.SelectingCombatCards)
         {
             UnHighlightHexes();
             if (SelectPlayerCharacter != null)
             {
-                SelectPlayerCharacter.GetMyCombatHand().UnShowCard();
-                SelectPlayerCharacter.myDecks.SetActive(false);
+                if (playerController.SelectPlayerCharacter.InCombat())
+                {
+                    SelectPlayerCharacter.GetMyCombatHand().UnShowCard();
+                    playerController.SelectPlayerCharacter.myCombatZone.HideInitiativeBoard();
+                }
+                else
+                {
+                    playerController.SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
+                }
+                playerController.SelectPlayerCharacter.myDecks.SetActive(false);
             }
             playerController.SelectPlayerCharacter = playerCharacter;
 
+            playerCharacter.myCombatZone.ShowInitiativeBoard();
             myCamera.SetTarget(playerCharacter.transform);
             hexVisualizer.HighlightSelectionHex(playerCharacter.HexOn);
             playerCharacter.myDecks.SetActive(true);
@@ -84,11 +96,21 @@ public class CombatActionController : MonoBehaviour {
             playerCharacter.ShowStats();
             ShowActions(playerCharacter);
             CSBM.ShowCharacterButtonSelected(playerCharacter);
+            foreach (CombatZone combatZone in combatZones)
+            {
+                if (playerCharacter.myCombatZone == combatZone) { combatZone.HideZone(); }
+                else { combatZone.ShowZone(); }
+            }
         }
         else if (myCombatState == CombatState.UsingCombatCards)
         {
             UnHighlightHexes();
             if (SelectPlayerCharacter != null) { SelectPlayerCharacter.myDecks.SetActive(false); }
+            foreach (CombatZone combatZone in combatZones)
+            {
+                if (playerCharacter.myCombatZone == combatZone) { combatZone.HideZone(); }
+                else { combatZone.ShowZone(); }
+            }
             playerController.SelectPlayerCharacter = playerCharacter;
 
             myCamera.SetTarget(playerCharacter.transform);
@@ -114,8 +136,19 @@ public class CombatActionController : MonoBehaviour {
             case CombatState.WaitingInCombat:
                 break;
             case CombatState.SelectingCombatCards:
-                SelectPlayerCharacter.GetMyCombatHand().HideHand();
-                SelectPlayerCharacter.GetMyCombatHand().HideSelectedCard();
+                if (playerController.SelectPlayerCharacter.InCombat())
+                {
+                    SelectPlayerCharacter.GetMyCombatHand().HideHand();
+                    SelectPlayerCharacter.GetMyCombatHand().HideSelectedCard();
+                }
+                else
+                {
+                    playerController.SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
+                }
+                playerController.SelectPlayerCharacter.myDecks.SetActive(false);
+                playerController.RemoveArea();
+                CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
+                foreach(CombatZone combatZone in combatZones) { combatZone.HideZone(); }
                 CSBM.HideCharacterSelection();
                 FindObjectOfType<EndTurnButton>().DisableEndTurn();
                 FindObjectOfType<CombatManager>().PlayerDonePickingCombatCards();
@@ -131,10 +164,11 @@ public class CombatActionController : MonoBehaviour {
         }
     }
 
-    bool AllPlayersHaveCardSelected()
+    public bool AllPlayersHaveCardSelected()
     {
         foreach (PlayerCharacter character in playerController.myCharacters)
         {
+            if (!character.InCombat()) { continue; }
             if (character.GetMyCurrentCombatCard() == null) { return false; }
         }
         return true;
@@ -386,7 +420,7 @@ public class CombatActionController : MonoBehaviour {
 
     public void FinishedMoving()
     {
-        if ( myCombatState == CombatState.UsingCombatCards)
+        if (myCombatState == CombatState.UsingCombatCards)
         {
             PerformingAction = false;
             playerController.AllowEndTurn();

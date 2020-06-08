@@ -96,6 +96,26 @@ public class PlayerCardDatabase : MonoBehaviour {
         return null;
     }
 
+    public GameObject[] Select3RandomCards(PlayerCharacter character, CardType CT)
+    {
+        GameObject Card1 = SelectRandomCard(character, CT);
+        GameObject Card2 = Card1;
+        int timeout = 0;
+        while (Card1 == Card2) {
+            Card2 = SelectRandomCard(character, CT);
+            timeout++;
+            if (timeout > 20) { Debug.LogError("Timedout"); }
+        }
+        GameObject Card3 = Card1;
+        timeout = 0;
+        while (Card1 == Card3 || Card2 == Card3) {
+            Card3 = SelectRandomCard(character, CT);
+            if (timeout > 20) { Debug.LogError("Timedout"); }
+        }
+        GameObject[] cards = new GameObject[3] { Card1, Card2, Card3 };
+        return cards;
+    }
+
 
     public GameObject SelectRandomCard(PlayerCharacter character, CardType CT)
     {

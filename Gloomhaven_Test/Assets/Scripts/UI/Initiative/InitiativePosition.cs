@@ -8,8 +8,9 @@ public class InitiativePosition : MonoBehaviour {
     public string CharacterNameLinkedTo;
     public Image InitiativeCharacterImage;
     public Text InitiativeValueText;
-    public int InitValue;
+    public float InitValue;
     public GameObject Init;
+    public bool player = false;
 
     public GameObject myCard;
 
@@ -33,10 +34,11 @@ public class InitiativePosition : MonoBehaviour {
         Init.SetActive(false);
     }
 
-    public void LinkCharacter(Sprite characterIcon, string name)
+    public void LinkCharacter(Sprite characterIcon, string name, bool isPlayer)
     {
         InitiativeCharacterImage.sprite = characterIcon;
         CharacterNameLinkedTo = name;
+        player = isPlayer;
         InitiativeValueText.text = "?";
         Init.SetActive(true);
     }
@@ -44,6 +46,7 @@ public class InitiativePosition : MonoBehaviour {
     public void SetInitiative(int initiativeValue)
     {
         InitValue = initiativeValue;
+        if (player) { InitValue -= .1f; }
         InitiativeValueText.text = initiativeValue.ToString();
     }
 
