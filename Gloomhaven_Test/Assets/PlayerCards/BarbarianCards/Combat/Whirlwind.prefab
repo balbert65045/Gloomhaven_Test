@@ -1124,7 +1124,7 @@ MonoBehaviour:
       thisAOEType: 4
       Targets: 0
       Damage: 1
-    Range: 0
+    Range: 1
     Duration: 0
 --- !u!114 &114742492241758882
 MonoBehaviour:

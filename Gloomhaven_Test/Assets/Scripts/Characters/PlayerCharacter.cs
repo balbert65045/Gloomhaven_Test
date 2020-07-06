@@ -64,6 +64,9 @@ public class PlayerCharacter : Character
 
     List<Node> NodesSeen = new List<Node>();
 
+    public ThreatArea ThreatAreaMovingTo = null;
+    public List<CombatZone> combatZonesMovingTo = new List<CombatZone>();
+
     public void StopFollowing()
     {
         if (CharacterLeading != null) { CharacterLeading.CharacterFollowing = null; }
@@ -170,24 +173,39 @@ public class PlayerCharacter : Character
         }
         Hex HexMovingFrom = HexOn;
         List<Node> nodes = GetPath(hex.HexNode);
-        bool movingToFight = false;
         if (!InCombat())
         {
-            if (nodes[nodes.Count - 1].NodeHex.InThreatArea() || nodes[nodes.Count - 1].NodeHex.InCombatZone())
+            int InitialLength = nodes.Count - 1;
+            for (int i = InitialLength; i >= 0; i--)
             {
-                movingToFight = true;
-                int start = nodes.Count - 2;
-                for (int i = start; i >= 0; i--)
+                if (nodes.Count <= i) { break; }
+                if (nodes[nodes.Count - 1].NodeHex.EntityHolding != null) {
+                    nodes.RemoveAt(nodes.Count - 1);
+                }
+                else if (nodes[i].NodeHex.InThreatArea() || nodes[i].NodeHex.InCombatZone())
                 {
-                    if (nodes[i].NodeHex.InThreatArea() || nodes[i].NodeHex.InCombatZone()) { nodes.RemoveAt(i + 1); }
+                    if (nodes[i].NodeHex.InThreatArea()) { ThreatAreaMovingTo = nodes[i].NodeHex.ThreatAreaIn; }
+                    if (nodes[i].NodeHex.InCombatZone()) {
+                        foreach(CombatZone CZ in nodes[i].NodeHex.CombatZonesIn)
+                        {
+                            combatZonesMovingTo.Add(CZ);
+                        }
+                    }
+                    if (nodes[i] != nodes[(nodes.Count - 1)])
+                    {
+                        nodes = nodes.GetRange(0, i);
+                    }
                 }
             }
         }
-
+        bool movingToFight = (ThreatAreaMovingTo != null || combatZonesMovingTo.Count > 0);
         List<Node> totalPath = new List<Node>();
         foreach(Node node in nodes) { totalPath.Add(node); }
-
-        if (nodes[0] == null) { return; }
+        if (totalPath.Count == 0) {
+            FinishedMoving(HexOn, true);
+            ActionUsed();
+            return;
+        }
         GetComponent<CharacterAnimationController>().SetMovingToFight(movingToFight);
 
         NodesInWalkingDistance.Clear();
@@ -402,6 +420,7 @@ public class PlayerCharacter : Character
         {
             if (playerController.ShowEnemyAreaAndCheckToFight(this))
             {
+                Debug.Log("Going into combat");
                 GoIntoCombat();
                 AddOtherCharactersToFightInView();
                 myCombatZone.ShowPeopleInCombat();
@@ -412,23 +431,19 @@ public class PlayerCharacter : Character
         return false;
     }
 
+    public void AddToFight(CombatZone CZ)
+    {
+        GoIntoCombat();
+        CZ.AddCharacterToCombat(this);
+    }
+
     public void AddOtherCharactersToFightInView()
     {
-        //Reveal others
-        NodesSeen = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance - 3);
-        CombatNodes = NodesSeen;
-        myCombatZone.AddNodesToCombatNodes(NodesSeen);
-        foreach (Node node in NodesSeen)
+        foreach (Node node in myCombatZone.CombatNodes)
         {
-            if (node.NodeHex.EntityHolding != null && node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>() != null)
+            if (node.NodeHex.HasPlayer() && !myCombatZone.CharactersInCombat.Contains(node.NodeHex.EntityHolding.GetComponent<Character>()))
             {
-                PlayerCharacter character = node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>();
-                if (!character.InCombat())
-                {
-                    character.GoIntoCombat();
-                    myCombatZone.AddCharacterToCombat(character);
-                    character.AddOtherCharactersToFightInView();
-                }
+                node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>().AddToFight(myCombatZone);
             }
         }
     }
@@ -450,7 +465,7 @@ public class PlayerCharacter : Character
             CantFollow = false;
         }
         playerController.ClearHexesMovingTo();
-        HexMovingTo.CharacterArrivedAtHex();
+        if (HexMovingTo != null) { HexMovingTo.CharacterArrivedAtHex(); }
         int goldPickedUp = HexMovingTo.PickUpMoney();
         if (goldPickedUp > 0)
         {
@@ -469,31 +484,31 @@ public class PlayerCharacter : Character
         }
         FindObjectOfType<PlayerController>().FinishedMoving(this);
         if (fight && !InCombat()) {
-            if (HexOn.InCombatZone())
+            if (combatZonesMovingTo.Count > 0)
             {
-                HexOn.CombatZonesIn[0].AddCharacterToCombat(this);
-                if (HexOn.CombatZonesIn.Count > 1)
+                combatZonesMovingTo[0].AddCharacterToCombat(this);
+                combatZonesMovingTo[0].AddNodeToCombatNodes(HexOn.HexNode);
+                if (combatZonesMovingTo.Count > 1)
                 {
                     MergeCombatZones();
                 }
                 GoIntoCombat();
-                AddOtherCharactersToFightInView();
                 myCombatZone.ShowPeopleInCombat();
                 playerController.PlayerMovedIntoCombat();
+                combatZonesMovingTo.Clear();
             }
             else
             {
                 FindObjectOfType<CombatManager>().CreateCombatZone(this);
-                HexOn.ThreatAreaIn.TurnIntoCombatZone(myCombatZone);
+                ThreatAreaMovingTo.TurnIntoCombatZone(myCombatZone);
+                ThreatAreaMovingTo = null;
                 GoIntoCombat();
-                AddOtherCharactersToFightInView();
                 myCombatZone.ShowPeopleInCombat();
                 playerController.PlayerMovedIntoCombat();
             }
         }
         else if (InCombat())
         {
-            AddOtherCharactersToFightInView();
             myCombatZone.UpdateCombatNodes();
             if (HexOn.InCombatZone() && HexOn.CombatZonesIn.Count > 1)
             {
@@ -504,7 +519,7 @@ public class PlayerCharacter : Character
 
     public void MergeCombatZones()
     {
-        CombatZone[] combatZones = HexOn.CombatZonesIn.ToArray();
+        CombatZone[] combatZones = combatZonesMovingTo.ToArray();
         foreach (CombatZone combatZone in combatZones)
         {
             if (combatZone != myCombatZone)

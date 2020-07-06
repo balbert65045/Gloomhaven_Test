@@ -398,6 +398,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (SelectPlayerCharacter != null && SelectPlayerCharacter != playerCharacter && SelectPlayerCharacter.InCombat() && combatController.UsingCards()) { return; }
         if (SelectPlayerCharacter != null && SelectPlayerCharacter.doorToOpen != null) { return; }
+        if (SelectPlayerCharacter!= null && (SelectPlayerCharacter.combatZonesMovingTo.Count > 0 || SelectPlayerCharacter.ThreatAreaMovingTo != null)) { return; }
         RemoveArea();
         if (playerCharacter.InCombat())
         {
@@ -562,14 +563,15 @@ public class PlayerController : MonoBehaviour {
     {
         outOfCombatController.StopLookingInChest();
         ReturnSelectionToNormal();
-        SelectPlayerCharacter.GetMyCombatHand().UnSelectCard();
-        SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
+        SelectCharacter(SelectPlayerCharacter);
+        //SelectPlayerCharacter.GetMyCombatHand().UnSelectCard();
+        //SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
 
-        SelectPlayerCharacter.GetMyCombatHand().EnableViewButton();
-        SelectPlayerCharacter.GetMyCombatHand().EnableBasicAttack();
-        SelectPlayerCharacter.GetMyOutOfCombatHand().EnableViewButton();
-        SelectPlayerCharacter.GetMyCombatHand().HideHand();
-        SelectPlayerCharacter.GetMyOutOfCombatHand().ShowHand();
+        //SelectPlayerCharacter.GetMyCombatHand().EnableViewButton();
+        //SelectPlayerCharacter.GetMyCombatHand().EnableBasicAttack();
+        //SelectPlayerCharacter.GetMyOutOfCombatHand().EnableViewButton();
+        //SelectPlayerCharacter.GetMyCombatHand().HideHand();
+        //SelectPlayerCharacter.GetMyOutOfCombatHand().ShowHand();
     }
 
 

@@ -16,18 +16,42 @@ public class CombatZone : MonoBehaviour {
             }
         }
     }
+
+    public void AddNodeToCombatNodes(Node node)
+    {
+        if (node.edge) { return; }
+        if (!CombatNodes.Contains(node))
+        {
+            CombatNodes.Add(node);
+            node.NodeHex.AddCombatZone(this);
+        }
+    }
+
     public void UpdateCombatNodes()
     {
         UnLinkAllHexes();
         CombatNodes.Clear();
         foreach(Character character in CharactersInCombat)
         {
-            AddNodesToCombatNodes(character.CombatNodes);
+            if (character.GetComponent<EnemyCharacter>() != null)
+            {
+                AddNodesToCombatNodes(character.CombatNodes);
+            }
         }
         CreateZone();
     }
 
     public List<Character> CharactersInCombat;
+    public List<EnemyCharacter> GetEnemyCharacters()
+    {
+        List<EnemyCharacter> ECs = new List<EnemyCharacter>();
+        foreach (Character character in CharactersInCombat)
+        {
+            if (character == null) { Debug.LogError("Null Character in combat"); }
+            if (character.GetComponent<EnemyCharacter>() != null) { ECs.Add(character.GetComponent<EnemyCharacter>()); }
+        }
+        return ECs;
+    }
     public List<PlayerCharacter> GetPlyaerCharacters()
     {
         List<PlayerCharacter> PCs = new List<PlayerCharacter>();
@@ -228,6 +252,7 @@ public class CombatZone : MonoBehaviour {
 
     public void CreateZone()
     {
+        if (CombatNodes.Count  < 2) { return; }
         if (CombatZoneMeshGen == null && CombatZoneEdgeLine == null)
         {
             CombatZoneMeshGen = GetComponentInChildren<MeshGenerator>();

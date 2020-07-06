@@ -102,6 +102,7 @@ public class HexAdjuster : MonoBehaviour {
     HexMapController hexMap;
     public void RevealEdgeHexes()
     {
+        if (GetComponent<Door>() != null) { return; }
         if (hexMap == null) { hexMap = FindObjectOfType<HexMapController>(); }
         List<Node> nodes = hexMap.GetNeighborsNoRoom(myNode);
         foreach (Node node in nodes)

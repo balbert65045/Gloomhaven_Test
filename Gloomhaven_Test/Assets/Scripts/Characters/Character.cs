@@ -130,9 +130,9 @@ public class Character : Entity {
         //Have to do this because of silly variable being added
         List<Node> nodesToSurround = new List<Node>();
         foreach(Node node in NodesInActionRange) { nodesToSurround.Add(node); }
-        //
 
-        List<Vector3> points = HexMap.GetHexesSurrounding(HexOn.HexNode, nodesToSurround);
+        List<Vector3> points = new List<Vector3>();
+        points = HexMap.GetHexesSurrounding(HexOn.HexNode, nodesToSurround);
         FindObjectOfType<PlayerController>().CreateArea(points, action);
     }
 

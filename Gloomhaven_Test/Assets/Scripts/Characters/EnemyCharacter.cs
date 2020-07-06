@@ -74,6 +74,7 @@ public class EnemyCharacter : Character {
         nodesInView = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance);
         foreach(Node node in nodesInView)
         {
+            if (node.edge) { continue; }
             if (node.NodeHex.ThreatAreaIn != null)
             {
                 //Probably need to merge threat area here
@@ -83,6 +84,7 @@ public class EnemyCharacter : Character {
                 return;
             }
         }
+        Debug.Log("Creating Threat Area");
         FindObjectOfType<EnemyController>().CreateThreatAreaShown(this, nodesInView);
     }
 
@@ -169,6 +171,7 @@ public class EnemyCharacter : Character {
 
     public void DelayedSwitchCombatState()
     {
+        CombatNodes = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance);
         StartCoroutine("SwitchToCombatStateInTime");
     }
 
@@ -212,6 +215,16 @@ public class EnemyCharacter : Character {
         CheckToAttack(ClosestCharacter);
         if (InCombat())
         {
+            CombatNodes.Clear();
+            nodesInView = HexMap.GetNodesInLOS(HexOn.HexNode, ViewDistance);
+            foreach(Node node in nodesInView)
+            {
+                if (node.NodeHex.HasPlayer() && !node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>().InCombat())
+                {
+                    node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>().AddToFight(myCombatZone);
+                }
+                if (node.Shown) { CombatNodes.Add(node); }
+            }
             myCombatZone.UpdateCombatNodes();
             if (HexOn.InCombatZone() && HexOn.CombatZonesIn.Count > 1)
             {

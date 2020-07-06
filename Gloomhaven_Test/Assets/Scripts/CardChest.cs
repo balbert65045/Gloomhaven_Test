@@ -22,8 +22,28 @@ public class CardChest : MonoBehaviour {
         FindObjectOfType<HexVisualizer>().DeactivateHex(GetComponent<Entity>().HexOn);
         if (myCharacter == null) { return; }
         GameObject[] cardPrefabs = FindObjectOfType<PlayerCardDatabase>().Select3RandomCards(myCharacter, myChestType);
+        PlayerCharacter currentActivePlayer = FindObjectOfType<PlayerController>().SelectPlayerCharacter;
+        currentActivePlayer.myDecks.SetActive(false);
+        myCharacter.myDecks.SetActive(true);
+        if (myChestType == CardType.Combat)
+        {
+            myCharacter.GetMyCombatHand().ShowHand();
+            myCharacter.GetMyOutOfCombatHand().HideHand();
+        }
+        else
+        {
+            myCharacter.GetMyCombatHand().HideHand();
+            myCharacter.GetMyOutOfCombatHand().ShowHand();
+        }
         List<Card> cards = FindObjectOfType<ChestPanel>().ActivePanel(myCharacter, cardPrefabs[0], cardPrefabs[1], cardPrefabs[2], this);
         FindObjectOfType<PlayerController>().ChestOpenedFor(cards);
+    }
+    private void Start()
+    {
+        if (myCharacter == null)
+        {
+            SetCharacter(myCharacterName);
+        }
     }
 
     public void SetCharacter(string characterName)
