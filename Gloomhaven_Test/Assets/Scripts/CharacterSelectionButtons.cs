@@ -28,19 +28,13 @@ public class CharacterSelectionButtons : MonoBehaviour {
         FollowRow rowJoining = CSBFollowed.GetComponentInParent<FollowRow>();
         FollowRow rowMovingFrom = CSBFollowing.GetComponentInParent<FollowRow>();
         CSBFollowed.SetLinked(true);
-        rowJoining.GetLastFollower().characterLinkedTo.SetFollow(CSBFollowing.characterLinkedTo);
         rowJoining.AddPlayerToRow(CSBFollowing.gameObject);
         FindObjectOfType<PlayerController>().SelectCharacter(rowJoining.GetLeader().characterLinkedTo);
     }
 
-    public void BreakLink(CharacterSelectionButton CSB)
-    {
-        CSB.characterLinkedTo.StopFollowing();
-    }
-
     public void MoveCharacterOutOfFollow(CharacterSelectionButton CSB)
     {
-        BreakLink(CSB);
+
         AddCharacterWithNoFollow(CSB.gameObject);
     }
 
@@ -51,7 +45,6 @@ public class CharacterSelectionButtons : MonoBehaviour {
         {
             CSB.SetLinked(false);
             AddCharacterWithNoFollow(CSB.gameObject);
-            CSB.characterLinkedTo.SetFollow(null);
         }
     }
 

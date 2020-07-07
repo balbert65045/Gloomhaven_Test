@@ -56,25 +56,15 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void FinishedMoving(PlayerCharacter character)
     {
-        if (NoOtherPlayerMoving()) { playerController.AllowEndTurn(); }
-        if (character != playerController.SelectPlayerCharacter) { return; }
+        //f (NoOtherPlayerMoving()) { playerController.AllowEndTurn(); }
+        //if (character != playerController.SelectPlayerCharacter) { return; }
         playerController.SelectPlayerCharacter.Selected();
-    }
-
-    bool NoOtherPlayerMoving()
-    {
-        foreach(PlayerCharacter character in playerController.myCharacters)
-        {
-            if (character.GetMoving()) { return false; }
-        }
-        return true;
     }
 
     public void FinishedAction(PlayerCharacter character)
     {
         if (character != playerController.SelectPlayerCharacter) { return; }
         if (playerController.SelectPlayerCharacter.GetMoving()) { return; }
-        playerController.SelectPlayerCharacter.Selected();
     }
 
     public void CheckToShowCharacterStats()
@@ -182,17 +172,12 @@ public class OutOfCombatActionController : MonoBehaviour {
             if (hexSelected == null || !hexSelected.HexNode.Shown) { return false; }
             if (!myCharacter.HexInMoveRange(hexSelected, myCharacter.CurrentMoveDistance)) { return false; }
             if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().isOpen) {
-                if (((PlayerCharacter)myCharacter).CharacterLeading != null)
-                {
-                    FindObjectOfType<CharacterSelectionButtons>().MoveCharacterOutOfFollow(((PlayerCharacter)myCharacter).myCharacterSelectionButton);
-                }
                 MoveToDoor((PlayerCharacter)myCharacter, hexSelected.GetComponent<Door>());
                 return true;
             }
             if (hexSelected.EntityHolding == null && !hexSelected.MovedTo)
             {
                 if (hexSelected.InThreatArea()) { MovingIntoCombat = true; }
-                if (((PlayerCharacter)myCharacter).CharacterLeading != null) { FindObjectOfType<CharacterSelectionButtons>().MoveCharacterOutOfFollow(((PlayerCharacter)myCharacter).myCharacterSelectionButton); }
                 myCharacter.MoveOnPath(hexSelected);
                 return true;
             }

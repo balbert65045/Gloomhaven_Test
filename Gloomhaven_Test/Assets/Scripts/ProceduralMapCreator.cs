@@ -198,7 +198,7 @@ public class ProceduralMapCreator : MonoBehaviour {
         Node StartNode = hexMap.GetNode(0, 0);
         foreach(Hex hex in hexes) { hex.GetComponent<Node>().Shown = true; }
         AddPlayerCharactersToRoom();
-        AddChestsToStartHexes();
+        //AddChestsToStartHexes();
         //AddObstaclesToRoom(hexes);
         SetStartNode(StartNode, RoomName);
         hexes.Add(StartNode.GetComponent<Hex>());

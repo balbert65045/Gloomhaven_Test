@@ -59,28 +59,7 @@ public class PlayerCharacter : Character
     private CardChest ChestToOpen;
     public void SetChestToOpen(CardChest chest) { ChestToOpen = chest; }
 
-    public PlayerCharacter CharacterLeading = null;
-    public PlayerCharacter CharacterFollowing = null;
-
     List<Node> NodesSeen = new List<Node>();
-
-    public ThreatArea ThreatAreaMovingTo = null;
-    public List<CombatZone> combatZonesMovingTo = new List<CombatZone>();
-
-    public void StopFollowing()
-    {
-        if (CharacterLeading != null) { CharacterLeading.CharacterFollowing = null; }
-        if (CharacterFollowing != null) { CharacterFollowing.BreakOutOfFollow(); }
-        CharacterLeading = null;
-        CharacterFollowing = null;
-    }
-
-    public void SetFollow(PlayerCharacter character)
-    {
-        if (CharacterFollowing != null) { CharacterFollowing.CharacterLeading = null; }
-        CharacterFollowing = character;
-        if (character != null) { CharacterFollowing.CharacterLeading = this; }
-    }
 
     bool EntityIsOnPositionAndMoving(Hex hex)
     {
@@ -92,121 +71,16 @@ public class PlayerCharacter : Character
         return false;
     }
 
-    public void SetFollowersMoving()
-    {
-        SetMoving(true);
-        if (CharacterFollowing != null) { CharacterFollowing.SetFollowersMoving(); }
-    }
-
-
-    bool CantFollow = false;
-    public void LeaderMoved(Hex hexMovedFrom, List<Node> path)
-    {
-        if (AvailableActions > 0)
-        {
-            SetFollowersMoving();
-            List<Node> FullPath = FindObjectOfType<AStar>().FindPath(HexOn.HexNode, hexMovedFrom.HexNode, myCT);
-            FullPath.AddRange(path);
-            FullPath.RemoveAt(FullPath.Count - 1);
-            for (int i = FullPath.Count - 1; i >= 0; i--)
-            {
-                if (playerController.HexesMovingTo.Contains(FullPath[i].NodeHex))
-                {
-                    FullPath.RemoveAt(i);
-                    CantFollow = true;
-                }
-                else if (FullPath[i].NodeHex.EntityHolding != null && FullPath[i].NodeHex.EntityHolding != this)
-                {
-                    if (!EntityIsOnPositionAndMoving(FullPath[i].NodeHex))
-                    {
-                        FullPath.RemoveAt(i);
-                        CantFollow = true;
-                    }else { break; }
-                }
-                else { break; }
-            }
-            if (FullPath.Count == 0) { return; }
-
-
-            NodesInWalkingDistance.Clear();
-            List<Node> PathOn = new List<Node>();
-            for (int i = 0; i < FullPath.Count; i++) { PathOn.Add(FullPath[i]); }
-            playerController.AddHexMovingTo(FullPath[FullPath.Count - 1].NodeHex);
-            Follow(FullPath);
-            ActionUsed();
-            if (CharacterFollowing != null)
-            {
-                CharacterFollowing.LeaderMoved(HexOn, PathOn);
-            }
-        }
-        else
-        {
-            BreakOutOfFollow();
-        }
-    }
-
-    void BreakOutOfFollow()
-    {
-        if (CharacterFollowing != null) { CharacterFollowing.BreakOutOfFollow(); }
-        CharacterSelectionButtons CSBS = FindObjectOfType<CharacterSelectionButtons>();
-        CSBS.BreakLink(myCharacterSelectionButton);
-        CSBS.AddCharacterWithNoFollow(myCharacterSelectionButton.gameObject);
-        myCharacterSelectionButton.SetPosition();
-    }
-
-    void Follow(List<Node> path)
-    {
-        HexMovingTo = path[0].NodeHex;
-        HexMovingTo.CharacterMovingToHex();
-        Hex HexCurrentlyOn = HexOn;
-        RemoveLinkFromHex();
-        Node HexToMoveTo = path[0];
-        path.Remove(HexToMoveTo);
-        GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, path, HexCurrentlyOn);
-    }
-
     public override void MoveOnPath(Hex hex)
     {
-        if (CharacterLeading != null)
-        {
-            CharacterLeading.BreakOutOfFollow();
-        }
         Hex HexMovingFrom = HexOn;
         List<Node> nodes = GetPath(hex.HexNode);
-        if (!InCombat())
-        {
-            int InitialLength = nodes.Count - 1;
-            for (int i = InitialLength; i >= 0; i--)
-            {
-                if (nodes.Count <= i) { break; }
-                if (nodes[nodes.Count - 1].NodeHex.EntityHolding != null) {
-                    nodes.RemoveAt(nodes.Count - 1);
-                }
-                else if (nodes[i].NodeHex.InThreatArea() || nodes[i].NodeHex.InCombatZone())
-                {
-                    if (nodes[i].NodeHex.InThreatArea()) { ThreatAreaMovingTo = nodes[i].NodeHex.ThreatAreaIn; }
-                    if (nodes[i].NodeHex.InCombatZone()) {
-                        foreach(CombatZone CZ in nodes[i].NodeHex.CombatZonesIn)
-                        {
-                            combatZonesMovingTo.Add(CZ);
-                        }
-                    }
-                    if (nodes[i] != nodes[(nodes.Count - 1)])
-                    {
-                        nodes = nodes.GetRange(0, i);
-                    }
-                }
-            }
-        }
-        bool movingToFight = (ThreatAreaMovingTo != null || combatZonesMovingTo.Count > 0);
         List<Node> totalPath = new List<Node>();
         foreach(Node node in nodes) { totalPath.Add(node); }
         if (totalPath.Count == 0) {
             FinishedMoving(HexOn, true);
-            ActionUsed();
             return;
         }
-        GetComponent<CharacterAnimationController>().SetMovingToFight(movingToFight);
 
         NodesInWalkingDistance.Clear();
         HexMovingTo = hex;
@@ -219,11 +93,6 @@ public class PlayerCharacter : Character
         nodes.Remove(HexToMoveTo);
 
         GetComponent<CharacterAnimationController>().MoveTowards(HexToMoveTo.NodeHex, nodes, HexMovingFrom);
-
-        ActionUsed();
-        if (CharacterFollowing != null) {
-            CharacterFollowing.LeaderMoved(HexMovingFrom, totalPath);
-        }
     }
 
     public override void ShowMoveDistance(int moveRange)
@@ -262,9 +131,9 @@ public class PlayerCharacter : Character
             myHealthBar.CreateXpBar(CurrentXP / XpUntilNextLevel);
         }
         maxHealth = health;
-        BuildDecks();
-        BuildCharacterSelectionIcon();
-        BuildCharacterCards();
+        //BuildDecks();
+        //BuildCharacterSelectionIcon();
+        //BuildCharacterCards();
         ShowViewArea(HexOn, ViewDistance);
     }
 
@@ -364,7 +233,6 @@ public class PlayerCharacter : Character
     //TODo completely show edges
     public override void ShowViewArea(Hex hex, int distance)
     {
-        if (CharacterLeading != null) { return; }
         List<Node> nodesAlmostSeen = HexMap.GetNodesInLOS(hex.HexNode, distance + 1);
         NodesSeen = HexMap.GetNodesInLOS(hex.HexNode, distance);
         ExitHex exit = null;
@@ -416,17 +284,14 @@ public class PlayerCharacter : Character
 
     public override bool CheckToFight()
     {
-        if (CharacterLeading == null)
+        if (playerController.ShowEnemyAreaAndCheckToFight(this))
         {
-            if (playerController.ShowEnemyAreaAndCheckToFight(this))
-            {
-                Debug.Log("Going into combat");
-                GoIntoCombat();
-                AddOtherCharactersToFightInView();
-                myCombatZone.ShowPeopleInCombat();
-                playerController.PlayerMovedIntoCombat();
-                return true;
-            }
+            Debug.Log("Going into combat");
+            GoIntoCombat();
+            AddOtherCharactersToFightInView();
+            myCombatZone.ShowPeopleInCombat();
+            playerController.PlayerMovedIntoCombat();
+            return true;
         }
         return false;
     }
@@ -458,12 +323,6 @@ public class PlayerCharacter : Character
 
     public override void FinishedMoving(Hex hex, bool fight = false, Hex hexMovingFrom = null)
     {
-        // Used to stop follow in wierd spots
-        if (CantFollow)
-        {
-            BreakOutOfFollow();
-            CantFollow = false;
-        }
         playerController.ClearHexesMovingTo();
         if (HexMovingTo != null) { HexMovingTo.CharacterArrivedAtHex(); }
         int goldPickedUp = HexMovingTo.PickUpMoney();
@@ -483,50 +342,6 @@ public class PlayerCharacter : Character
             ChestToOpen = null;
         }
         FindObjectOfType<PlayerController>().FinishedMoving(this);
-        if (fight && !InCombat()) {
-            if (combatZonesMovingTo.Count > 0)
-            {
-                combatZonesMovingTo[0].AddCharacterToCombat(this);
-                combatZonesMovingTo[0].AddNodeToCombatNodes(HexOn.HexNode);
-                if (combatZonesMovingTo.Count > 1)
-                {
-                    MergeCombatZones();
-                }
-                GoIntoCombat();
-                myCombatZone.ShowPeopleInCombat();
-                playerController.PlayerMovedIntoCombat();
-                combatZonesMovingTo.Clear();
-            }
-            else
-            {
-                FindObjectOfType<CombatManager>().CreateCombatZone(this);
-                ThreatAreaMovingTo.TurnIntoCombatZone(myCombatZone);
-                ThreatAreaMovingTo = null;
-                GoIntoCombat();
-                myCombatZone.ShowPeopleInCombat();
-                playerController.PlayerMovedIntoCombat();
-            }
-        }
-        else if (InCombat())
-        {
-            myCombatZone.UpdateCombatNodes();
-            if (HexOn.InCombatZone() && HexOn.CombatZonesIn.Count > 1)
-            {
-                MergeCombatZones();
-            }
-        }
-    }
-
-    public void MergeCombatZones()
-    {
-        CombatZone[] combatZones = combatZonesMovingTo.ToArray();
-        foreach (CombatZone combatZone in combatZones)
-        {
-            if (combatZone != myCombatZone)
-            {
-                myCombatZone.MergeCombatZone(combatZone, this.CharacterName);
-            }
-        }
     }
 
     public void CollectGold(int amount)

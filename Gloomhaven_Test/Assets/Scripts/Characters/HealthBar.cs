@@ -67,6 +67,29 @@ public class HealthBar : MonoBehaviour {
     public List<GameObject> CurrentHealthPieces = new List<GameObject>();
 
     public GameObject SavingThrowCoin;
+
+    public GameObject IndicatorPrefab;
+    List<ActionIndicator> CurrnetIndicators = new List<ActionIndicator>();
+
+    public void ClearActions()
+    {
+        foreach (ActionIndicator ai in CurrnetIndicators)
+        {
+            Destroy(ai.gameObject);
+        }
+        CurrnetIndicators.Clear();
+    }
+
+    public void ShowAction(Action action)
+    {
+        ClearActions();
+        GameObject actionIndicator = Instantiate(IndicatorPrefab, this.transform);
+        actionIndicator.transform.localPosition = new Vector3(-.82f, 1.1f, 0);
+        ActionIndicator AI = actionIndicator.GetComponent<ActionIndicator>();
+        AI.ShowAction(action);
+        CurrnetIndicators.Add(AI);
+    }
+
     public void FlipSavingThrow()
     {
         SavingThrowCoin.SetActive(true);

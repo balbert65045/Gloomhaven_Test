@@ -115,6 +115,13 @@ public class Character : Entity {
     public bool IsPlayer() { return GetComponent<PlayerCharacter>() != null; }
     public bool IsEnemy() { return GetComponent<EnemyCharacter>() != null; }
 
+    public void ClearActions()
+    {
+        NodesInActionRange.Clear();
+        NodesInWalkingDistance.Clear();
+        myHealthBar.ClearActions();
+    }
+
     public void ShowAction(int Range, ActionType action)
     {
         List<Node> nodes = HexMap.GetNodesInLOS(HexOn.HexNode, Range);
@@ -134,6 +141,11 @@ public class Character : Entity {
         List<Vector3> points = new List<Vector3>();
         points = HexMap.GetHexesSurrounding(HexOn.HexNode, nodesToSurround);
         FindObjectOfType<PlayerController>().CreateArea(points, action);
+    }
+
+    public void ShowActionOnHealthBar(Action action)
+    {
+        myHealthBar.ShowAction(action);
     }
 
     public bool HexInActionRange(Hex hex) { return NodesInActionRange.Contains(hex.HexNode); }

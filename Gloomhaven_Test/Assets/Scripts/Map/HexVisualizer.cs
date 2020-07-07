@@ -292,7 +292,7 @@ public class HexVisualizer : MonoBehaviour {
     public void HighlightActionArea(Hex hex, ActionType type)
     {
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
-        List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(playerController.GetCurrentAction().thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
+        List<Node> nodesInAOE = FindObjectOfType<HexMapController>().GetAOE(playerController.StagedAction.thisAOE.thisAOEType, myCharacter.HexOn.HexNode, hex.HexNode);
         foreach (Node node in nodesInAOE)
         {
             if (node == null) { break; }
@@ -318,124 +318,124 @@ public class HexVisualizer : MonoBehaviour {
 
     public void OnHexChanged(Hex hex)
     {
+        
         if (LastHexOver == hex) {return;}
         LastHexOver = hex;
 
         PlayerCharacter myCharacter = playerController.SelectPlayerCharacter;
         if (myCharacter == null) { return; }
-        if (!myCharacter.InCombat() && combatcontroller.PickingCards())
+        //if (!myCharacter.InCombat() && combatcontroller.PickingCards())
+        //{
+        //    Debug.Log("Hex Changed Combat");
+        //    if (myCharacter.GetMoving()) { return; }
+        //    if (outOfCombatcontroller.LookingInChest) { return; }
+        //    if (outOfCombatcontroller.cardUsing == null)
+        //    {
+        //        if (hex == null || !hex.HexNode.Shown) { return; }
+        //        if(myCharacter.GetMoving()) { return; }
+        //        ReturnMoveHexes(myCharacter);
+        //        if (myCharacter.HexInMoveRange(hex, myCharacter.GetCurrentMoveRange()))
+        //        {
+        //            HighlightMovePath(hex);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        switch (outOfCombatcontroller.cardUsing.cardAbility.Actions[0].thisActionType)
+        //        {
+        //            case ActionType.Scout:
+        //                ClearLastChangedHexSelf();
+        //                if (hex == myCharacter.HexOn)
+        //                {
+        //                    HighlightHealPointHex(hex);
+        //                    LastHexesChanged.Add(hex);
+        //                }
+        //                break;
+        //            case ActionType.Stealth:
+        //                ClearLastChangedHexSelf();
+        //                if (hex == myCharacter.HexOn)
+        //                {
+        //                    HighlightHealPointHex(hex);
+        //                    LastHexesChanged.Add(hex);
+        //                }
+        //                break;
+        //            case ActionType.BuffAttack:
+        //                ShowActionArea(myCharacter, hex, ActionType.BuffAttack);
+        //                break;
+        //            case ActionType.BuffMove:
+        //                ShowActionArea(myCharacter, hex, ActionType.BuffMove);
+        //                break;
+        //            case ActionType.BuffRange:
+        //                ShowActionArea(myCharacter, hex, ActionType.BuffRange);
+        //                break;
+        //            case ActionType.BuffArmor:
+        //                ShowActionArea(myCharacter, hex, ActionType.BuffArmor);
+        //                break;
+        //            case ActionType.Heal:
+        //                ShowActionArea(myCharacter, hex, ActionType.Heal);
+        //                break;
+        //            case ActionType.Attack:
+        //                ShowActionArea(myCharacter, hex, ActionType.Attack);
+        //                break;
+        //        }
+        //    }
+        //}
+        ////else if (myCharacter.InCombat() && combatcontroller.GetCombatState() == CombatActionController.CombatState.UsingCombatCards)
+        //else
+        if (hex == null || !hex.HexNode.Shown) { return; }
+        switch (playerController.StagedAction.thisActionType)
         {
-            if (myCharacter.GetMoving()) { return; }
-            if (outOfCombatcontroller.LookingInChest) { return; }
-            if (outOfCombatcontroller.cardUsing == null)
+            case ActionType.Movement:
             {
-                if (hex == null || !hex.HexNode.Shown) { return; }
-                if(myCharacter.GetMoving()) { return; }
-                ReturnMoveHexes(myCharacter);
-                if (myCharacter.HexInMoveRange(hex, myCharacter.GetCurrentMoveRange()))
-                {
-                    HighlightMovePath(hex);
-                }
+                    if (myCharacter.GetMoving()) { return; }
+                    if (LastHexesChanged.Count != 0)
+                    {
+                        foreach (Hex lastHex in LastHexesChanged)
+                        {
+                            lastHex.UnHighlight();
+                        }
+                        LastHexesChanged.Clear();
+                    }
+                    if (myCharacter.HexInMoveRange(hex, myCharacter.GetCurrentMoveRange()))
+                    {
+                        HighlightMovePath(hex);
+                    }
+                    break;
             }
-            else
+            case ActionType.Attack:
             {
-                switch (outOfCombatcontroller.cardUsing.cardAbility.Actions[0].thisActionType)
-                {
-                    case ActionType.Scout:
-                        ClearLastChangedHexSelf();
-                        if (hex == myCharacter.HexOn)
-                        {
-                            HighlightHealPointHex(hex);
-                            LastHexesChanged.Add(hex);
-                        }
-                        break;
-                    case ActionType.Stealth:
-                        ClearLastChangedHexSelf();
-                        if (hex == myCharacter.HexOn)
-                        {
-                            HighlightHealPointHex(hex);
-                            LastHexesChanged.Add(hex);
-                        }
-                        break;
-                    case ActionType.BuffAttack:
-                        ShowActionArea(myCharacter, hex, ActionType.BuffAttack);
-                        break;
-                    case ActionType.BuffMove:
-                        ShowActionArea(myCharacter, hex, ActionType.BuffMove);
-                        break;
-                    case ActionType.BuffRange:
-                        ShowActionArea(myCharacter, hex, ActionType.BuffRange);
-                        break;
-                    case ActionType.BuffArmor:
-                        ShowActionArea(myCharacter, hex, ActionType.BuffArmor);
-                        break;
-                    case ActionType.Heal:
-                        ShowActionArea(myCharacter, hex, ActionType.Heal);
-                        break;
-                    case ActionType.Attack:
-                        ShowActionArea(myCharacter, hex, ActionType.Attack);
-                        break;
-                }
+                ShowActionArea(myCharacter, hex, ActionType.Attack);
+                break;
             }
-        }
-        else if (myCharacter.InCombat() && combatcontroller.GetCombatState() == CombatActionController.CombatState.UsingCombatCards)
-        {
-            if (hex == null || !hex.HexNode.Shown) { return; }
-            switch (combatcontroller.GetMyCurrectAction().thisActionType)
+            case ActionType.Heal:
             {
-                case ActionType.Movement:
-                {
-                        if (myCharacter.GetMoving()) { return; }
-                        if (LastHexesChanged.Count != 0)
-                        {
-                            foreach (Hex lastHex in LastHexesChanged)
-                            {
-                                lastHex.UnHighlight();
-                            }
-                            LastHexesChanged.Clear();
-                        }
-                        if (myCharacter.HexInMoveRange(hex, myCharacter.GetCurrentMoveRange()))
-                        {
-                            HighlightMovePath(hex);
-                        }
-                        break;
-                }
-                case ActionType.Attack:
-                {
-                    if (combatcontroller.Attacking) { return; }
-                    ShowActionArea(myCharacter, hex, ActionType.Attack);
-                    break;
-                }
-                case ActionType.Heal:
-                {
-                    ShowActionArea(myCharacter, hex, ActionType.Heal);
-                    break;
-                }
-                case ActionType.Shield:
-                {
-                    ShowActionArea(myCharacter, hex, ActionType.Shield);
-                    break;
-                }
-                case ActionType.BuffAttack:
-                {
-                    ShowActionArea(myCharacter, hex, ActionType.BuffAttack);
-                    break;
-                }
-                case ActionType.BuffArmor:
-                {
-                    ShowActionArea(myCharacter, hex, ActionType.BuffArmor);
-                    break;
-                }
-                case ActionType.BuffMove:
-                {
-                    ShowActionArea(myCharacter, hex, ActionType.BuffMove);
-                    break;
-                }
-                case ActionType.BuffRange:
-                {
-                    ShowActionArea(myCharacter, hex, ActionType.BuffRange);
-                    break;
-                }
+                ShowActionArea(myCharacter, hex, ActionType.Heal);
+                break;
+            }
+            case ActionType.Shield:
+            {
+                ShowActionArea(myCharacter, hex, ActionType.Shield);
+                break;
+            }
+            case ActionType.BuffAttack:
+            {
+                ShowActionArea(myCharacter, hex, ActionType.BuffAttack);
+                break;
+            }
+            case ActionType.BuffArmor:
+            {
+                ShowActionArea(myCharacter, hex, ActionType.BuffArmor);
+                break;
+            }
+            case ActionType.BuffMove:
+            {
+                ShowActionArea(myCharacter, hex, ActionType.BuffMove);
+                break;
+            }
+            case ActionType.BuffRange:
+            {
+                ShowActionArea(myCharacter, hex, ActionType.BuffRange);
+                break;
             }
         }
     }

@@ -77,10 +77,10 @@ public class CameraRaycaster : MonoBehaviour {
 
     void OutOfCombatRaycast()
     {
-        if (playerController.SelectPlayerCharacter.OutOfActions()) {
-            cursorImage.sprite = Pointer;
-            return;
-        }
+        //if (playerController.SelectPlayerCharacter.OutOfActions()) {
+        //    cursorImage.sprite = Pointer;
+        //    return;
+        //}
         Transform ActionHit = null;
         ActionHit = WallRaycast();
         if (ActionHit != null)
@@ -149,11 +149,12 @@ public class CameraRaycaster : MonoBehaviour {
 
         if (playerController.SelectPlayerCharacter == null) { return; }
 
-        if (playerController.SelectPlayerCharacter.InCombat()) {
-            CombatRaycast();
-        }
-        else {
-            OutOfCombatRaycast();
-        }
+        CombatRaycast();
+        //if (playerController.SelectPlayerCharacter.InCombat()) {
+        //    CombatRaycast();
+        //}
+        //else {
+        //    OutOfCombatRaycast();
+        //}
     }
 }

@@ -35,11 +35,27 @@ public class PlayerController : MonoBehaviour {
 
     public int GoldHolding = 0;
 
-    //private void Awake()
-    //{
-    //    myCharacters.Clear();
-    //    myCharacters.AddRange(FindObjectsOfType<PlayerCharacter>());
-    //}
+    public bool CardsPlayable = true;
+    public Action StagedAction;
+    public void ShowStagedAction(Action action)
+    {
+        StagedAction = action;
+        if (action.thisActionType == ActionType.None)
+        {
+            SelectPlayerCharacter.ClearActions();
+            RemoveArea();
+        }
+        else if (action.thisActionType == ActionType.Movement)
+        {
+            SelectPlayerCharacter.ShowMoveDistance(action.Range);
+            SelectPlayerCharacter.ShowActionOnHealthBar(action);
+        }
+        else
+        {
+            SelectPlayerCharacter.ShowAction(action.Range, action.thisActionType);
+            SelectPlayerCharacter.ShowActionOnHealthBar(action);
+        }
+    }
 
     public void BeginGame()
     {
@@ -57,7 +73,7 @@ public class PlayerController : MonoBehaviour {
         endTurnButton = FindObjectOfType<EndTurnButton>();
         actionButton = FindObjectOfType<PlayerActionButton>();
         initBoard = FindObjectOfType<InitiativeBoard>();
-        actionButton.gameObject.SetActive(false);
+        //actionButton.gameObject.SetActive(false);
     }
 
     IEnumerator StartGame()
@@ -70,66 +86,255 @@ public class PlayerController : MonoBehaviour {
         GoOutOfCombat();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (EventSystem.current.IsPointerOverGameObject() == true) {
-                return;
-            }
-            Character characterOver = CheckIfOverCharacter();
-            if (characterOver != null)
-            {
-                if (characterOver.GetComponent<EnemyCharacter>() != null)
-                {
-                    if (SelectPlayerCharacter.InCombat())
-                    {
-                        combatController.CheckToSelectCharacter();
-                    }
-                    else
-                    {
-                        outOfCombatController.CheckToShowCharacterStats();
-                    }
-                }
-                else
-                {
-                    if (characterOver.GetComponent<PlayerCharacter>().InCombat())
-                    {
-                        combatController.CheckToSelectCharacter();
-                    }
-                    else
-                    {
-                        outOfCombatController.CheckToShowCharacterStats();
-                    }
-                }
-            }
-        }
-
         if (Input.GetMouseButtonDown(1))
         {
-            if (SelectPlayerCharacter.InCombat())
+            UseAction();
+        }
+    }
+
+    void UseAction()
+    {
+        if (StagedAction.thisActionType == ActionType.None) { return; }
+        Transform HexHit = raycaster.HexRaycast();
+        Hex hexSelected = null;
+        if (HexHit != null && HexHit.GetComponent<Hex>()) { hexSelected = HexHit.GetComponent<Hex>(); }
+        if (hexSelected == null) { return; }
+        bool usingAction = false;
+        if (StagedAction.thisActionType == ActionType.Movement)
+        {
+            usingAction = CheckToMoveOrInteract();
+        }
+        else if (StagedAction.thisActionType == ActionType.Attack)
+        {
+            List<Character> charactersActingOn = CheckForNegativeAction(StagedAction, SelectPlayerCharacter, hexSelected);
+            if (charactersActingOn.Count != 0)
             {
-                combatController.CheckToUseActions();
+                usingAction = true;
+                PerformAction(StagedAction, charactersActingOn);
             }
-            else
+        }
+        else
+        {
+            List<Character> charactersActingOn = CheckForPositiveAction(StagedAction, SelectPlayerCharacter, hexSelected);
+            if (charactersActingOn.Count != 0)
             {
-                outOfCombatController.UseAction(SelectPlayerCharacter);
+                usingAction = true;
+                PerformAction(StagedAction, charactersActingOn);
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (usingAction)
         {
-            if (SelectPlayerCharacter.InCombat())
-            {
-                combatController.SwitchActionOrSelectCharacter();
-            } 
-            else
-            {
-                selectAnotherCharacter();
-            }
+            DisableEndTurn();
         }
     }
+
+    bool CheckToMoveOrInteract()
+    {
+        if (SelectPlayerCharacter.GetMoving()) { return false; }
+        Transform WallHit = raycaster.WallRaycast();
+        if (WallHit != null)
+        {
+            if (WallHit.GetComponent<DoorObject>() != null && !WallHit.GetComponent<DoorObject>().door.isOpen)
+            {
+                MoveToDoor(WallHit.GetComponent<DoorObject>().door);
+                return true;
+            }
+        }
+
+        Transform HexHit = raycaster.HexRaycast();
+        if (HexHit != null && HexHit.GetComponent<Hex>())
+        {
+            Hex hexSelected = HexHit.GetComponent<Hex>();
+            if (hexSelected == null || !hexSelected.HexNode.Shown) { return false; }
+            if (!SelectPlayerCharacter.HexInMoveRange(hexSelected, StagedAction.Range)) { return false; }
+            if (hexSelected.GetComponent<Door>() != null && !hexSelected.GetComponent<Door>().isOpen)
+            {
+                MoveToDoor(hexSelected.GetComponent<Door>());
+                return true;
+            }
+            if (hexSelected.EntityHolding == null && !hexSelected.MovedTo)
+            {
+                SelectPlayerCharacter.MoveOnPath(hexSelected);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void MoveToDoor(Door doorHex)
+    {
+        if (SelectPlayerCharacter.GetMoving()) { return; }
+        if (!SelectPlayerCharacter.HexInMoveRange(doorHex.GetComponent<Hex>(), StagedAction.Range)) { return; }
+        if (doorHex.GetComponent<Hex>().EntityHolding == null && !doorHex.GetComponent<Hex>().MovedTo)
+        {
+            SelectPlayerCharacter.SetDoorToOpen(doorHex);
+            SelectPlayerCharacter.MoveOnPath(doorHex.GetComponent<Hex>());
+        }
+    }
+
+    void PerformAction(Action action, List<Character> characters)
+    {
+        RemoveArea();
+        switch (action.thisActionType)
+        {
+            case ActionType.Attack:
+                Attack(action.thisAOE.Damage, characters);
+                break;
+            case ActionType.Heal:
+                Heal(action.thisAOE.Damage, characters);
+                break;
+            case ActionType.BuffArmor:
+                BuffArmor(action.thisAOE.Damage, action.Duration, characters);
+                break;
+            case ActionType.BuffAttack:
+                BuffAttack(action.thisAOE.Damage, action.Duration, characters);
+                break;
+            case ActionType.BuffMove:
+                BuffMove(action.thisAOE.Damage, action.Duration, characters);
+                break;
+            case ActionType.BuffRange:
+                BuffRange(action.thisAOE.Damage, action.Duration, characters);
+                break;
+        }
+    }
+
+    void Attack(int value, List<Character> characters)
+    {
+        SelectPlayerCharacter.Attack(value, characters);
+    }
+
+    void Heal(int value, List<Character> characters)
+    {
+        SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.Heal, value, 0, characters);
+    }
+
+    void BuffRange(int value, int duration, List<Character> characters)
+    {
+        SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffRange, value, duration, characters);
+    }
+
+    void BuffMove(int value, int duration, List<Character> characters)
+    {
+        SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffMove, value, duration, characters);
+    }
+
+    void BuffAttack(int value, int duration, List<Character> characters)
+    {
+        SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffAttack, value, duration, characters);
+    }
+
+    void BuffArmor(int value, int duration, List<Character> characters)
+    {
+        SelectPlayerCharacter.GetComponent<CharacterAnimationController>().DoBuff(ActionType.BuffArmor, value, duration, characters);
+    }
+
+    List<Character> CheckForNegativeAction(Action action, Character character, Hex hexSelected)
+    {
+        List<Node> nodes = FindObjectOfType<HexMapController>().GetAOE(action.thisAOE.thisAOEType, character.HexOn.HexNode, hexSelected.HexNode);
+        List<Character> characterActingUpon = new List<Character>();
+
+        if (!character.HexInActionRange(hexSelected)) { return null; }
+        foreach (Node node in nodes)
+        {
+            if (node == null) { break; }
+            if (character.HexNegativeActionable(node.NodeHex))
+            {
+                UnHighlightHexes();
+                foreach (Node node_highlight in nodes)
+                {
+                    hexVisualizer.HighlightActionPointHex(node_highlight.NodeHex, action.thisActionType);
+                }
+                characterActingUpon.Add(node.NodeHex.EntityHolding.GetComponent<Character>());
+            }
+        }
+        return characterActingUpon;
+    }
+
+    List<Character> CheckForPositiveAction(Action action, Character character, Hex hexSelected)
+    {
+        List<Node> nodes = FindObjectOfType<HexMapController>().GetAOE(action.thisAOE.thisAOEType, character.HexOn.HexNode, hexSelected.HexNode);
+        List<Character> characterActingUpon = new List<Character>();
+
+        if (!character.HexInActionRange(hexSelected)) { return null; }
+        foreach (Node node in nodes)
+        {
+            if (node == null) { break; }
+            if (character.HexPositiveActionable(node.NodeHex))
+            {
+                UnHighlightHexes();
+                foreach (Node node_highlight in nodes)
+                {
+                    hexVisualizer.HighlightActionPointHex(node_highlight.NodeHex, action.thisActionType);
+                }
+                characterActingUpon.Add(node.NodeHex.EntityHolding.GetComponent<Character>());
+            }
+        }
+        return characterActingUpon;
+    }
+
+    // Update is called once per frame
+    //void Update()
+    //{
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //        if (EventSystem.current.IsPointerOverGameObject() == true) {
+    //            return;
+    //        }
+    //        Character characterOver = CheckIfOverCharacter();
+    //        if (characterOver != null)
+    //        {
+    //            if (characterOver.GetComponent<EnemyCharacter>() != null)
+    //            {
+    //                if (SelectPlayerCharacter.InCombat())
+    //                {
+    //                    combatController.CheckToSelectCharacter();
+    //                }
+    //                else
+    //                {
+    //                    outOfCombatController.CheckToShowCharacterStats();
+    //                }
+    //            }
+    //            else
+    //            {
+    //                if (characterOver.GetComponent<PlayerCharacter>().InCombat())
+    //                {
+    //                    combatController.CheckToSelectCharacter();
+    //                }
+    //                else
+    //                {
+    //                    outOfCombatController.CheckToShowCharacterStats();
+    //                }
+    //            }
+    //        }
+    //    }
+
+    //    if (Input.GetMouseButtonDown(1))
+    //    {
+    //        if (SelectPlayerCharacter.InCombat())
+    //        {
+    //            combatController.CheckToUseActions();
+    //        }
+    //        else
+    //        {
+    //            outOfCombatController.UseAction(SelectPlayerCharacter);
+    //        }
+    //    }
+
+    //    if (Input.GetKeyDown(KeyCode.Tab))
+    //    {
+    //        if (SelectPlayerCharacter.InCombat())
+    //        {
+    //            combatController.SwitchActionOrSelectCharacter();
+    //        } 
+    //        else
+    //        {
+    //            selectAnotherCharacter();
+    //        }
+    //    }
+    //}
 
     public void AddGold(int gold)
     {
@@ -300,16 +505,9 @@ public class PlayerController : MonoBehaviour {
 
     public void EndPlayerTurn()
     {
-        combatController.UnHighlightHexes();
-        FindObjectOfType<CharacterViewer>().HideCharacterCards();
-        if (PlayerInCombat())
-        {
-            combatController.EndPlayerTurn();
-        }
-        else
-        {
-            BeginNewTurn();
-        }
+        FindObjectOfType<NewHand>().DiscardHand();
+        //This will rotate through players Than go to enemy turn
+        FindObjectOfType<NewHand>().DrawNewHand();
     }
 
     bool PlayerInCombat()
@@ -321,16 +519,18 @@ public class PlayerController : MonoBehaviour {
         return false;
     }
 
+    void ActionFinished()
+    {
+        FindObjectOfType<StagingArea>().DiscardCards();
+        AllowEndTurn();
+        UnHighlightHexes();
+    }
 
     //Callbacks
     public void FinishedMoving(PlayerCharacter characterFinished)
     {
-        if (characterFinished.InCombat()) { combatController.FinishedMoving(); }
-        else
-        {
-            outOfCombatController.FinishedMoving(characterFinished);
-            CheckToAllowExitFloorOrOpenDoor();
-        }
+        //Allow end turn
+        ActionFinished();
     }
 
     public void FinishedAttacking(PlayerCharacter characterFinished)
@@ -398,7 +598,6 @@ public class PlayerController : MonoBehaviour {
     {
         if (SelectPlayerCharacter != null && SelectPlayerCharacter != playerCharacter && SelectPlayerCharacter.InCombat() && combatController.UsingCards()) { return; }
         if (SelectPlayerCharacter != null && SelectPlayerCharacter.doorToOpen != null) { return; }
-        if (SelectPlayerCharacter!= null && (SelectPlayerCharacter.combatZonesMovingTo.Count > 0 || SelectPlayerCharacter.ThreatAreaMovingTo != null)) { return; }
         RemoveArea();
         if (playerCharacter.InCombat())
         {
@@ -470,22 +669,11 @@ public class PlayerController : MonoBehaviour {
 
     void CheckToAllowExitFloorOrOpenDoor()
     {
-        bool exitAllowed = true;
-        foreach (PlayerCharacter character in myCharacters)
-        {
-            if (character.HexOn.GetComponent<ExitAreaHex>() == null){ exitAllowed = false; }
-        }
-        if (exitAllowed) {
-            AllowExit();
-            return;
-        }
-        DisableExit();
     }
 
     void AllowExit()
     {
         actionButton.gameObject.SetActive(true);
-        //actionButton.enabled = true;
         actionButton.AllowExit();
     }
 
@@ -505,18 +693,15 @@ public class PlayerController : MonoBehaviour {
     //End Turn Button
     public void AllowEndTurn()
     {
-        if (combatController.PickingCards() && combatController.AllPlayersHaveCardSelected())
-        {
-            endTurnButton.AllowEndTurn();
-        }
-        else if (combatController.UsingCards())
-        {
-            endTurnButton.AllowEndTurn();
-        }
+        CardsPlayable = true;
+        FindObjectOfType<NewHand>().MakeAllCardsPlayable();
+        endTurnButton.AllowEndTurn();
     }
 
     public void DisableEndTurn()
     {
+        CardsPlayable = false;
+        FindObjectOfType<NewHand>().MakeAllCardsUnPlayable();
         endTurnButton.DisableEndTurn();
     }
 

@@ -46,7 +46,6 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
     {
         SetLinked(false);
         CSBS.AddCharacterWithNoFollow(this.gameObject);
-        characterLinkedTo.SetFollow(null);
     }
 
 
@@ -68,11 +67,6 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
         HexMapController hexmap = FindObjectOfType<HexMapController>();
         List<Node> adjacentNodes = hexmap.GetNodesAdjacent(characterLinkedTo.HexOn.HexNode);
         CharacterSelectionButton[] AllButtons = FindObjectsOfType<CharacterSelectionButton>();
-        foreach (CharacterSelectionButton button in AllButtons)
-        {
-            if (adjacentNodes.Contains(button.characterLinkedTo.HexOn.HexNode) && button.characterLinkedTo.CharacterFollowing == null) { AdjacentCharacters.Add(button); }
-            else { button.GetComponent<Button>().interactable = false; }
-        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -138,7 +132,6 @@ public class CharacterSelectionButton : MonoBehaviour, IPointerUpHandler, IPoint
                 if ((transform.position - StartPosition).magnitude > 30f)
                 {
                     Linked = false;
-                    CSBS.BreakLink(this);
                 }
             }
         }
