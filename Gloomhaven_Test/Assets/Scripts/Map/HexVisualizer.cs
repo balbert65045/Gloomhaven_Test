@@ -404,6 +404,7 @@ public class HexVisualizer : MonoBehaviour {
             }
             case ActionType.Attack:
             {
+                if (!playerController.CardsPlayable) { return; }
                 ShowActionArea(myCharacter, hex, ActionType.Attack);
                 break;
             }

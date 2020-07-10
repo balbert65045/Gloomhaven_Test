@@ -20,20 +20,6 @@ public class Hex : MonoBehaviour {
 
     public bool MovedTo = false;
 
-    public bool InThreatArea() { return ThreatAreaIn != null; }
-    public ThreatArea ThreatAreaIn = null;
-
-    public bool InCombatZone() { return CombatZonesIn.Count > 0; }
-    public List<CombatZone> CombatZonesIn = new List<CombatZone>();
-    public void AddCombatZone(CombatZone cz)
-    {
-        if (!CombatZonesIn.Contains(cz)) { CombatZonesIn.Add(cz); }
-    }
-    public void RemoveCombatZone(CombatZone cz)
-    {
-        if (CombatZonesIn.Contains(cz)) { CombatZonesIn.Remove(cz); }
-    }
-
     public Material InvisibleMaterial;
     public Material SlightlyVisibleMaterial;
     public Material OGMaterial;
@@ -55,6 +41,18 @@ public class Hex : MonoBehaviour {
     public EnemyCharacter GetEnemy() { return EntityHolding.GetComponent<EnemyCharacter>(); }
     public bool HasPlayer() { return EntityHolding != null && EntityHolding.GetComponent<PlayerCharacter>() != null; }
     public bool HasCharacter() { return EntityHolding != null && EntityHolding.GetComponent<Character>() != null; }
+
+    public void OpenHex(string roomName)
+    {
+        GetComponent<Node>().isAvailable = true;
+        GetComponent<HexAdjuster>().AddRoomShown(roomName);
+        if (GetComponent<Node>().edge) {GetComponent<HexAdjuster>().RevealRoomEdge(); }
+        GetComponent<HexWallAdjuster>().ShowWall();
+        GetComponent<Hex>().ShowHex();
+        HexNode.Shown = true;
+        ShowMoney();
+        if (EntityToSpawn != null) { CreateCharacter(); }
+    }
 
     public int PickUpMoney()
     {
@@ -83,25 +81,6 @@ public class Hex : MonoBehaviour {
             GoldHolding = Instantiate(GoldPrefabLarge, this.transform);
             GoldHolding.transform.localPosition = new Vector3(0, 0f, -.15f);
             GoldHolding.transform.localRotation = Quaternion.Euler(new Vector3(-90, 0, 0));
-        }
-    }
-
-
-    public void setUpHexes()
-    {
-        if (EntityToSpawn != null && EntityToSpawn.GetComponent<EnemyCharacter>() != null)
-        {
-            int viewDistance = EntityToSpawn.GetComponent<EnemyCharacter>().ViewDistance;
-            List<Node> nodesInEnemyView = FindObjectOfType<HexMapController>().GetNodesInLOS(this.HexNode, viewDistance);
-            foreach (Node node in nodesInEnemyView)
-            {
-                if (node.NodeHex.ThreatAreaIn != null)
-                {
-                    node.NodeHex.ThreatAreaIn.AddEnemyNodes(nodesInEnemyView);
-                    return;
-                }
-            }
-            FindObjectOfType<EnemyController>().CreateThreatAreaHidden(nodesInEnemyView);
         }
     }
     

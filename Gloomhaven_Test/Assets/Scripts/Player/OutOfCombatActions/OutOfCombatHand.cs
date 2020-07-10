@@ -124,7 +124,6 @@ public class OutOfCombatHand : Hand {
                 else { linkedButton = cardButton; }
             }
         }
-        FindObjectOfType<PlayerController>().SelectCard(card);
     }
 
     public void allowLongRest()

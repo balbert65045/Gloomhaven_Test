@@ -28,6 +28,7 @@ public class Buff
 
 public class Character : Entity {
 
+    public Sprite characterIcon;
     public GameObject CharacterCardPrefab;
     public CharacterCard MyCharacterCard;
 
@@ -288,17 +289,8 @@ public class Character : Entity {
 
         int healthBeforeDamage = health;
         health -= Mathf.Clamp((TotalHealthLosing - CurrentArmor), 0, 1000);
-        bool UsingSavingThrow = GetComponent<PlayerCharacter>() != null && health <= 0 ;
-        if (UsingSavingThrow)
-        {
-            int HealthDifference = healthBeforeDamage - 1;
-            TotalHealthLosing = CurrentArmor + HealthDifference;
-        }
-        else
-        {
-            if (health <= 0) { GoingToDie = true; }
-        }
-        myHealthBar.LoseHealth(TotalHealthLosing, UsingSavingThrow);
+        if (health <= 0) { GoingToDie = true; }
+        myHealthBar.LoseHealth(TotalHealthLosing);
     }
 
     public void TakeTrueDamage(int amount)
@@ -307,17 +299,7 @@ public class Character : Entity {
         int healthBeforeDamage = health;
         TotalHealthLosing = amount;
         health -= Mathf.Clamp(amount, 0, 1000);
-        bool UsingSavingThrow = GetComponent<PlayerCharacter>() != null && health <= 0;
-        if (UsingSavingThrow)
-        {
-            int HealthDifference = healthBeforeDamage - 1;
-            TotalHealthLosing = HealthDifference;
-        }
-        else
-        {
-            if (health <= 0) { GoingToDie = true; }
-        }
-        myHealthBar.LoseHealth(TotalHealthLosing, UsingSavingThrow);
+        myHealthBar.LoseHealth(TotalHealthLosing);
     }
 
     public void SwitchCombatState(bool InCombat)
@@ -405,25 +387,11 @@ public class Character : Entity {
         Destroy(this.gameObject);
     }
 
-    public void TakeDamage(int damage, string modifier, Character characterThatAttacked)
+    public void TakeDamage(int damage, Character characterThatAttacked)
     {
-
         characterThatAttackedMe = characterThatAttacked;
-
-        int totalDamage = damage;
-        if (modifier[0] == "+"[0])
-        {
-            totalDamage += int.Parse(modifier[1].ToString());
-        } else if (modifier[0] == "-"[0])
-        {
-            totalDamage -= int.Parse(modifier[1].ToString());
-        } else if (modifier[0] == "x"[0])
-        {
-            totalDamage = damage * int.Parse(modifier[1].ToString());
-        }
-
-        TotalHealthLosing = totalDamage;
-        myHealthBar.LoseCalculateDamage(damage, modifier, totalDamage);
+        TotalHealthLosing = damage;
+        LetAttackerAttack();
     }
 
     public void HitOpponent()
@@ -452,8 +420,7 @@ public class Character : Entity {
         foreach (Character character in characters)
         {
             character.transform.LookAt(transform);
-            string modifier = GetComponent<CharacterModifierController>().GetRandomModifier();
-            character.TakeDamage(damage + Strength, modifier, this);
+            character.TakeDamage(damage, this);
         }
     }
 

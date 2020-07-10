@@ -71,8 +71,15 @@ public class CameraRaycaster : MonoBehaviour {
         if (HexFound != null && HexFound.GetComponent<Hex>())
         {
             notifyCursorOverHexObservers(HexFound.GetComponent<Hex>());
+            if (!ObjectInCharacterRange(HexFound.gameObject))
+            {
+                cursorImage.sprite = Pointer;
+                return;
+            }
+            if (HexFound.GetComponent<Door>() != null && !HexFound.GetComponent<Door>().isOpen) { cursorImage.sprite = DoorSprite; }
+            else { cursorImage.sprite = Pointer; }
+            return;
         }
-        cursorImage.sprite = Pointer;
     }
 
     void OutOfCombatRaycast()

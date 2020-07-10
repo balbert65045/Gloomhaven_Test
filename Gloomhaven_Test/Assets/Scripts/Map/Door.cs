@@ -116,26 +116,23 @@ public class Door : MonoBehaviour {
         {
             foreach (Hex hex in hexesToOpenTo)
             {
-                if (hex.GetComponent<Door>() != null) { hex.GetComponent<Door>().OpenedRoom(RoomNameToBuild); }
-                hex.GetComponent<Node>().isAvailable = true;
-            }
-            foreach (Hex hex in hexesToOpenTo)
-            {
-                hex.GetComponent<HexAdjuster>().AddRoomShown(RoomNameToBuild);
-                if (!hex.GetComponent<Node>().edge) { hex.setUpHexes(); }
+                hex.OpenHex(RoomNameToBuild);
+                if (hex.GetComponent<Door>() != null && hex.GetComponent<Door>() != this ){
+                    hex.GetComponent<Door>().OpenedRoom(RoomNameToBuild);
+                    if (hex.GetComponent<Door>() != this) { hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true); }
+                }
             }
         }
         else
         {
             foreach (Hex hex in HexesInRoom)
             {
-                if (hex.GetComponent<Door>() != null) { hex.GetComponent<Door>().OpenedRoom(GetComponent<Node>().RoomName[0]); }
-                hex.GetComponent<Node>().isAvailable = true;
-            }
-            foreach (Hex hex in HexesInRoom)
-            {
-                hex.GetComponent<HexAdjuster>().AddRoomShown(GetComponent<Node>().RoomName[0]);
-                if (!hex.GetComponent<Node>().edge) { hex.setUpHexes(); }
+                hex.OpenHex(GetComponent<Node>().RoomName[0]);
+                if (hex.GetComponent<Door>() != null && hex.GetComponent<Door>() != this)
+                {
+                    hex.GetComponent<Door>().OpenedRoom(GetComponent<Node>().RoomName[0]);
+                    if (hex.GetComponent<Door>() != this) { hex.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true); }
+                }
             }
         }
     }

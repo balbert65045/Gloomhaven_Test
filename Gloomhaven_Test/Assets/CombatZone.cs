@@ -12,7 +12,7 @@ public class CombatZone : MonoBehaviour {
             if (node.edge) { continue; }
             if (!CombatNodes.Contains(node)) {
                 CombatNodes.Add(node);
-                node.NodeHex.AddCombatZone(this);
+                //node.NodeHex.AddCombatZone(this);
             }
         }
     }
@@ -23,7 +23,7 @@ public class CombatZone : MonoBehaviour {
         if (!CombatNodes.Contains(node))
         {
             CombatNodes.Add(node);
-            node.NodeHex.AddCombatZone(this);
+            //node.NodeHex.AddCombatZone(this);
         }
     }
 
@@ -119,35 +119,35 @@ public class CombatZone : MonoBehaviour {
     {
         foreach (Node node in CombatNodes)
         {
-            node.NodeHex.RemoveCombatZone(this);
+          //  node.NodeHex.RemoveCombatZone(this);
         }
     }
 
     void UnlinkAllCharacters()
     {
-        foreach (Character character in CharactersInCombat)
-        {
-            character.myCombatZone = null;
-            if (character.IsPlayer())
-            {
-                PlayerCharacter PC = character.GetComponent<PlayerCharacter>();
-                PC.resetShield(character.GetArmor());
-                PC.SwitchCombatState(false);
-                if (PC.GetMyCombatHand().getSelectedCard() != null)
-                {
-                    PC.GetMyCombatHand().discardSelectedCard();
-                    PC.SetMyCurrentCombatCard(null);
-                }
-                PC.myCharacterSelectionButton.hideCardIndicators();
-                PC.myCharacterSelectionButton.ShowActions();
-            }
-            else if (character.IsEnemy())
-            {
-                EnemyCharacter EC = character.GetComponent<EnemyCharacter>();
-                character.SwitchCombatState(false);
-                EC.RecreateThreatArea();
-            }
-        }
+        //foreach (Character character in CharactersInCombat)
+        //{
+        //    character.myCombatZone = null;
+        //    if (character.IsPlayer())
+        //    {
+        //        PlayerCharacter PC = character.GetComponent<PlayerCharacter>();
+        //        PC.resetShield(character.GetArmor());
+        //        PC.SwitchCombatState(false);
+        //        if (PC.GetMyCombatHand().getSelectedCard() != null)
+        //        {
+        //            PC.GetMyCombatHand().discardSelectedCard();
+        //            PC.SetMyCurrentCombatCard(null);
+        //        }
+        //        PC.myCharacterSelectionButton.hideCardIndicators();
+        //        PC.myCharacterSelectionButton.ShowActions();
+        //    }
+        //    else if (character.IsEnemy())
+        //    {
+        //        EnemyCharacter EC = character.GetComponent<EnemyCharacter>();
+        //        character.SwitchCombatState(false);
+        //        EC.RecreateThreatArea();
+        //    }
+        //}
     }
 
     public void removeCharacter(Character character)
@@ -191,18 +191,18 @@ public class CombatZone : MonoBehaviour {
     public List<InitiativePosition> PopulateInitiatives(EnemyActionCard[] enemyActions)
     {
         List<InitiativePosition> Initiatives = new List<InitiativePosition>();
-        foreach(EnemyActionCard enemyAction in enemyActions)
-        {
-            InitiativePosition IP = InitiativeBoard.AddInitiative(enemyAction.characterName, enemyAction.Initiative, enemyAction.gameObject);
-            if (IP != null){ Initiatives.Add(IP); }
-        }
-        foreach(PlayerCharacter playerCharacter in GetPlyaerCharacters())
-        {
-            CombatPlayerCard playerCard = playerCharacter.GetMyCurrentCombatCard();
-            InitiativePosition IP = InitiativeBoard.AddInitiative(playerCharacter.CharacterName, playerCard.Initiative, playerCard.gameObject);
-            Initiatives.Add(IP);
-        }
-        InitiativeBoard.OrganizeInits();
+        //foreach(EnemyActionCard enemyAction in enemyActions)
+        //{
+        //    InitiativePosition IP = InitiativeBoard.AddInitiative(enemyAction.characterName, enemyAction.Initiative, enemyAction.gameObject);
+        //    if (IP != null){ Initiatives.Add(IP); }
+        //}
+        //foreach(PlayerCharacter playerCharacter in GetPlyaerCharacters())
+        //{
+        //    CombatPlayerCard playerCard = playerCharacter.GetMyCurrentCombatCard();
+        //    InitiativePosition IP = InitiativeBoard.AddInitiative(playerCharacter.CharacterName, playerCard.Initiative, playerCard.gameObject);
+        //    Initiatives.Add(IP);
+        //}
+        //InitiativeBoard.OrganizeInits();
         return Initiatives;
     }
 
@@ -285,7 +285,7 @@ public class CombatZone : MonoBehaviour {
         }
         foreach(Node node in combatZoneMerging.CombatNodes)
         {
-            node.NodeHex.RemoveCombatZone(combatZoneMerging);
+           // node.NodeHex.RemoveCombatZone(combatZoneMerging);
         }
         MergeInitiativeBoards(combatZoneMerging.InitiativeBoard, characterCausingMerge);
         AddNodesToCombatNodes(combatZoneMerging.CombatNodes);

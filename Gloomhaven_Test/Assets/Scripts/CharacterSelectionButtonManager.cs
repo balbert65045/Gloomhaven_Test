@@ -43,12 +43,12 @@ public class CharacterSelectionButtonManager : MonoBehaviour {
 
     public void ShowCardSelected(PlayerCharacter character)
     {
-        character.myCharacterSelectionButton.CardForCharacterSelected();
+        //character.myCharacterSelectionButton.CardForCharacterSelected();
     }
 
     public void ShowCardUnselected(PlayerCharacter character)
     {
-        character.myCharacterSelectionButton.CardForCharacterUnselected();
+        //character.myCharacterSelectionButton.CardForCharacterUnselected();
     }
 
     public void ShowCardIndicators()
@@ -81,13 +81,13 @@ public class CharacterSelectionButtonManager : MonoBehaviour {
 
     public void RemoveCharacterButton(PlayerCharacter character)
     {
-        character.myCharacterSelectionButton.SetCharacterDeadValue(true);
-        character.myCharacterSelectionButton.gameObject.SetActive(false);
+        //character.myCharacterSelectionButton.SetCharacterDeadValue(true);
+        //character.myCharacterSelectionButton.gameObject.SetActive(false);
     }
 
     public void FilterCharacter(PlayerCharacter character)
     {
-        character.myCharacterSelectionButton.Disable();
+       // character.myCharacterSelectionButton.Disable();
     }
 
     public void ReturnButtonsToNormal()

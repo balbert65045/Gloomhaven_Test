@@ -107,39 +107,39 @@ public class OutOfCombatActionController : MonoBehaviour {
 
     public void SelectCharacter(PlayerCharacter playerCharacter)
     {
-        if (MovingIntoCombat || LookingInChest) { return; }
-        if (playerCharacter.GetMoving()) { return; }
+        //if (MovingIntoCombat || LookingInChest) { return; }
+        //if (playerCharacter.GetMoving()) { return; }
 
-        UnHighlightHexes();
-        if (playerController.SelectPlayerCharacter != null) {
-            if (playerController.SelectPlayerCharacter.InCombat())
-            {
-                playerController.SelectPlayerCharacter.GetMyCombatHand().UnShowCard();
-                playerController.SelectPlayerCharacter.myCombatZone.HideInitiativeBoard();
-            }
-            else
-            {
-                cardUsing = null;
-                playerController.SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
-            }
-            playerController.SelectPlayerCharacter.myDecks.SetActive(false);
-        }
-        playerController.SelectPlayerCharacter = playerCharacter;
+        //UnHighlightHexes();
+        //if (playerController.SelectPlayerCharacter != null) {
+        //    if (playerController.SelectPlayerCharacter.InCombat())
+        //    {
+        //        playerController.SelectPlayerCharacter.GetMyCombatHand().UnShowCard();
+        //        playerController.SelectPlayerCharacter.myCombatZone.HideInitiativeBoard();
+        //    }
+        //    else
+        //    {
+        //        cardUsing = null;
+        //        playerController.SelectPlayerCharacter.GetMyOutOfCombatHand().UnSelectCard();
+        //    }
+        //    playerController.SelectPlayerCharacter.myDecks.SetActive(false);
+        //}
+        //playerController.SelectPlayerCharacter = playerCharacter;
 
-        myCamera.SetTarget(playerCharacter.transform);
+        //myCamera.SetTarget(playerCharacter.transform);
 
-        playerCharacter.myDecks.SetActive(true);
-        playerCharacter.GetMyCombatHand().HideHand();
-        playerCharacter.GetMyOutOfCombatHand().ShowHand();
-        if (playerCharacter.GetMyCombatHand().DiscardedCards > 0) { playerCharacter.GetMyOutOfCombatHand().allowLongRest(); }
-        playerCharacter.myCharacterSelectionButton.CharacterSelected();
-        playerCharacter.ShowStats();
-        playerCharacter.Selected();
-        CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
-        foreach(CombatZone combatZone in combatZones)
-        {
-            combatZone.ShowZone();
-        }
+        //playerCharacter.myDecks.SetActive(true);
+        //playerCharacter.GetMyCombatHand().HideHand();
+        //playerCharacter.GetMyOutOfCombatHand().ShowHand();
+        //if (playerCharacter.GetMyCombatHand().DiscardedCards > 0) { playerCharacter.GetMyOutOfCombatHand().allowLongRest(); }
+        //playerCharacter.myCharacterSelectionButton.CharacterSelected();
+        //playerCharacter.ShowStats();
+        //playerCharacter.Selected();
+        //CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
+        //foreach(CombatZone combatZone in combatZones)
+        //{
+        //    combatZone.ShowZone();
+        //}
     }
 
     public bool CheckToMoveOrInteractOutOfCombat(Character myCharacter)
@@ -177,7 +177,7 @@ public class OutOfCombatActionController : MonoBehaviour {
             }
             if (hexSelected.EntityHolding == null && !hexSelected.MovedTo)
             {
-                if (hexSelected.InThreatArea()) { MovingIntoCombat = true; }
+                //if (hexSelected.InThreatArea()) { MovingIntoCombat = true; }
                 myCharacter.MoveOnPath(hexSelected);
                 return true;
             }
@@ -190,7 +190,7 @@ public class OutOfCombatActionController : MonoBehaviour {
         Node closestNode = FindObjectOfType<HexMapController>().GetClosestNodeFromNeighbors(chestHex, myCharacter);
         if (closestNode == myCharacter.HexOn.HexNode) {
             LookingInChest = true;
-            myCharacter.ActionUsed();
+           // myCharacter.ActionUsed();
             chestHex.EntityHolding.GetComponent<CardChest>().OpenChest();
         }
         else if (closestNode != null)
@@ -228,7 +228,6 @@ public class OutOfCombatActionController : MonoBehaviour {
                 UnHighlightHexes();
                 playerController.RemoveArea();
                 playerController.DisableEndTurn();
-                playerController.DisableExit();
             }
         }
         else
@@ -298,9 +297,9 @@ public class OutOfCombatActionController : MonoBehaviour {
         if (success)
         {
             if (cardUsing.cardAbility.LostAbility) { cardUsing.LostAbilityUsed = true; }
-            character.GetMyOutOfCombatHand().DiscardSelectedCard();
-            cardUsing = null;
-            character.ActionUsed();
+            //character.GetMyOutOfCombatHand().DiscardSelectedCard();
+            //cardUsing = null;
+            //character.ActionUsed();
         }
     }
 

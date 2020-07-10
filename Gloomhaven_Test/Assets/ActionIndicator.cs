@@ -9,6 +9,7 @@ public class ActionIndicator : MonoBehaviour {
     public SpriteRenderer RangeSpriteIndicator;
     public TextMesh RangeValue;
     public SpriteRenderer ActionSpriteIndicator;
+    public SpriteRenderer ActionSpriteIndicatorBackGround;
     public TextMesh ActionValue;
 
     public Sprite AttackIndicatorSprite;
@@ -24,9 +25,9 @@ public class ActionIndicator : MonoBehaviour {
             case ActionType.Movement:
                 RangeObj.SetActive(false);
                 ActionSpriteIndicator.sprite = MoveIndicatorSprite;
+                ActionSpriteIndicatorBackGround.sprite = MoveIndicatorSprite;
                 ActionValue.text = action.Range.ToString();
                 ActionSpriteIndicator.color = Color.blue;
-                ActionValue.color = Color.blue;
                 break;
             case ActionType.Attack:
                 if (action.Range > 1)
@@ -34,7 +35,6 @@ public class ActionIndicator : MonoBehaviour {
                     RangeObj.SetActive(true);
                     RangeValue.text = action.Range.ToString();
                     RangeSpriteIndicator.color = Color.red;
-                    RangeValue.color = Color.red;
                 }
                 else
                 {
@@ -42,8 +42,8 @@ public class ActionIndicator : MonoBehaviour {
                 }
                 ActionValue.text = action.thisAOE.Damage.ToString();
                 ActionSpriteIndicator.sprite = AttackIndicatorSprite;
+                ActionSpriteIndicatorBackGround.sprite = AttackIndicatorSprite;
                 ActionSpriteIndicator.color = Color.red;
-                ActionValue.color = Color.red;
                 break;
         }
     }

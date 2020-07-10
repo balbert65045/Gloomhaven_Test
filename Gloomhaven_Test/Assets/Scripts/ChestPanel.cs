@@ -36,7 +36,7 @@ public class ChestPanel : MonoBehaviour {
     {
         chestOpened = chest;
         CharacterOpeningChest = Character;
-        if (Character.OutOfActions()) { Character.GetMyOutOfCombatHand().RefeshActions(); }
+        //if (Character.OutOfActions()) { Character.GetMyOutOfCombatHand().RefeshActions(); }
         cardFound1 = cardPrefab1;
         cardFound2 = cardPrefab2;
         cardFound3 = cardPrefab3;
@@ -159,22 +159,21 @@ public class ChestPanel : MonoBehaviour {
         if (CardPosition3.GetComponentInChildren<Card>() != null){ Destroy(CardPosition3.GetComponentInChildren<Card>().gameObject); }
         Panel.SetActive(false);
         Mask.SetActive(false);
-        if (CharacterOpeningChest.OutOfActions()) { CharacterOpeningChest.GetMyOutOfCombatHand().ActionsUsedForHand(); }
-        CharacterOpeningChest.myDecks.SetActive(false);
+        //if (CharacterOpeningChest.OutOfActions()) { CharacterOpeningChest.GetMyOutOfCombatHand().ActionsUsedForHand(); }
+        //CharacterOpeningChest.myDecks.SetActive(false);
         FindObjectOfType<PlayerController>().AllowEndTurn();
-        FindObjectOfType<PlayerController>().ReturnToNormal();
     }
 
     Hand GetCorrectHand()
     {
-        if (cardFound1.GetComponent<CombatPlayerCard>() != null)
-        {
-            return CharacterOpeningChest.GetMyCombatHand();
-        }
-        else if (cardFound1.GetComponent<OutOfCombatCard>() != null)
-        {
-            return CharacterOpeningChest.GetMyOutOfCombatHand();
-        }
+        //if (cardFound1.GetComponent<CombatPlayerCard>() != null)
+        //{
+        //    return CharacterOpeningChest.GetMyCombatHand();
+        //}
+        //else if (cardFound1.GetComponent<OutOfCombatCard>() != null)
+        //{
+        //    return CharacterOpeningChest.GetMyOutOfCombatHand();
+        //}
         return null;
     }
 }

@@ -1509,7 +1509,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1868863097766338}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.6922496, y: 0.15000021, z: 8.450897}
+  m_LocalPosition: {x: -2.64597, y: 0.15000013, z: -7.6690736}
   m_LocalScale: {x: 0.5305921, y: 0.530592, z: 0.530592}
   m_Children:
   - {fileID: 4033970002272130}
@@ -1796,7 +1796,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1623517641655806}
   m_LocalRotation: {x: 0.000000029802315, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1, y: 0.647, z: 0}
+  m_LocalPosition: {x: -0.05, y: 0.65, z: -0}
   m_LocalScale: {x: 1.0000008, y: 1.0000002, z: 1.000001}
   m_Children: []
   m_Father: {fileID: 4033970002272130}
@@ -1837,7 +1837,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1352146168447514}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.727, y: 0.81, z: 0.005}
+  m_LocalPosition: {x: 0.16, y: 0.81, z: 0.005}
   m_LocalScale: {x: 0.1632594, y: 0.16325934, z: 0.1632594}
   m_Children: []
   m_Father: {fileID: 4033970002272130}
@@ -2648,7 +2648,7 @@ TextMesh:
   m_Font: {fileID: 0}
   m_Color:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4278190335
 --- !u!102 &102244318216182760
 TextMesh:
   serializedVersion: 3
@@ -2781,10 +2781,10 @@ MonoBehaviour:
   XpBar: {fileID: 0}
   backGround: {fileID: 1889945791412136}
   HealthEncapsulation: {fileID: 1115040443868946}
-  HealthChunk: {fileID: 1699503997114878, guid: 192c6f9611e01614fb493d11c1a777af,
+  HealthChunk: {fileID: 1395283163943636, guid: f99eb4faecdb46e4f8be7d5380b53fcf,
     type: 2}
   HealthValueEnclosment: {fileID: 1602291903057262}
-  Health: {fileID: 21300000, guid: 26a3b63b401c1ac48820984b15a2d2c6, type: 3}
+  Health: {fileID: 21300000, guid: ec00a994296528b458aa9cd01874ba55, type: 3}
   NoHealth: {fileID: 21300000, guid: 4b16e0d99f0b47b4d95a01829d237ee2, type: 3}
   textMesh: {fileID: 102244318216182760}
   Width: 28
@@ -2817,6 +2817,8 @@ MonoBehaviour:
   CurrentArmorPieces: []
   CurrentHealthPieces: []
   SavingThrowCoin: {fileID: 0}
+  IndicatorPrefab: {fileID: 1145121032965342, guid: ab27972d27547c841a63479e9dfd7496,
+    type: 2}
 --- !u!114 &114450619842802780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2829,6 +2831,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexOn: {fileID: 0}
+  characterIcon: {fileID: 21300000, guid: 93641462c8a68624c8425002fe016275, type: 3}
   CharacterCardPrefab: {fileID: 1209044191999950, guid: cac02cb22b69ecc458404b9a13266ed4,
     type: 2}
   MyCharacterCard: {fileID: 0}
@@ -2843,12 +2846,11 @@ MonoBehaviour:
   baseArmor: 0
   NodesInWalkingDistance: []
   NodesInActionRange: []
+  myCombatZone: {fileID: 0}
+  CombatNodes: []
   XpOnDeath: 10
   CharacterName: Archer
   enemySprite: {fileID: 21300000, guid: 93641462c8a68624c8425002fe016275, type: 3}
-  InCombat: 0
-  Alerted: 0
-  nodesInView: []
 --- !u!114 &114461455225871412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3481,7 +3483,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 629ea3e56e6ceb04886b3c957b331eec, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

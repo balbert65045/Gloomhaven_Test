@@ -13,53 +13,33 @@ public enum PlayerCharacterType
 
 public class PlayerCharacter : Character
 {
-    public CharacterCard CardActingWith;
-
     public int CharacterLevel = 1;
     public float CurrentXP = 0;
     public float XpUntilNextLevel { get { return CharacterLevel * 100 + (CharacterLevel - 1) * 50; } }
 
-    public int AvailableActions = 2;
-    public bool OutOfActions() { return AvailableActions <= 0; }
-
-    public GameObject SelectionPrefab;
-    public CharacterSelectionButton myCharacterSelectionButton { get; set; }
-
     public PlayerCharacterType myType;
 
     public Sprite characterSymbol;
-    public Sprite characterIcon;
     public string CharacterName;
-
-    public int CombatHandSize = 5;
-    public GameObject[] InitialCombatCards;
-    public int OutOfCombatHandSize = 5;
-    public GameObject[] InitialOutOfCombatCards;
 
     public void AddCardToBeStored(GameObject cardToBeStored) { FindObjectOfType<GroupCardStorage>().AddCardStored(cardToBeStored, CharacterName); }
     public void AddCardToHand(GameObject cardToBeStored) { FindObjectOfType<GroupCardStorage>().AddCardHolding(cardToBeStored, CharacterName); }
     public void ReplacingCardInHand(GameObject cardToBeInHand, GameObject cardToBeOutOfHand) { FindObjectOfType<GroupCardStorage>().ReplaceCard(cardToBeInHand, cardToBeOutOfHand, CharacterName); }
 
-    public GameObject DeckPrefab;
-
-    public GameObject myDecks { get; set; }
-    public CombatPlayerHand GetMyCombatHand(){ return myDecks.GetComponentInChildren<CombatPlayerHand>(); }
-    public OutOfCombatHand GetMyOutOfCombatHand() { return myDecks.GetComponentInChildren<OutOfCombatHand>(); }
-
-    public CombatPlayerCard myCurrentCombatCard { get; set; }
-    public CombatPlayerCard GetMyCurrentCombatCard() { return myCurrentCombatCard; }
-    public void SetMyCurrentCombatCard(CombatPlayerCard card) { myCurrentCombatCard = card; }
+    public GameObject MyNewDeckPrefab;
+    public GameObject MyNewDeck;
+    public NewHand GetMyNewHand() { return MyNewDeck.GetComponentInChildren<NewHand>(); }
+    public StagingArea GetMyStagingArea() { return MyNewDeck.GetComponentInChildren<StagingArea>(); }
+    public DrawPile GetMyDrawPile() { return MyNewDeck.GetComponentInChildren<DrawPile>(); }
+    public DiscardPile GetMyDiscardPile() { return MyNewDeck.GetComponentInChildren<DiscardPile>(); }
 
     private PlayerController playerController;
-    private bool SavingThrowUsed = false;
 
     public Door doorToOpen;
     public void SetDoorToOpen(Door door) { doorToOpen = door; }
 
     private CardChest ChestToOpen;
     public void SetChestToOpen(CardChest chest) { ChestToOpen = chest; }
-
-    List<Node> NodesSeen = new List<Node>();
 
     bool EntityIsOnPositionAndMoving(Hex hex)
     {
@@ -100,10 +80,6 @@ public class PlayerCharacter : Character
         CurrentMoveRange = moveRange;
         List<Node> nodesInDistance = aStar.Diskatas(HexOn.HexNode, moveRange, myCT);
         NodesInWalkingDistance.Clear();
-        if (AvailableActions <= 0 && !InCombat()) {
-            playerController.RemoveArea();
-            return;
-        }
         List<Node> nodesInArea = new List<Node>();
         foreach (Node node in nodesInDistance)
         {
@@ -131,76 +107,19 @@ public class PlayerCharacter : Character
             myHealthBar.CreateXpBar(CurrentXP / XpUntilNextLevel);
         }
         maxHealth = health;
-        //BuildDecks();
-        //BuildCharacterSelectionIcon();
-        //BuildCharacterCards();
-        ShowViewArea(HexOn, ViewDistance);
+        BuildNewDeck();
+        GetComponent<CharacterAnimationController>().SwitchCombatState(true);
+        FindObjectOfType<TurnOrder>().AddCharacter(this);
     }
 
-    void BuildCharacterCards()
-    {
-        GameObject myCard = Instantiate(CharacterCardPrefab, FindObjectOfType<CharacterViewer>().transform);
-        MyCharacterCard = myCard.GetComponent<CharacterCard>();
-        MyCharacterCard.ShowCharacterStats(CharacterName, characterIcon, this);
-        MyCharacterCard.HideCharacterStats();
-
-        GameObject myCardActing = Instantiate(CharacterCardPrefab, FindObjectOfType<myCharacterCard>().transform);
-        CardActingWith = myCardActing.GetComponent<CharacterCard>();
-        CardActingWith.ShowCharacterStats(CharacterName, characterIcon, this);
-        CardActingWith.HideCharacterStats();
-    }
-
-    public override void ShowStats()
-    {
-        FindObjectOfType<CharacterViewer>().HideCharacterCards();
-        MyCharacterCard.ShowCharacterStats(CharacterName, characterIcon, this);
-    }
-
-    public void ShowStatsActingWith()
-    {
-        FindObjectOfType<myCharacterCard>().HideCharacterCards();
-        CardActingWith.ShowCharacterStats(CharacterName, characterIcon, this);
-    }
-
-    public void BuildCharacterSelectionIcon()
-    {
-        CharacterSelectionButtons CSBS = FindObjectOfType<CharacterSelectionButtons>();
-        GameObject CSB = Instantiate(SelectionPrefab, CSBS.transform);
-        CSBS.AddCharacterWithNoFollow(CSB);
-        myCharacterSelectionButton = CSB.GetComponent<CharacterSelectionButton>();
-        myCharacterSelectionButton.characterLinkedTo = this;
-    }
-
-    public void BuildDecks()
+    void BuildNewDeck()
     {
         Transform deckParent = FindObjectOfType<PlayersDecks>().transform;
-        GameObject Deck = Instantiate(DeckPrefab, deckParent);
-        Deck.name = name + " Deck";
-        Deck.SetActive(false);
-        myDecks = Deck;
-        GetMyCombatHand().SetHandSize(CombatHandSize);
-        GetMyOutOfCombatHand().SetHandSize(OutOfCombatHandSize);
-
-        foreach (GameObject card in InitialCombatCards)
-        {
-            GetMyCombatHand().AddCard(card);
-        }
-        foreach (GameObject card in InitialOutOfCombatCards)
-        {
-            GetMyOutOfCombatHand().AddCard(card);
-        }
+        MyNewDeck = Instantiate(MyNewDeckPrefab, deckParent);
+        MyNewDeck.name = name + " Deck";
     }
 
     //VIEW//
-    public void ShowRangeDistance(int Range)
-    {
-        List<Node> nodesInDistance = HexMap.GetDistanceRange(HexOn.HexNode, Range, myCT);
-        foreach (Node node in nodesInDistance)
-        {
-           hexVisualizer.HighlightMoveRangeHex(node.NodeHex);
-        }
-    }
-
     public void ShowPath(Node NodeToMoveTo)
     {
         Node StartNode = HexOn.HexNode;
@@ -212,113 +131,8 @@ public class PlayerCharacter : Character
         }
     }
 
-    public void Selected(){
-        if (!GetMoving()) {
-            hexVisualizer.ResetLastHex();
-            hexVisualizer.HighlightSelectionHex(HexOn);
-            ShowMoveDistance(CurrentMoveDistance);
-        }
-    }
-
-    //placeholder
-    public void ShowHexes(){ StartCoroutine("ShowNodes"); }
-    //
-
-    IEnumerator ShowNodes()
+    public void Selected()
     {
-        yield return new WaitForSeconds(.5f);
-        ShowViewArea(HexOn, ViewDistance);
-    }
-
-    //TODo completely show edges
-    public override void ShowViewArea(Hex hex, int distance)
-    {
-        List<Node> nodesAlmostSeen = HexMap.GetNodesInLOS(hex.HexNode, distance + 1);
-        NodesSeen = HexMap.GetNodesInLOS(hex.HexNode, distance);
-        ExitHex exit = null;
-        List<EnemyCharacter> charactersViewUpdate = new List<EnemyCharacter>();
-        List<ThreatArea> ThreatAreasToUpdate = new List<ThreatArea>();
-        foreach (Node node in nodesAlmostSeen)
-        {
-            if (node.edge) { continue; }
-            if (NodesSeen.Contains(node))
-            {
-                node.GetComponent<HexWallAdjuster>().ShowWall();
-                if (!node.Shown)
-                {
-                    node.GetComponent<Hex>().ShowHex();
-                    if (node.GetComponent<Door>() == null) { node.GetComponent<HexAdjuster>().RevealEdgeHexes(); }
-                    if (node.NodeHex.ThreatAreaIn != null)
-                    {
-                        if (!ThreatAreasToUpdate.Contains(node.NodeHex.ThreatAreaIn)) { ThreatAreasToUpdate.Add(node.NodeHex.ThreatAreaIn); }
-                    }
-                    if (node.GetComponent<Door>() != null && node.GetComponent<Door>().door != null)
-                    {
-                        node.GetComponent<Door>().door.transform.parent.gameObject.SetActive(true);
-                    }
-                    if (node.GetComponent<ExitHex>() != null) {
-                        exit = node.GetComponent<ExitHex>();
-                        node.GetComponent<ExitHex>().ShowExit();
-                    }
-                    node.Shown = true;
-                    node.NodeHex.ShowMoney();
-                    if (node.NodeHex.EntityToSpawn != null)
-                    {
-                        node.NodeHex.CreateCharacter();
-                    }
-                }
-            }
-            else
-            {
-                if (!node.Shown) {
-                    node.GetComponent<HexAdjuster>().RevealRoomEdge();
-                    node.GetComponent<Hex>().slightlyShowHex();
-                }
-            }
-        }
-        if (exit != null) { exit.ShowWinArea(); }
-        foreach(ThreatArea threatArea in ThreatAreasToUpdate) {
-            threatArea.UpdateVisualArea();
-        }
-    }
-
-    public override bool CheckToFight()
-    {
-        if (playerController.ShowEnemyAreaAndCheckToFight(this))
-        {
-            Debug.Log("Going into combat");
-            GoIntoCombat();
-            AddOtherCharactersToFightInView();
-            myCombatZone.ShowPeopleInCombat();
-            playerController.PlayerMovedIntoCombat();
-            return true;
-        }
-        return false;
-    }
-
-    public void AddToFight(CombatZone CZ)
-    {
-        GoIntoCombat();
-        CZ.AddCharacterToCombat(this);
-    }
-
-    public void AddOtherCharactersToFightInView()
-    {
-        foreach (Node node in myCombatZone.CombatNodes)
-        {
-            if (node.NodeHex.HasPlayer() && !myCombatZone.CharactersInCombat.Contains(node.NodeHex.EntityHolding.GetComponent<Character>()))
-            {
-                node.NodeHex.EntityHolding.GetComponent<PlayerCharacter>().AddToFight(myCombatZone);
-            }
-        }
-    }
-
-    void GoIntoCombat()
-    {
-        SwitchCombatState(true);
-        myCharacterSelectionButton.BreakLink();
-        myCharacterSelectionButton.showCardIndicators();
-        myCharacterSelectionButton.HideActions();
     }
 
     public override void FinishedMoving(Hex hex, bool fight = false, Hex hexMovingFrom = null)
@@ -360,16 +174,6 @@ public class PlayerCharacter : Character
         base.FinishedAttacking();
         if (CharactersFinishedTakingDamage >= charactersAttackingAt.Count) {
             FindObjectOfType<PlayerController>().FinishedAttacking(this);
-            if (!InCombat())
-            {
-                foreach(Character character in charactersAttackingAt)
-                {
-                    if (character.myCombatZone == null) { continue; }
-                    character.myCombatZone.AddCharacterToCombat(this);
-                    AddOtherCharactersToFightInView();
-                    myCombatZone.ShowPeopleInCombat();
-                }
-            }
         }
     }
 
@@ -390,10 +194,6 @@ public class PlayerCharacter : Character
         if (HexOn.GetComponent<doorConnectionHex>() != null)
         {
             HexOn.GetComponent<doorConnectionHex>().door.OpenHexes(HexOn.HexNode.RoomName[0]);
-            if (!CheckToFight()) {
-                ShowViewArea(HexOn, ViewDistance);
-                playerController.ShowCharacterView();
-            }
         }
         FindObjectOfType<PlayerController>().FinishedMoving(this);
         yield return null;
@@ -405,18 +205,9 @@ public class PlayerCharacter : Character
         base.GetHit();
     }
 
-    public override void ShowNewMoveArea()
-    {
-        FindObjectOfType<CombatActionController>().ShowMoveArea();
-    }
-
     public override void Die()
     {
         FindObjectOfType<PlayerController>().CharacterDied(this);
-        if (InCombat())
-        {
-            this.myCombatZone.removeCharacter(this);
-        }
         base.Die();
     }
 
@@ -439,18 +230,10 @@ public class PlayerCharacter : Character
             CurrentXP = CurrentXP - XpUntilNextLevel;
             CharacterLevel++;
             myHealthBar.LevelUpAndGainXP(CurrentXP / XpUntilNextLevel);
-            if (playerController.SelectPlayerCharacter == this)
-            {
-                CardActingWith.LevelUpAndGainXP(this);
-            }
         }
         else
         {
             myHealthBar.GainXP(CurrentXP / XpUntilNextLevel);
-            if (playerController.SelectPlayerCharacter == this)
-            {
-                CardActingWith.GainXP(this);
-            }
         }
         XpGaining = 0;
     }
@@ -460,19 +243,4 @@ public class PlayerCharacter : Character
         FindObjectOfType<PlayerController>().EnemyVanquished(XP);
         base.SlayedEnemy(XP);
     }
-
-    public void ActionUsed()
-    {
-        AvailableActions--;
-        myCharacterSelectionButton.ActionUsed();
-        if (AvailableActions <= 0) { GetMyOutOfCombatHand().ActionsUsedForHand(); }
-    }
-
-    public void RefreshActions()
-    {
-        GetMyOutOfCombatHand().RefeshActions();
-        myCharacterSelectionButton.ActionsAvailable();
-        AvailableActions = 2;
-    }
-
 }

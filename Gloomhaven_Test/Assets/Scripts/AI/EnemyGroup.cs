@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public struct ActionSet
+{
+    public List<Action> Actions;
+}
+
 public class EnemyGroup : MonoBehaviour {
 
     public Sprite CharacterIcon;
     public string CharacterNameLinkedTo;
 
-    public EnemyActionDeck mydeck;
-    public EnemyActionCard currentAction;
+    public List<ActionSet> AvailableActions = new List<ActionSet>();
+    public ActionSet CurrentActionSet;
+
     public List<EnemyCharacter> linkedCharacters = new List<EnemyCharacter>();
 
     public int currentCharacterIndex = 0;
@@ -18,23 +25,26 @@ public class EnemyGroup : MonoBehaviour {
     MyCameraController myCamera;
     CharacterViewer characterViewer;
 
-    //public List<EnemyCharacter> charactersOut = new List<EnemyCharacter>();
-
     // Use this for initialization
+    private void Awake()
+    {
+        if (AvailableActions.Count == 0) { return; }
+        CurrentActionSet = AvailableActions[Random.Range(0, AvailableActions.Count)];
+    }
+
+    public void SetNewAction()
+    {
+        if (AvailableActions.Count == 0) { return; }
+        CurrentActionSet = AvailableActions[Random.Range(0, AvailableActions.Count)];
+        foreach(EnemyCharacter character in linkedCharacters)
+        {
+            character.ShowNewAction();
+        }
+    }
+
     void Start()
     {
         myCamera = FindObjectOfType<MyCameraController>();
-        characterViewer = FindObjectOfType<CharacterViewer>();
-        EnemyActionDeck[] decks = FindObjectsOfType<EnemyActionDeck>();
-        foreach (EnemyActionDeck deck in decks)
-        {
-            if (deck.CharacterNameLinkedTo == CharacterNameLinkedTo)
-            {
-                mydeck = deck;
-                mydeck.SetUpDeck();
-            }
-        }
-
         EnemyCharacter[] enemyCharacters = FindObjectsOfType<EnemyCharacter>();
         foreach (EnemyCharacter character in enemyCharacters)
         {
@@ -53,26 +63,12 @@ public class EnemyGroup : MonoBehaviour {
             FindObjectOfType<HexVisualizer>().HighlightSelectionHex(character.HexOn);
             FindObjectOfType<MyCameraController>().UnLockCamera();
             FindObjectOfType<MyCameraController>().LookAt(character.transform);
-            character.ShowStats();
-            if (FindObjectOfType<CombatActionController>().myCombatState == CombatActionController.CombatState.UsingCombatCards)
-            {
-                FindObjectOfType<EnemyController>().ShowActionCard(character);
-            }
         }
     }
 
     public bool hasCharactersOut()
     {
         return linkedCharacters.Count != 0;
-    }
-
-    public bool hasCharacterInCombat()
-    {
-        foreach (EnemyCharacter character in linkedCharacters)
-        {
-            if (character.InCombat()) { return true; }
-        }
-        return false;
     }
 
     public void LinkCharacterToGroup(EnemyCharacter character)
@@ -82,63 +78,8 @@ public class EnemyGroup : MonoBehaviour {
 
     public void UnLinkCharacterToGroup(EnemyCharacter character)
     {
-        if (character.myCombatZone == null) {}
-        else
-        {
-            character.myCombatZone.removeCharacter(character);
-        }
+        FindObjectOfType<TurnOrder>().CharacterRemoved(character);
         linkedCharacters.Remove(character);
-
-        if (linkedCharacters.Count == 0) {
-            mydeck.DiscardCard(currentAction);
-            if (currentAction.Shuffle) { mydeck.Shuffle(); }
-        }
-    }
-
-    public EnemyActionCard getNewActionCard()
-    {
-        currentAction = mydeck.GetRandomActionCard();
-        return currentAction;
-    }
-
-    public void beginActions()
-    {
-        //currentAction.showCard();
-        performNextCharacterAction();
-    }
-
-    public void performNextCharacterAction()
-    {
-        if (linkedCharacters.Count == 0) {
-            endGroupTurn();
-        }
-        else if (currentCharacterIndex < linkedCharacters.Count)
-        {
-            EnemyCharacter character = linkedCharacters[currentCharacterIndex];
-            if (character.GetSummonSickness() || !character.InCombat())
-            {
-                currentCharacterIndex++;
-                performNextCharacterAction();
-            }
-            else
-            {
-                StartCoroutine("WaitAndPerformCharacterAction");
-            }
-        }
-        else
-        {
-            endGroupTurn();
-        }
-    }
-
-    void endGroupTurn()
-    {
-        currentCharacterIndex = 0;
-        FindObjectOfType<CharacterViewer>().HideActionCard();
-        FindObjectOfType<CharacterViewer>().HideCharacterCards();
-        mydeck.DiscardCard(currentAction);
-        if (currentAction.Shuffle) { mydeck.Shuffle(); }
-        FindObjectOfType<CombatManager>().PerformNextInInitiative();
     }
 
     public void takeAwayBuffs()
@@ -149,30 +90,5 @@ public class EnemyGroup : MonoBehaviour {
             character.resetShield(character.GetArmor());
             character.SetSummonSickness(false);
         }
-    }
-
-    IEnumerator WaitAndPerformCharacterAction()
-    {
-        EnemyCharacter character = linkedCharacters[currentCharacterIndex];
-        character.myCombatZone.ShowInitiativeBoard();
-        character.myCombatZone.ShowMyCharacterAsCurrentAction(this.CharacterNameLinkedTo);
-        CombatZone[] combatZones = FindObjectsOfType<CombatZone>();
-        foreach (CombatZone combatZone in combatZones)
-        {
-            if (character.myCombatZone == combatZone) { combatZone.HideZone(); }
-            else { combatZone.ShowZone(); }
-        }
-        myCamera.SetTarget(character.transform);
-        ShowCharacter(character);
-        yield return new WaitForSeconds(.5f);
-        currentCharacterIndex++;
-        character.PerformAction(currentAction.Movement, currentAction.Damage, currentAction.Range, currentAction.MovementAvailable, currentAction.AttackAvailable, currentAction.HealAmount, currentAction.ShieldAmount);
-    }
-
-    public void ShowCharacter(EnemyCharacter character)
-    {
-        character.ShowStats();
-        characterViewer.ShowActionCard(currentAction.gameObject);
-        currentAction.setUpCard(character.GetStrength(), character.GetAgility(), character.GetDexterity());
     }
 }

@@ -13,7 +13,7 @@ public class ThreatArea : MonoBehaviour {
             if (!ThreatNodes.Contains(node))
             {
                 ThreatNodes.Add(node);
-                node.NodeHex.ThreatAreaIn = this;
+               // node.NodeHex.ThreatAreaIn = this;
             }
         }
     }
@@ -57,7 +57,7 @@ public class ThreatArea : MonoBehaviour {
     {
         foreach(EnemyCharacter character in EnemiesInThreatZone)
         {
-            character.DelayedSwitchCombatState();
+           // character.DelayedSwitchCombatState();
             combatZone.AddCharacterToCombat(character);
         }
         combatZone.AddNodesToCombatNodes(ThreatNodes);

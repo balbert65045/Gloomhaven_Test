@@ -78,7 +78,6 @@ public class CombatPlayerHand : Hand {
             }
             ShowPotential(SelectedPlayerCard);
         }
-        playerController.SelectCard(card);
     }
 
     public void ShowPotential(CombatPlayerCard card)

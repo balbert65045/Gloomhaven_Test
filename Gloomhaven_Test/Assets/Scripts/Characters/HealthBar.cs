@@ -80,6 +80,33 @@ public class HealthBar : MonoBehaviour {
         CurrnetIndicators.Clear();
     }
 
+    public void RemoveAction()
+    {
+        ActionIndicator AI = CurrnetIndicators[0];
+        CurrnetIndicators.Remove(AI);
+        Destroy(AI.gameObject);
+        if (CurrnetIndicators.Count > 0)
+        {
+            for(int i = 0; i < CurrnetIndicators.Count; i++)
+            {
+                CurrnetIndicators[i].transform.localPosition = new Vector3(-.82f, CurrnetIndicators[i].transform.localPosition.y - .5f, 0);
+            }
+        }
+    }
+
+    public void ShowActions(List<Action> actions)
+    {
+        ClearActions();
+        for(int i = 0; i < actions.Count; i++)
+        {
+            GameObject actionIndicator = Instantiate(IndicatorPrefab, this.transform);
+            actionIndicator.transform.localPosition = new Vector3(-.82f, 1.1f + i * .5f, 0);
+            ActionIndicator AI = actionIndicator.GetComponent<ActionIndicator>();
+            AI.ShowAction(actions[i]);
+            CurrnetIndicators.Add(AI);
+        }
+    }
+
     public void ShowAction(Action action)
     {
         ClearActions();
@@ -357,46 +384,50 @@ public class HealthBar : MonoBehaviour {
 
     IEnumerator CalculateDamage(int attack, string modifier, int totalDamageIncomming)
     {
-        AttackSymbol.SetActive(true);
-        AttackValue.gameObject.SetActive(true);
-        AttackValue.text = attack.ToString();
+        //AttackSymbol.SetActive(true);
+        //AttackValue.gameObject.SetActive(true);
+        //AttackValue.text = attack.ToString();
 
-        yield return new WaitForSeconds(1f);
-        ModifierValue.gameObject.SetActive(true);
-        ModifierValue.text = modifier;
-        if (modifier[0] == "+"[0]) { ModifierValue.color = Color.green; }
-        else if (modifier[0] == "-"[0]) { ModifierValue.color = Color.red; }
-        else if (modifier == "x0") { ModifierValue.color = new Color(.627f, .125f, .941f); }
-        else if (modifier == "x2") { ModifierValue.color = Color.yellow; }
-        yield return new WaitForSeconds(.5f);
-        float hitModifierPoint = ModifierValue.gameObject.transform.localPosition.x;
-        while (AttackValue.gameObject.transform.localPosition.x < hitModifierPoint)
-        {
-            AttackSymbol.transform.localPosition = new Vector3(AttackSymbol.transform.localPosition.x + Time.deltaTime * 2f, AttackSymbol.transform.localPosition.y, AttackSymbol.transform.localPosition.z);
-            AttackValue.gameObject.transform.localPosition = new Vector3(AttackValue.gameObject.transform.localPosition.x + Time.deltaTime * 2f, AttackValue.gameObject.transform.localPosition.y, AttackValue.gameObject.transform.localPosition.z);
-            yield return new WaitForEndOfFrame();
-        }
-        ModifierValue.gameObject.SetActive(false);
-        AttackValue.text = totalDamageIncomming.ToString();
-        while (AttackValue.gameObject.transform.localPosition.x < hitModifierPoint + 1f)
-        {
-            AttackSymbol.transform.localPosition = new Vector3(AttackSymbol.transform.localPosition.x + Time.deltaTime * 2f, AttackSymbol.transform.localPosition.y, AttackSymbol.transform.localPosition.z);
-            AttackValue.gameObject.transform.localPosition = new Vector3(AttackValue.gameObject.transform.localPosition.x + Time.deltaTime * 2f, AttackValue.gameObject.transform.localPosition.y, AttackValue.gameObject.transform.localPosition.z);
-            yield return new WaitForEndOfFrame();
-        }
+        //yield return new WaitForSeconds(1f);
+        //ModifierValue.gameObject.SetActive(true);
+        //ModifierValue.text = modifier;
+        //if (modifier[0] == "+"[0]) { ModifierValue.color = Color.green; }
+        //else if (modifier[0] == "-"[0]) { ModifierValue.color = Color.red; }
+        //else if (modifier == "x0") { ModifierValue.color = new Color(.627f, .125f, .941f); }
+        //else if (modifier == "x2") { ModifierValue.color = Color.yellow; }
+        //yield return new WaitForSeconds(.5f);
+        //float hitModifierPoint = ModifierValue.gameObject.transform.localPosition.x;
+        //while (AttackValue.gameObject.transform.localPosition.x < hitModifierPoint)
+        //{
+        //    AttackSymbol.transform.localPosition = new Vector3(AttackSymbol.transform.localPosition.x + Time.deltaTime * 2f, AttackSymbol.transform.localPosition.y, AttackSymbol.transform.localPosition.z);
+        //    AttackValue.gameObject.transform.localPosition = new Vector3(AttackValue.gameObject.transform.localPosition.x + Time.deltaTime * 2f, AttackValue.gameObject.transform.localPosition.y, AttackValue.gameObject.transform.localPosition.z);
+        //    yield return new WaitForEndOfFrame();
+        //}
+        //ModifierValue.gameObject.SetActive(false);
+        //AttackValue.text = totalDamageIncomming.ToString();
+        //while (AttackValue.gameObject.transform.localPosition.x < hitModifierPoint + 1f)
+        //{
+        //    AttackSymbol.transform.localPosition = new Vector3(AttackSymbol.transform.localPosition.x + Time.deltaTime * 2f, AttackSymbol.transform.localPosition.y, AttackSymbol.transform.localPosition.z);
+        //    AttackValue.gameObject.transform.localPosition = new Vector3(AttackValue.gameObject.transform.localPosition.x + Time.deltaTime * 2f, AttackValue.gameObject.transform.localPosition.y, AttackValue.gameObject.transform.localPosition.z);
+        //    yield return new WaitForEndOfFrame();
+        //}
         GetComponentInParent<Character>().LetAttackerAttack();
+        yield return null;
     }
 
-    public void LoseHealth(int totalHealthLoss, bool usingSavingThrow)
+    public void LoseHealth(int totalHealthLoss)
     {
-        IEnumerator LoseHealthCoroutine = LosingHealth(totalHealthLoss, usingSavingThrow);
+        IEnumerator LoseHealthCoroutine = LosingHealth(totalHealthLoss);
         StartCoroutine(LoseHealthCoroutine);
     }
 
-    IEnumerator LosingHealth(int totalDamageIncomming, bool usingSavingThrow)
+    IEnumerator LosingHealth(int totalDamageIncomming)
     {
         yield return new WaitForSeconds(.2f);
         int totalHealthLoss = totalDamageIncomming - CurrentShield;
+        AttackSymbol.SetActive(true);
+        AttackValue.gameObject.SetActive(true);
+        AttackValue.text = totalDamageIncomming.ToString();
         for (int i = 0; i < totalHealthLoss; i++)
         {
             int index = CurrentHealth - 1;
@@ -411,8 +442,7 @@ public class HealthBar : MonoBehaviour {
         AttackSymbol.SetActive(false);
         AttackValue.gameObject.SetActive(false);
         resetPositions();
-        if (usingSavingThrow) { FlipSavingThrow(); }
-        else { GetComponentInParent<Character>().finishedTakingDamage(); }
+        GetComponentInParent<Character>().finishedTakingDamage();
         yield return null;
     }
 

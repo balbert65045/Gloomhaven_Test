@@ -24,7 +24,7 @@ public class CharacterAnimationController : MonoBehaviour {
     int DurationOfAction;
     List<Character> CharactersAffected;
     // Use this for initialization
-    void Start() {
+    void Awake() {
         myAnimator = GetComponent<Animator>();
         myRigidbody = GetComponent<Rigidbody>();
         myRigidbody.constraints = RigidbodyConstraints.FreezePosition;
