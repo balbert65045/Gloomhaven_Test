@@ -7,6 +7,7 @@ using UnityEditor;
 public class CombatCardAbilityEditor : Editor
 {
     public SerializedProperty
+        Staging_Property,
         Lost_Property,
         AbilityType_Property,
         Actions_Property,
@@ -16,11 +17,11 @@ public class CombatCardAbilityEditor : Editor
 
     private void OnEnable()
     {
+        Staging_Property = serializedObject.FindProperty("Staging");
         Lost_Property = serializedObject.FindProperty("LostAbility");
         Actions_Property = serializedObject.FindProperty("Actions");
         ActionsCount_Property = serializedObject.FindProperty("Actions.Array.size");
         cardAbility = (CardAbility)target;
-
     }
 
 
@@ -28,6 +29,7 @@ public class CombatCardAbilityEditor : Editor
     {
         serializedObject.Update();
         EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(Staging_Property);
         EditorGUILayout.PropertyField(Lost_Property);
         //EditorGUILayout.PropertyField(Actions_Property, new GUIContent("Actions Field"), false);
         EditorGUILayout.BeginHorizontal();
@@ -150,6 +152,16 @@ public class CombatCardAbilityEditor : Editor
                 case ActionType.Stealth:
                     SerializedProperty ActionStealthDuration_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("Duration");
                     EditorGUILayout.PropertyField(ActionStealthDuration_Property);
+                    break;
+                case ActionType.LoseHealth:
+                    SerializedProperty ActionLoseHealthAOE_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("thisAOE");
+                    SerializedProperty ActionLoseHealthAOEAmount_Property = ActionLoseHealthAOE_Property.FindPropertyRelative("Damage");
+                    EditorGUILayout.PropertyField(ActionLoseHealthAOEAmount_Property);
+                    break;
+                case ActionType.DrawCard:
+                    SerializedProperty ActionDrawCardAOE_Property = Actions_Property.GetArrayElementAtIndex(i - 1).FindPropertyRelative("thisAOE");
+                    SerializedProperty ActionDrawCardAOEAmount_Property = ActionDrawCardAOE_Property.FindPropertyRelative("Damage");
+                    EditorGUILayout.PropertyField(ActionDrawCardAOEAmount_Property);
                     break;
 
             }

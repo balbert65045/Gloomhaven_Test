@@ -14,7 +14,9 @@ public enum ActionType
     BuffArmor = 8,
     Stealth = 9,
     Scout = 10,
-    None = 11,
+    LoseHealth = 11,
+    DrawCard = 12,
+    None = 13,
 }
 
 [System.Serializable]

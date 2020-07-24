@@ -198,11 +198,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -333,11 +333,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -468,11 +468,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -603,11 +603,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -738,11 +738,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -873,11 +873,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1008,11 +1008,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1143,11 +1143,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1278,11 +1278,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1413,11 +1413,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1548,11 +1548,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1683,11 +1683,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1818,11 +1818,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -1953,11 +1953,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -2162,7 +2162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.74264705, g: 0.74264705, b: 0.74264705, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2288,11 +2288,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -2423,11 +2423,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -2558,11 +2558,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -2693,11 +2693,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -2828,11 +2828,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -2963,11 +2963,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -3098,11 +3098,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -3233,11 +3233,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -3368,11 +3368,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -3503,11 +3503,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -3643,11 +3643,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -3878,11 +3878,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -4093,11 +4093,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -4195,6 +4195,10 @@ Prefab:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 0f2ffbce892d20c48908461f435389ee, type: 2}
+    - target: {fileID: 1051693405633424, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114805234396703488, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
     - {fileID: 114267859121012764, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
@@ -4286,11 +4290,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -4516,11 +4520,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -4616,7 +4620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6911765, g: 0.6911765, b: 0.6911765, a: 1}
+  m_Color: {r: 0.11764705, g: 0.11764705, b: 0.11764705, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -4722,11 +4726,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -4824,6 +4828,10 @@ Prefab:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 816b92ace3109cd41a369405308be2dd, type: 2}
+    - target: {fileID: 1483956855262380, guid: 21cc12e9de7dde643ad7e21f772fd8d8, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114728095803665568, guid: 21cc12e9de7dde643ad7e21f772fd8d8, type: 2}
     - {fileID: 114206659552712676, guid: 21cc12e9de7dde643ad7e21f772fd8d8, type: 2}
@@ -4857,6 +4865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f724af0ce353145846e04b11ec88df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LevelIndex: 1
   autoLoadNextLevelAfter: 0
 --- !u!4 &823541334
 Transform:
@@ -4956,11 +4965,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -5091,11 +5100,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -5226,11 +5235,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -5361,11 +5370,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -5496,11 +5505,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -5631,11 +5640,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -5766,11 +5775,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -5901,11 +5910,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -6036,11 +6045,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -6171,11 +6180,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -6306,11 +6315,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -6441,11 +6450,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -6576,11 +6585,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -6711,11 +6720,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -6846,11 +6855,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -7046,11 +7055,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -7181,11 +7190,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -7316,11 +7325,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -7513,11 +7522,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -7648,11 +7657,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -7783,11 +7792,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -8009,6 +8018,10 @@ Prefab:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 0f2ffbce892d20c48908461f435389ee, type: 2}
+    - target: {fileID: 1051693405633424, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114805234396703488, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
     - {fileID: 114267859121012764, guid: dd0db71e4ebc5d34f93d1e8b668e13be, type: 2}
@@ -8100,11 +8113,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -8235,11 +8248,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -8370,11 +8383,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -8505,11 +8518,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -8640,11 +8653,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -8775,11 +8788,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -8910,11 +8923,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9050,11 +9063,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9185,11 +9198,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9320,11 +9333,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9455,11 +9468,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9590,11 +9603,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9725,11 +9738,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9860,11 +9873,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -9995,11 +10008,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -10130,11 +10143,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -10265,11 +10278,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -10400,11 +10413,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -10609,11 +10622,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -10744,11 +10757,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -10879,11 +10892,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -11014,11 +11027,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -11149,11 +11162,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -11284,11 +11297,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -11493,11 +11506,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -11628,11 +11641,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -11763,11 +11776,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -11898,11 +11911,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -12033,11 +12046,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -12168,11 +12181,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -12303,11 +12316,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -12438,11 +12451,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -12573,11 +12586,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -12708,11 +12721,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -12917,11 +12930,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -13052,11 +13065,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -13192,11 +13205,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -13327,11 +13340,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -13462,11 +13475,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -13597,11 +13610,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -13732,11 +13745,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -13867,11 +13880,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -14136,11 +14149,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -14405,11 +14418,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -14540,11 +14553,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -14675,11 +14688,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -14810,11 +14823,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -14945,11 +14958,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}
@@ -15080,11 +15093,11 @@ MonoBehaviour:
   GoldPrefabMedium: {fileID: 0}
   GoldPrefabLarge: {fileID: 0}
   GoldHolding: {fileID: 0}
+  chestFor: 
   EntityToSpawn: {fileID: 0}
   EntityOffset: 0.1
   EntityHolding: {fileID: 0}
   MovedTo: 0
-  EnemysHexInSeight: []
   InvisibleMaterial: {fileID: 2100000, guid: fdf2b43281550f649b68d2fda981e899, type: 2}
   SlightlyVisibleMaterial: {fileID: 2100000, guid: e637be75295b8c8479953cd02127b981,
     type: 2}

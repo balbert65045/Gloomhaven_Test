@@ -136,10 +136,10 @@ public class Hex : MonoBehaviour {
     public GameObject CreateCharacter()
     {
         GameObject objectMade = GenerateCharacter();
-        if (EntityHolding.GetComponent<EnemyCharacter>() != null)
-        {
-            FindObjectOfType<EnemyController>().LinkSpawnedCharacter(EntityHolding.GetComponent<EnemyCharacter>());
-        }
+        //if (EntityHolding.GetComponent<EnemyCharacter>() != null)
+        //{
+        //    FindObjectOfType<EnemyController>().LinkSpawnedCharacter(EntityHolding.GetComponent<EnemyCharacter>());
+        //}
         return objectMade;
     }
 

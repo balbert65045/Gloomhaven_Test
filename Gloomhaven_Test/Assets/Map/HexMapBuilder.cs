@@ -63,11 +63,10 @@ public class HexMapBuilder : MonoBehaviour {
 
     void CreateGrid()
     {
-        for (int q = -map_radius; q <= map_radius; q++)
+        for (int q = 0; q < map_radius * 2; q++)
         {
-            int r1 = Mathf.Max(-map_radius, -q - map_radius);
-            int r2 = Mathf.Min(map_radius, -q + map_radius);
-            for (int r = r1; r <= r2; r++)
+            int q_offset = (int)Mathf.Floor(q / 2);
+            for (int r = -q_offset; r < (map_radius * 1.5f) - q_offset; r++)
             {
                 Transform hex = Instantiate(HexPrefab) as Transform;
                 Vector2 gridPos = new Vector2(r, q);
@@ -81,6 +80,24 @@ public class HexMapBuilder : MonoBehaviour {
                 hex.GetComponent<Node>().SetNode(q, r);
             }
         }
+        //for (int q = -map_radius; q <= map_radius; q++)
+        //{
+        //    int r1 = Mathf.Max(-map_radius, -q - map_radius);
+        //    int r2 = Mathf.Min(map_radius, -q + map_radius);
+        //    for (int r = r1; r <= r2; r++)
+        //    {
+        //        Transform hex = Instantiate(HexPrefab) as Transform;
+        //        Vector2 gridPos = new Vector2(r, q);
+        //        hex.position = CalculateWorldPos(gridPos);
+
+        //        hex.SetParent(this.transform);
+        //        hex.name = "Hex " + r + "|" + q;
+        //        hex.GetComponent<Node>().isAvailable = false;
+        //        hex.GetComponent<MeshRenderer>().material = InvisibleMaterial;
+
+        //        hex.GetComponent<Node>().SetNode(q, r);
+        //    }
+        //}
     }
 
     Vector3 CalculateWorldPos(Vector2 gridPos)
